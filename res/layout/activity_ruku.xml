@@ -1,0 +1,158 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.yimei_v01.RuKuActivity" >
+
+    <TableLayout
+        android:id="@+id/ruku_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_user" />
+
+            <EditText
+                android:id="@+id/yimei_ruku_user_edt"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_ruku_user_edt"
+                android:paddingLeft="10dp" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_proNum" />
+
+            <EditText
+                android:id="@+id/yimei_ruku_proNum_edt"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_ruku_proNum_edt"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
+        </TableRow>
+
+        <LinearLayout
+            android:id="@+id/ruku_data_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ruku_tab"
+            android:layout_marginTop="10dip"
+            android:background="#ccc"
+            android:minHeight="40dip"
+            android:orientation="horizontal" >
+
+            <com.yimei.scrollview.GeneralCHScrollView
+                android:id="@+id/ruku_scroll_title"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_cid"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_checkid"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_bat_no"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_prd_no"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_prd_mark"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_prd_name"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_wh"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_qty"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/ruku_info"
+                        android:textColor="#850" />
+                </LinearLayout>
+            </com.yimei.scrollview.GeneralCHScrollView>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/ruku_scroll_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/ruku_data_title"
+            android:cacheColorHint="@android:color/transparent"
+            android:scrollbars="none" >
+        </ListView>
+    </TableLayout>
+
+</RelativeLayout>

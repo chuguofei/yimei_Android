@@ -1,0 +1,342 @@
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/tabhost"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.yimei_v01.ZhuangXiangActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TabWidget>
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/zhuangxiang_tab1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:shrinkColumns="0,1,2" >
+
+                    <!-- 经办人 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_jinbanren"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_jinbanren"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_jinbanren"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 出库申请 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_chukushenqing"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_chukushenqing"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_chukushenqing"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 满箱数量 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_manxiangNum"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_manxiangNum"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_manxiangNum"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 批次号 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_bat_no"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_bat_no"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_bat_no"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                     <!-- BinCode -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_bincode"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_bincode"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_bincode"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 数量 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_Num"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_Num"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_Num"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 产品型号 -->
+                    <!--
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_canpinxinghao" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_canpinxinghao"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_canpinxinghao"
+                            android:paddingLeft="10dp" />
+                    </TableRow>-->
+                    <!-- 产品代号 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_canpindaihao" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_canpindaihao"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_canpindaihao"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 出库数量 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_chukuNum" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_chukuNum"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_chukuNum"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 受定单号 -->
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zhuangxiang_shoudingdanhao" />
+
+                        <EditText
+                            android:id="@+id/yimei_zhuangxiang_shoudingdanhao"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_zhuangxiang_shoudingdanhao"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+
+                    <TableRow android:layout_marginTop="8dp" >
+
+                        <Button
+                            android:id="@+id/zhuangxiang_add"
+                            android:layout_width="0dip"
+                            android:layout_height="40dp"
+                            android:layout_margin="5dip"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_shape_check_border"
+                            android:text="新增单号" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/zhuangxiang_tab2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/zhuangxiang_data_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dip"
+                    android:background="#ccc"
+                    android:minHeight="40dip"
+                    android:orientation="horizontal" >
+
+                    <com.yimei.scrollview.GeneralCHScrollView
+                        android:id="@+id/zhuangxiang_scroll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_cid"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_bat_no"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_bincode"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_qty"
+                                android:textColor="#850" />
+                        </LinearLayout>
+                    </com.yimei.scrollview.GeneralCHScrollView>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/zhuangxiang_scroll_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/zhuangxiang_data_title"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:scrollbars="none" >
+                </ListView>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+</TabHost>

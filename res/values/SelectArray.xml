@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="spingarr">
+        <item>固晶</item>
+        <item>焊接</item>
+        <item>点胶</item>
+        <item>烘烤</item>
+        <!-- <item>外观SMD</item> -->
+        <!--
+        <item>测试SMD</item>
+		<item>编带SMD</item>
+		<item>看带SMD</item>
+		<item>包装SMD</item>
+        -->
+    </string-array>
+    <string-array name="mozuType">
+        <item>SMD</item>
+        <item>喷码</item>
+        <item>卡板</item>
+        <item>印刷</item>
+        <item>贴片</item>
+        <item>回流焊</item>
+        <item>高温点亮</item>
+        <item>外观</item>
+        <item>贴背胶</item>
+        <item>低电流点亮</item>
+        <item>分板</item>
+        <item>卡板</item>
+        <item>点胶</item>
+        <item>贴装透镜</item>
+        <item>UV炉</item>
+        <item>外观/品味测试</item>
+        <item>QC检验</item>
+        <item>包装入库</item>
+    </string-array>
+
+</resources>

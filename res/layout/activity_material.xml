@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <com.yimei.scrollview.MaterialsBreakdownCHScrollView
+        android:id="@+id/Material_item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/Material_xiangci"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_cailiaoNum"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_cailiaoName"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_BinCode"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_cailiaopici"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_SumNum"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+
+            <TextView
+                android:id="@+id/Material_tidaipin"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textColor="#191" />
+        </LinearLayout>
+    </com.yimei.scrollview.MaterialsBreakdownCHScrollView>
+</RelativeLayout>

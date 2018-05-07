@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    <com.yimei.scrollview.CHScrollView
+        android:id="@+id/item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center" />
+
+            <!-- 产品批次 -->
+            <TextView
+                android:id="@+id/sid1"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#191" />
+			<!-- 制定单号 -->
+            <TextView
+                android:id="@+id/slkid"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#191" />
+			<!-- 机种名称 -->
+            <TextView
+                android:id="@+id/prd_no"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#101" />
+			<!-- 数量 -->
+            <TextView
+                android:id="@+id/qty"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#111" />
+			<!-- 备注 -->
+            <TextView
+                android:id="@+id/remark"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#071" />
+          
+        </LinearLayout>
+    </com.yimei.scrollview.CHScrollView>
+
+</LinearLayout>

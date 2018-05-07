@@ -1,0 +1,360 @@
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/tabhost"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.yimei_v01.ShangLiaoActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TabWidget>
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/tab1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    android:id="@+id/ScanArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:shrinkColumns="0,1,2" >
+
+                    <TableRow
+                        android:id="@+id/yinchang"
+                        android:layout_marginTop="15dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/isNum" />
+
+                        <Button
+                            android:id="@+id/IsbtnCheck"
+                            android:layout_width="fill_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/isnum" />
+                    </TableRow>
+
+                    <!-- 材料代码 -->
+
+                    <TableRow android:layout_marginTop="15dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_shangliao_materialCode" />
+
+                        <EditText
+                            android:id="@+id/yimei_shangliao_materialCode"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_shangliao_materialCode"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+                    <!-- 材料批号 -->
+
+                    <TableRow android:layout_marginTop="15dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_shangliao_materialPihao" />
+
+                        <EditText
+                            android:id="@+id/yimei_shangliao_materialPihao"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_shangliao_materialPihao"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+
+                    <!-- 数量 -->
+
+                    <TableRow android:layout_marginTop="15dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_shangliao_Num" />
+
+                        <EditText
+                            android:id="@+id/yimei_shangliao_Num"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_shangliao_Num"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal" >
+
+                        <!-- 应发数 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_shangliao_NumDue"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_shangliao_NumDue"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:editable="false" 
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_shangliao_NumDue"
+                            android:maxLength="12"
+                            android:paddingLeft="10dp"
+                            android:textColor="#032eff" />
+                        <!-- 已发数 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/yimei_shangliao_NumIssued"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_shangliao_NumIssued"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:editable="false" 
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_shangliao_NumIssued"
+                            android:maxLength="12"
+                            android:paddingLeft="10dp"
+                            android:textColor="#032eff" />
+                    </LinearLayout>
+                </TableLayout>
+
+                <LinearLayout
+                    android:id="@+id/ScanArea_data_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="#ccc"
+                    android:minHeight="40dip"
+                    android:orientation="horizontal" >
+
+                    <com.yimei.scrollview.ScanAreaCHScrollView
+                        android:id="@+id/ScanArea_scroll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/xiangci"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/yimei_shangliao_materialCode"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaopici"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaoName"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/BinCode"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaoNum"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/verification"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/unit"
+                                android:textColor="#850" />
+                        </LinearLayout>
+                    </com.yimei.scrollview.ScanAreaCHScrollView>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/ScanArea_scroll_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/ScanArea_data_title"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:scrollbars="none" >
+                </ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/MaterialsBreakdown_data_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ccc"
+                    android:minHeight="40dip"
+                    android:orientation="horizontal" >
+
+                    <com.yimei.scrollview.MaterialsBreakdownCHScrollView
+                        android:id="@+id/MaterialsBreakdowni_scroll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/xiangci"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaohao"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaoName"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/BinCode"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/cailiaopici"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/yingfaNum"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/tidaipin"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/info"
+                                android:textColor="#850" />
+                        </LinearLayout>
+                    </com.yimei.scrollview.MaterialsBreakdownCHScrollView>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/MaterialsBreakdown_scroll_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/MaterialsBreakdown_data_title"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:scrollbars="none" >
+                </ListView>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+</TabHost>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    <com.yimei.scrollview.JiaJiaoCHScrollView
+        android:id="@+id/jiajiao_item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+            <!-- 胶杯批号 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_prtno"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 机型名称 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_prd_no"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 数量 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_qty"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 加胶时间 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_indate"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 胶杯打印时间 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_mkdate"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 到期时间 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_edate"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            <!-- 货品名称 -->
+
+            <TextView
+                android:id="@+id/yimei_jiajiao_prd_name"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+        </LinearLayout>
+    </com.yimei.scrollview.JiaJiaoCHScrollView>
+
+</LinearLayout>

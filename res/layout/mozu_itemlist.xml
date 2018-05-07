@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    <com.yimei.scrollview.MoZuCHScrollView
+        android:id="@+id/mozu_item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/mozu_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_sid1"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_state"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_sid"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_prd_name"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_qty"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+            
+             <TextView
+                android:id="@+id/yimei_mozu_bincode"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_mozu_xianbie"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+        </LinearLayout>
+    </com.yimei.scrollview.MoZuCHScrollView>
+
+</LinearLayout>
