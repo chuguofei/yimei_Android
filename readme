@@ -1,0 +1,12 @@
+辅助：
+	通用工站：
+		MOZCLIST： //批次号查询
+	任务列表：
+		MESEQUTM //查询设备号是否存在
+	加胶登记：
+		JIAJAOSELECT //加胶列表查询
+		MESGLUEJOB //胶杯查询
+	
+	
+	
+查辅助方法： MyApplication.QueryBatNo(辅助名,where查询);  //通用只要查数据都可以用
