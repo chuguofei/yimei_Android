@@ -86,6 +86,10 @@ public class MoZuActivity extends Activity {
 					.getAction())) {
 				View rootview = getCurrentFocus();
 				int focusId = rootview.findFocus().getId();
+				Object tag = rootview.findFocus().getTag();
+				if(tag==null){
+					return;
+				}
 				// 拿到pda扫描后的值
 				String barcodeData;
 				if (intent.getStringExtra("data") == null) {
@@ -95,7 +99,7 @@ public class MoZuActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (focusId == 2131296312) { // 作业员
+				if (tag.equals("模组作业员")) { // 作业员
 					Log.i("id", "作业员");
 					yimei_mozu_user_edt.setText(barcodeData);
 					if (yimei_mozu_user_edt.getText().toString().trim()
@@ -107,7 +111,7 @@ public class MoZuActivity extends Activity {
 					}
 					MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 				}
-				if (focusId == 2131296313) { // 设备号
+				if (tag.equals("模组设备号")) { // 设备号
 					Log.i("id", "设备");
 					yimei_mozu_sbid_edt.setText(barcodeData);
 					if (yimei_mozu_user_edt.getText().toString().trim()
@@ -131,7 +135,7 @@ public class MoZuActivity extends Activity {
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
 				}
-				if (focusId == 2131296314) { // 批次号
+				if (tag.equals("模组批次号")) { // 批次号
 					Log.i("id", "批号");
 					yimei_mozu_proNum_edt.setText(barcodeData);
 					if (yimei_mozu_user_edt.getText().toString().trim()

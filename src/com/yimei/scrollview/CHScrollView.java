@@ -1,6 +1,6 @@
 package com.yimei.scrollview;
 
-import com.yimei.activity.GuJingActivity;
+import com.yimei.activity.TongYongActivity;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,22 +9,22 @@ import android.widget.HorizontalScrollView;
 
 public class CHScrollView extends HorizontalScrollView{
 	
-	GuJingActivity activity;
+	TongYongActivity activity;
 	
 	public CHScrollView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		activity = (GuJingActivity) context;
+		activity = (TongYongActivity) context;
 	}
 
 	
 	public CHScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		activity = (GuJingActivity) context;
+		activity = (TongYongActivity) context;
 	}
 
 	public CHScrollView(Context context) {
 		super(context);
-		activity = (GuJingActivity) context;
+		activity = (TongYongActivity) context;
 	}
 	
 	@Override

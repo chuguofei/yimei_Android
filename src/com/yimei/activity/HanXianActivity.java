@@ -8,7 +8,7 @@ import com.yimei.sqlliteUtil.mesAllMethod;
 public class HanXianActivity extends Activity {
 
 	static MyApplication myapp;
-	public static GuJingActivity gujingActivity;
+	public static TongYongActivity gujingActivity;
 
 //	stuDao s = new stuDao(HanXianActivity.this,"");
 	

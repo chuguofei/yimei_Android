@@ -52,7 +52,7 @@ public class LoginActivity extends Activity {
 					// 直接进入手机中设置界面
 					Toast.makeText(getApplicationContext(), "亲，请检查网络是否开启~", 0).show();
 				} else {
-					/*if(login_edit_account.getText().toString().trim().equals("")||login_edit_account.getText().toString().trim()==null){
+					if(login_edit_account.getText().toString().trim().equals("")||login_edit_account.getText().toString().trim()==null){
 						Toast.makeText(getApplicationContext(), "用户名不能为空", 0)
 						.show();
 						return ;
@@ -61,7 +61,7 @@ public class LoginActivity extends Activity {
 						Toast.makeText(getApplicationContext(), "密码不能为空", 0)
 						.show();
 						return ;
-					}*/
+					}
 					
 				    Intent intent = new Intent();
 					intent.setClass(LoginActivity.this, LoadingActivity.class);// 跳转到加载界面

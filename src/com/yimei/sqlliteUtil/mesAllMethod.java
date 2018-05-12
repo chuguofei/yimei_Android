@@ -349,10 +349,10 @@ public class mesAllMethod {
 	 * @param sbid
 	 * @return
 	 */
-	public boolean kaigongState1Update(String sid1) {
+	public boolean kaigongState1Update(String sid1,String hpdate) {
 		sqlitedb = dbhelp.getWritableDatabase();
 		try {
-			sqlitedb.execSQL("update mes_precord set state1='03' where sid1=?",
+			sqlitedb.execSQL("update mes_precord set state1='03',hpdate='"+hpdate+"' where sid1=?",
 					new Object[] { sid1 });
 		} catch (SQLException e) {
 			Log.e("Tag", e.toString());

@@ -1,12 +1,13 @@
 package com.yimei.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.util.Base64;
@@ -14,19 +15,22 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-	// public static final String MESURL = "http://192.168.7.15:8088/mes/api";
+	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
 	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
-//	public static final String DBID = "01";
-	public static final String DBID = "mes";
+	 public static final String DBID = "01";
+//	 public static final String DBID = "mes";
 	// 李老师宿舍
 	// public static final String MESURL = "http://192.168.8.107:8080/mes/api";
-//	public static final String MESURL = "http://192.168.8.105:8080/mes/api";
+	// public static final String MESURL = "http://192.168.8.105:8080/mes/api";
 	// 李老师公司
-//	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+//	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+	// 李老师调试
+//	 public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
-	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
-//	 public static final String MESURL = "http://192.168.8.102:9999/jd/api";
+//	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
+	//冯哥宿舍
+	// public static final String MESURL = "http://192.168.8.102:9999/jd/api";
 	public static String user = "";
 
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
@@ -43,6 +47,40 @@ public class MyApplication extends Application {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
 	}
 
+	public static long ChooseTime(String kaigongTime,String nowTime){
+		if(kaigongTime.length()==16){
+			kaigongTime+=":00";
+		}
+		long xiangchaTime = 0;
+	    try {
+			long nd = 1000 * 24 * 60 * 60;
+			long nh = 1000 * 60 * 60;
+			long nm = 1000 * 60;
+			// long ns = 1000;
+			// 获得两个时间的毫秒时间差异
+			long a =df.parse(nowTime).getTime();
+			long b =df.parse(kaigongTime).getTime();
+			long diff = df.parse(nowTime).getTime() - df.parse(kaigongTime).getTime();
+			// 计算差多少天
+			long day = diff / nd;
+			// 计算差多少小时
+			long hour = diff % nd / nh;
+			// 计算差多少分钟
+			long min = diff % nd % nh / nm;
+			xiangchaTime = min;
+			// 计算差多少秒//输出结果
+			System.out.println(day + "天" + hour + "小时" + min + "分钟");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return xiangchaTime;
+	}
+	
+	@SuppressLint("SimpleDateFormat")
+	public static SimpleDateFormat df = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");// 设置日期格式
+	public static Date now = new Date(); // 当前时间
+
 	public static final String GUJING_ZCNO = "11";
 	public static final String HANJIE_ZCNO = "21";
 	public static final String DIANJIAO_ZCNO = "31";
@@ -50,7 +88,7 @@ public class MyApplication extends Application {
 	public static final String BIANDAI_ZCNO = "71";
 
 	/**
-	 * 生产入库,包装作业
+	 * 通用
 	 * 
 	 * @param cont
 	 *            辅助名
@@ -65,6 +103,22 @@ public class MyApplication extends Application {
 		map.put("apiId", "assist");
 		map.put("assistid", "{" + assistid + "}");
 		map.put("cont", cont);
+		return map;
+	}
+
+	/**
+	 * 混胶301
+	 * 
+	 */
+	public static Map<String, String> hunjiao_301(String prtno,
+			String effective_time) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("dbid", MyApplication.DBID);
+		map.put("usercode", MyApplication.user);
+		map.put("prtno", prtno);
+		map.put("qty", effective_time);
+		map.put("apiId", "mesudp");
+		map.put("id", "301");
 		return map;
 	}
 

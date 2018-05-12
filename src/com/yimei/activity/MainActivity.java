@@ -2,7 +2,7 @@ package com.yimei.activity;
 
 import java.util.ArrayList;
 
-import com.yimei.adapter.MyAdapter;
+import com.yimei.adapter.MainMyAdapter;
 import com.yimei.entity.Main_map;
 
 import android.app.Activity;
@@ -12,20 +12,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 	private ListView lv;
+	private GridView gv;
 	static MyApplication myapp;
 	public static MainActivity mainActivity;
-	private MyAdapter adapter;
+	private MainMyAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+//		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_gridmain);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		Application application = getApplication();
@@ -51,9 +54,11 @@ public class MainActivity extends Activity {
 		list.add(m1);
 		list.add(m2);
 		list.add(m3);*/
-		lv = (ListView) findViewById(R.id.Main_list_view);
-		adapter = new MyAdapter(list, MainActivity.this);
-		lv.setAdapter(adapter);
+//		lv = (ListView) findViewById(R.id.Main_list_view);
+		gv = (GridView) findViewById(R.id.Main_gridlist_view);
+		adapter = new MainMyAdapter(list, MainActivity.this);
+//		lv.setAdapter(adapter);
+		gv.setAdapter(adapter);
 		
 	}
 	

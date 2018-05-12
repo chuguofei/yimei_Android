@@ -5,10 +5,10 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    tools:context="com.example.yimei_v01.BianDaiActivity" >
+    tools:context="com.example.yimei_v01.TongYongActivity" >
 
     <TableLayout
-        android:id="@+id/biandai_tab"
+        android:id="@+id/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
@@ -20,10 +20,46 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/yimei_biandai_user" />
+                android:text="@string/gujing_type" />
+
+            <Spinner
+                android:id="@+id/selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:entries="@array/spingarr" />
+        </TableRow>
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_user" />
 
             <EditText
-                android:id="@+id/yimei_biandai_user_edt"
+                android:id="@+id/yimei_user_edt"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:maxLength="12"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:tag="通用作业员"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_user_edt"
+                android:paddingLeft="10dp" />
+        </TableRow>
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_equipment" />
+
+            <EditText
+                android:id="@+id/yimei_equipment_edt"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
@@ -31,8 +67,8 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="编带作业员"
-                android:labelFor="@+id/yimei_biandai_user_edt"
+                android:tag="通用设备号"
+                android:labelFor="@+id/yimei_equipment_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
 
@@ -41,10 +77,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/yimei_biandai_num" />
+                android:text="@string/yimei_gujing_proNum" />
 
             <EditText
-                android:id="@+id/yimei_biandai_sbid_edt"
+                android:id="@+id/yimei_proNum_edt"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
@@ -52,29 +88,8 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="编带设备号"
-                android:labelFor="@+id/yimei_biandai_sbid_edt"
-                android:paddingLeft="10dp" />
-        </TableRow>
-
-        <TableRow android:paddingTop="20dp" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/yimei_biandai_proNum" />
-
-            <EditText
-                android:id="@+id/yimei_biandai_proNum_edt"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:background="@drawable/shape_edittext"
-                android:ems="10"
-                android:enabled="true"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:tag="编带批次号"
-                android:labelFor="@+id/yimei_biandai_proNum_edt"
+                android:tag="通用批次号"
+                android:labelFor="@+id/yimei_proNum_edt"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
         </TableRow>
@@ -86,7 +101,16 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/biandai_kaigong"
+                android:id="@+id/ruliao"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="@string/ruliao" />
+
+            <Button
+                android:id="@+id/kaigong"
                 android:layout_width="0dip"
                 android:layout_height="40dp"
                 android:layout_margin="5dip"
@@ -95,7 +119,7 @@
                 android:text="@string/kaigong" />
 
             <Button
-                android:id="@+id/biandai_chuzhan"
+                android:id="@+id/chuzhan"
                 android:layout_width="0dip"
                 android:layout_height="40dp"
                 android:layout_margin="5dip"
@@ -106,16 +130,16 @@
     </TableLayout>
 
     <LinearLayout
-        android:id="@+id/biandai_data_title"
+        android:id="@+id/data_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/biandai_tab"
+        android:layout_below="@+id/tab"
         android:background="#ccc"
         android:minHeight="40dip"
         android:orientation="horizontal" >
 
-        <com.yimei.scrollview.BianDaiCHScrollView
-            android:id="@+id/biandai_scroll_title"
+        <com.yimei.scrollview.CHScrollView
+            android:id="@+id/item_scroll_title"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -127,7 +151,7 @@
                 android:orientation="horizontal" >
 
                 <CheckBox
-                    android:id="@+id/biandai_quanxuan"
+                    android:id="@+id/quanxuan"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_weight="2"
@@ -138,59 +162,45 @@
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
-                    android:text="@string/biandai_lotno"
+                    android:text="@string/Data1"
                     android:textColor="#850" />
 
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
-                    android:text="状态"
-                    android:textColor="#850" />
-                
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="fill_parent"
-                    android:gravity="center"
-                    android:text="@string/biandai_sid"
+                    android:text="@string/Data2"
                     android:textColor="#850" />
 
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
-                    android:text="@string/biandai_sid1"
+                    android:text="@string/Data3"
                     android:textColor="#850" />
 
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
-                    android:text="@string/biandai_prd_name"
+                    android:text="@string/Data4"
                     android:textColor="#850" />
 
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
-                    android:text="@string/biandai_qty"
-                    android:textColor="#850" />
-                
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="fill_parent"
-                    android:gravity="center"
-                    android:text="@string/biandai_bincode"
+                    android:text="@string/Data5"
                     android:textColor="#850" />
             </LinearLayout>
-        </com.yimei.scrollview.BianDaiCHScrollView>
+        </com.yimei.scrollview.CHScrollView>
     </LinearLayout>
 
     <ListView
-        android:id="@+id/biandai_scroll_list"
+        android:id="@+id/scroll_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/biandai_data_title"
+        android:layout_below="@id/data_title"
         android:cacheColorHint="@android:color/transparent"
         android:scrollbars="none" >
     </ListView>

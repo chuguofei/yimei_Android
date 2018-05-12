@@ -45,7 +45,6 @@ public class BianDaiAdapter extends BaseAdapter {
 	}
 
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return listData.get(position);
 	}
 

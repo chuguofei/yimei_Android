@@ -36,19 +36,16 @@ public class LoadingActivity extends Activity {
 				LoadingActivity.this.finish();
 
 				Intent intent = getIntent();
-//				user= intent.getStringExtra("user");
-				user = "admin";
+				user= intent.getStringExtra("user");
+//				user = "admin";
 				String pwd = intent.getStringExtra("pwd");
-				/*
-				 * intent = new Intent(LoadingActivity.this,
-				 * GuJingActivity.class); startActivity(intent);
-				 */
+				
 
 				Map<String, String> map = new HashMap<String, String>();
 				map.put("dbid", MyApplication.DBID);
 				map.put("usercode", user);
 				map.put("apiId", "login");
-				map.put("pwd", MyApplication.Base64pwd("system"));
+				map.put("pwd", MyApplication.Base64pwd(pwd));
 				httpRequest(MyApplication.MESURL, map);
 			}
 		}, 1400);
@@ -103,12 +100,7 @@ public class LoadingActivity extends Activity {
 			public void run() {
 				JSONObject json = JSON.parseObject(response.toString());
 				Log.i("id",json.toString());
-			
 				
-//				MyApplication.user = user;
-//				startActivity(new Intent(LoadingActivity.this,BianDaiActivity.class));
-//				startActivity(new Intent(LoadingActivity.this,GuJingActivity.class));
-//				startActivity(new Intent(LoadingActivity.this,JiaJiaoActivity.class));
 					if (json.getInteger("id") == 0) {
 						
 						MyApplication.user = user;
@@ -123,6 +115,11 @@ public class LoadingActivity extends Activity {
 									.get(0).toString());
 							String caidan = quanxian.get("menuId").toString();
 							if (caidan.equals("D0001")) { //通用工站
+								Intent intent = new Intent(LoadingActivity.this,
+										TongYongActivity.class);
+								startActivity(intent);
+							}
+							if (caidan.equals("D0002")) { //通用工站
 								Intent intent = new Intent(LoadingActivity.this,
 										GuJingActivity.class);
 								startActivity(intent);
@@ -152,6 +149,12 @@ public class LoadingActivity extends Activity {
 									  ZhuangXiangActivity.class);
 								startActivity(intent);
 							}
+							if (caidan.equals("D2009")) { //装箱作业
+								Intent intent = new Intent(LoadingActivity.this,
+									  HunJiaoActivity.class);
+								startActivity(intent);
+							}
+							
 							break;
 						case 0:
 							Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

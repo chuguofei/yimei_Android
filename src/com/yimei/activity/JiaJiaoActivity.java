@@ -68,7 +68,10 @@ public class JiaJiaoActivity extends Activity {
 			if (MyApplication.INTENT_ACTION_SCAN_RESULT.equals(intent
 					.getAction())) {
 				View rootview = getCurrentFocus();
-				int focusId = rootview.findFocus().getId();
+				Object tag =rootview.findFocus().getTag();
+				if(tag==null){
+					return;
+				}
 				// 拿到pda扫描后的值
 				String barcodeData;
 				if (intent.getStringExtra("data") == null) {
@@ -78,7 +81,7 @@ public class JiaJiaoActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (focusId == 2131296279) { // 作业员  
+				if (tag.equals("加胶作业员")) { // 作业员  
 					Log.i("id", "作业员");
 					yimei_jiajiao_user.setText(barcodeData);
 					zuoyeyuan = yimei_jiajiao_user.getText().toString().trim();
@@ -92,8 +95,7 @@ public class JiaJiaoActivity extends Activity {
 					}
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
 				}
-				if (focusId == 2131296280) { // 胶机编号 
-					Log.i("id", "胶机编号");
+				if (tag.equals("加胶胶机编号")) { // 胶机编号 
 					yimei_jiajiao_jidiaojinumber.setText(barcodeData);
 					sbid = yimei_jiajiao_jidiaojinumber.getText().toString()
 							.trim();
@@ -124,10 +126,8 @@ public class JiaJiaoActivity extends Activity {
 					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
 							"Isshebei");
 				}
-				if (focusId == 2131296281) { // 胶杯批号
+				if (tag.equals("加胶胶杯批号")) { // 胶杯批号
 					yimei_jiajiao_jiaobeipihao.setText(barcodeData);
-					jiaobeipihao = yimei_jiajiao_jiaobeipihao.getText()
-							.toString().trim();
 					if (yimei_jiajiao_user.getText().toString().trim()
 							.equals("")
 							|| yimei_jiajiao_user.getText().toString().trim() == null) {
@@ -154,7 +154,7 @@ public class JiaJiaoActivity extends Activity {
 						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 						return;
 					}
-
+					jiaobeipihao = yimei_jiajiao_jiaobeipihao.getText().toString().trim();
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 					Map<String, String> mapSbid = new HashMap<String, String>();
 					mapSbid.put("dbid", MyApplication.DBID);
@@ -235,7 +235,6 @@ public class JiaJiaoActivity extends Activity {
 						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 						return false;
 					}
-					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 					Map<String, String> mapSbid = new HashMap<String, String>();
 					mapSbid.put("dbid", MyApplication.DBID);
 					mapSbid.put("usercode", MyApplication.user);
@@ -244,6 +243,8 @@ public class JiaJiaoActivity extends Activity {
 					mapSbid.put("cont", "~id='" + sbid + "' and zc_id='31'");
 					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
 							"Isshebei1");
+					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+					yimei_jiajiao_jiaobeipihao.selectAll();
 					flag = true;
 				}
 			}
@@ -367,10 +368,12 @@ public class JiaJiaoActivity extends Activity {
 							mListView.setAdapter(null);
 							JiaJiaoAdapter.notifyDataSetChanged();
 							nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
+							yimei_jiajiao_jidiaojinumber.selectAll();
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该胶机编号!", 0);
 						} else {
 							nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
+							yimei_jiajiao_jidiaojinumber.selectAll();
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该胶机编号!", 0);
 						}
@@ -385,23 +388,30 @@ public class JiaJiaoActivity extends Activity {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
 
-						if (!jsonValue.get("vdate").toString().equals("")) {
-
-							SimpleDateFormat sdf = new SimpleDateFormat(
-									"yyyy-MM-dd HH:mm");
-							long vdate = sdf.parse(
-									jsonValue.get("vdate").toString())
-									.getTime()
-									- System.currentTimeMillis();
-							if (vdate < 0) {
-								ToastUtil.showToast(getApplicationContext(),
-										"胶杯已过有效期", 0);
+						if(jsonValue.containsKey("newly_time")){
+							//混胶的新时间 
+							if (!jsonValue.get("newly_time").toString().equals("")) {
+	
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"yyyy-MM-dd HH:mm");
+								long vdate = sdf.parse(
+										jsonValue.get("newly_time").toString())
+										.getTime()
+										- System.currentTimeMillis();
+								if (vdate < 0) {
+									ToastUtil.showToast(getApplicationContext(),
+											"胶杯已过有效期", 0);
+								}
 							}
+						}else{
+							ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
+							return;
 						}
-
+						
 						jsonValue.put("op", zuoyeyuan);
 						jsonValue.put("sbid", sbid);
 						jsonValue.put("prtno", jsonValue.get("prtno"));
+						jsonValue.put("indate",MyApplication.df.format(MyApplication.now));
 						jsonValue.put("edate", jsonValue.get("vdate"));// 到期时间
 						jsonValue.put("mkdate", jsonValue.get("tprn"));// 胶杯打印时间
 						jsonValue.put("slkid", jsonValue.get("mo_no"));// 工单号（制令单号）
@@ -417,6 +427,7 @@ public class JiaJiaoActivity extends Activity {
 										jsonValue.toJSONString(), "D2010", "1");
 						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
 								"AddMESgluejob");
+						
 					} else {
 						ToastUtil.showToast(getApplicationContext(), "没有"
 								+ jiaobeipihao + "胶杯批号！", 0);
@@ -503,7 +514,7 @@ public class JiaJiaoActivity extends Activity {
 				}
 			} catch (Exception e) {
 				Log.i("err", e.toString());
-				ToastUtil.showToast(getApplicationContext(), "服务器异常，请重新登录！", 0);
+				ToastUtil.showToast(getApplicationContext(),e.toString(), 0);
 			}
 		}
 	};

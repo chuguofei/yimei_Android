@@ -1,5 +1,6 @@
 package com.yimei.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +27,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -33,6 +37,7 @@ import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -40,31 +45,34 @@ import android.widget.Toast;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
-import com.yimei.adapter.GuJingScrollAdapter;
+import com.yimei.adapter.ScrollAdapter;
 import com.yimei.entity.mesPrecord;
-import com.yimei.scrollview.GeneralCHScrollView;
+import com.yimei.scrollview.CHScrollView;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
+import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
 
-public class GuJingActivity extends Activity {
+public class TongYongActivity extends Activity {
 
 	static MyApplication myapp;
-	public static GuJingActivity gujingActivity;
+	public static TongYongActivity gujingActivity;
 	// 操作sqliet
-	private mesAllMethod gujing_list = new mesAllMethod(GuJingActivity.this); // 调用操作本地库的方法
-	private static GuJingScrollAdapter scrollAdapter; // 适配器
+	private mesAllMethod gujing_list = new mesAllMethod(TongYongActivity.this); // 调用操作本地库的方法
+	private static ScrollAdapter scrollAdapter; // 适配器
 	private static ListView mListView; // listview
 	public HorizontalScrollView mTouchView;
-	private static List<GeneralCHScrollView> GeneralCHScrollView = new ArrayList<GeneralCHScrollView>(); // 行+标题滚动
-	private CheckBox gujing_quanxuan; // 全选按钮
-	private EditText yimei_gujingequipment_edt;
-	private EditText yimei_gujinguser_edt;
-	private EditText yimei_gujingproNum_edt;
+	private static List<CHScrollView> mHScrollViews = new ArrayList<CHScrollView>(); // 行+标题滚动
+	private CheckBox quanxuan; // 全选按钮
+	private EditText yimei_equipment_edt;
+	private EditText yimei_user_edt;
+	private EditText yimei_proNum_edt;
+	private Spinner selectValue; // 下拉框
 	private String zcno = "11";// 界面上的制程号
 	private Button kaigong;// 开工按钮
 	private Button chuzhan;// 出站按钮
+
 	private Button shangliao; // 上料按钮
 
 	// 获取4个文本框的文本
@@ -76,6 +84,7 @@ public class GuJingActivity extends Activity {
 	private static JSONObject newJson; // 拿新sid存在json
 	private static String currSlkid;
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
+	private Map<String,String> ptime = new HashMap<String,String>();
 
 	/**
 	 * 获取pda扫描（广播）
@@ -99,66 +108,61 @@ public class GuJingActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (tag.equals("固晶作业员")) { // 2131296268 2131361805
+				if (tag.equals("通用作业员")) { // 2131296268 2131361805
 					Log.i("id", "作业员");
-					yimei_gujinguser_edt.setText(barcodeData);
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+					yimei_user_edt.setText(barcodeData);
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujinguser_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
 						return;
 					}
-					nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+					nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 				}
-				if (tag.equals("固晶设备号")) {
-					yimei_gujingequipment_edt.setText(barcodeData);
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+				if (tag.equals("通用设备号")) {
+					Log.i("id", "设备");
+					yimei_equipment_edt.setText(barcodeData);
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujinguser_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
 						return;
 					}
-					if (yimei_gujingequipment_edt.getText().toString().trim()
+					if (yimei_equipment_edt.getText().toString().trim()
 							.equals("")
-							|| yimei_gujingequipment_edt.getText().toString()
-									.trim() == null) {
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 						return;
 					}
 					sbidGetData(); // 设备号的回车键
-					nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
+					nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
 				}
-				if (tag.equals("固晶批次号")) {
-					yimei_gujingproNum_edt.setText(barcodeData);
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+				if (tag.equals("通用批次号")) {
+					Log.i("id", "批号");
+					yimei_proNum_edt.setText(barcodeData);
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujinguser_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
 						return;
 					}
-					if (yimei_gujingequipment_edt.getText().toString().trim()
+					if (yimei_equipment_edt.getText().toString().trim()
 							.equals("")
-							|| yimei_gujingequipment_edt.getText().toString()
-									.trim() == null) {
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "设备号不能为空~", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 						return;
 					}
-					if (yimei_gujingproNum_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujingproNum_edt.getText().toString()
-									.trim() == null) {
+					if (yimei_proNum_edt.getText().toString().trim().equals("")
+							|| yimei_proNum_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "批次号为空~", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
 						return;
 					}
 					sid1GetData(); // 生产批号回车事件
-					nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
-					yimei_gujingproNum_edt.selectAll();
+					nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
+					yimei_proNum_edt.selectAll();
 				}
 			}
 		}
@@ -167,7 +171,7 @@ public class GuJingActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_gujing);
+		setContentView(R.layout.activity_tongyong);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
@@ -176,11 +180,14 @@ public class GuJingActivity extends Activity {
 		myapp.addActivity_(this);
 		gujingActivity = this;
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
-		gujing_quanxuan = (CheckBox) findViewById(R.id.gujing_quanxuan); // 全选按钮
+		selectValue = (Spinner) findViewById(R.id.selectValue); // 下拉框id
+		selectValue.setOnItemSelectedListener(SelectValueListener); // 下拉框改变更新值
+		quanxuan = (CheckBox) findViewById(R.id.quanxuan); // 全选按钮
 		listenerQuanXuan(); // 全选事件
-		shangliao = (Button) findViewById(R.id.gujing_ruliao); // 获取上料id
-		kaigong = (Button) findViewById(R.id.gujing_kaigong); // 获取开工id
-		chuzhan = (Button) findViewById(R.id.gujing_chuzhan); // 获取出站id
+		shangliao = (Button) findViewById(R.id.ruliao); // 获取上料id
+		kaigong = (Button) findViewById(R.id.kaigong); // 获取开工id
+		chuzhan = (Button) findViewById(R.id.chuzhan); // 获取出站id
+
 		if (gujing_list.mesDataCount() == 0) { // 是否禁用(上料，开工，出站)按钮
 			shangliao.setEnabled(false);
 			kaigong.setEnabled(false);
@@ -198,6 +205,9 @@ public class GuJingActivity extends Activity {
 		kaigong.setOnClickListener(kaigongClick); // 开工点击事件
 		chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
 		shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
+		
+		Map<String,String> map = MyApplication.QueryBatNo("M_PROCESS5","");
+		httpRequestQueryRecord(MyApplication.MESURL,map,"Tongyong_ptime");
 	};
 
 	/**
@@ -207,7 +217,7 @@ public class GuJingActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			if (v.getId() == R.id.gujing_chuzhan) {
+			if (v.getId() == R.id.chuzhan) {
 				UpdateServerData("chuzhanUpdata");
 			}
 		}
@@ -221,7 +231,7 @@ public class GuJingActivity extends Activity {
 		@SuppressWarnings("null")
 		@Override
 		public void onClick(View v) {
-			if (v.getId() == R.id.gujing_kaigong) {
+			if (v.getId() == R.id.kaigong) {
 				UpdateServerData("kaigongUpdata");
 			}
 		}
@@ -259,14 +269,7 @@ public class GuJingActivity extends Activity {
 					ToastUtil.showToast(gujingActivity, "请选中一条记录!", 0);
 					break;
 				case 1:
-					Intent intent = new Intent();
-					intent.setClass(gujingActivity, ShangLiaoActivity.class);// 跳转到上料页面
-					Bundle bundle = new Bundle();
-					bundle.putString("activity", "gujing");
-					bundle.putString("type", "料号+批号"); // 显示的文本框
-					bundle.putSerializable("object", mesObj);
-					intent.putExtras(bundle);
-					startActivity(intent);
+					showPopupMenu(v, mesObj);
 					break;
 				default:
 					// 多选
@@ -278,6 +281,61 @@ public class GuJingActivity extends Activity {
 	};
 
 	/**
+	 * 选择上料验证方式
+	 * 
+	 * @param view
+	 */
+	private void showPopupMenu(View view, final mesPrecord m) {
+		// View当前PopupMenu显示的相对View的位置
+		PopupMenu popupMenu = new PopupMenu(this, view);
+
+		// menu布局
+		popupMenu.getMenuInflater().inflate(R.menu.shangliaoitem,
+				popupMenu.getMenu());
+
+		// menu的item点击事件
+		popupMenu
+				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						String a = item.getTitle().toString();
+						if (item.getTitle().equals("料号")) { // 料号
+							JumpShangliao("料号", m);
+						} else if (item.getTitle().equals("料号+批号")) { // 料号+批号
+							JumpShangliao("料号+批号", m);
+						} else if (item.getTitle().equals("料号+BinCode")) { // 料号+bincode
+							JumpShangliao("料号+bincode", m);
+						}
+						return false;
+					}
+				});
+
+		// PopupMenu关闭事件
+		popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+			@Override
+			public void onDismiss(PopupMenu menu) {
+				// ToastUtil.showToast(gujingActivity, "关闭PopupMenu", 0);
+			}
+		});
+
+		popupMenu.show();
+	}
+
+	/**
+	 * 选择上料的类型需传的类型
+	 */
+	public void JumpShangliao(String jumpMes, mesPrecord m) {
+		Intent intent = new Intent();
+		intent.setClass(gujingActivity, ShangLiaoActivity.class);// 跳转到上料页面
+		Bundle bundle = new Bundle();
+		bundle.putString("activity", "tongyong");
+		bundle.putString("type", jumpMes); // 要传的类型
+		bundle.putSerializable("object", m);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
+
+	/**
 	 * 与界面交互
 	 */
 	protected void onResume() {
@@ -286,10 +344,10 @@ public class GuJingActivity extends Activity {
 		List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 				shebeihao, zcno);
 		if (getListMes_Procord != null) {
-			yimei_gujingequipment_edt.setFocusable(true);
-			yimei_gujingequipment_edt.setFocusableInTouchMode(true);
-			yimei_gujingequipment_edt.selectAll();
-			scrollAdapter = new GuJingScrollAdapter(GuJingActivity.this,
+			yimei_equipment_edt.setFocusable(true);
+			yimei_equipment_edt.setFocusableInTouchMode(true);
+			yimei_equipment_edt.selectAll();
+			scrollAdapter = new ScrollAdapter(TongYongActivity.this,
 					getListMes_Procord);
 			mListView.setAdapter(scrollAdapter);
 			scrollAdapter.notifyDataSetChanged();
@@ -297,18 +355,17 @@ public class GuJingActivity extends Activity {
 
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
-		yimei_gujinguser_edt = (EditText) findViewById(R.id.yimei_gujinguser_edt);
-		yimei_gujingproNum_edt = (EditText) findViewById(R.id.yimei_gujingproNum_edt);
-		yimei_gujingequipment_edt = (EditText) findViewById(R.id.yimei_gujingequipment_edt);
-		// yimei_gujinguser_edt.setTag("固晶作业员");
+		yimei_user_edt = (EditText) findViewById(R.id.yimei_user_edt);
+		yimei_proNum_edt = (EditText) findViewById(R.id.yimei_proNum_edt);
+		yimei_equipment_edt = (EditText) findViewById(R.id.yimei_equipment_edt);
 
-		yimei_gujinguser_edt.setOnEditorActionListener(editEnter); // 操作员的回车监听事件
-		yimei_gujingequipment_edt.setOnEditorActionListener(editEnter); // 设备的回车监听事件
-		yimei_gujingproNum_edt.setOnEditorActionListener(editEnter);// 生产批号的回车监听事件
+		yimei_user_edt.setOnEditorActionListener(editEnter); // 操作员的回车监听事件
+		yimei_equipment_edt.setOnEditorActionListener(editEnter); // 设备的回车监听事件
+		yimei_proNum_edt.setOnEditorActionListener(editEnter);// 生产批号的回车监听事件
 
-		yimei_gujinguser_edt.setOnFocusChangeListener(EditGetFocus);// 操作员失去焦点
-		yimei_gujingequipment_edt.setOnFocusChangeListener(EditGetFocus);// 设备号失去焦点
-		yimei_gujingproNum_edt.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
+		yimei_user_edt.setOnFocusChangeListener(EditGetFocus);// 操作员失去焦点
+		yimei_equipment_edt.setOnFocusChangeListener(EditGetFocus);// 设备号失去焦点
+		yimei_proNum_edt.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
 
 	};
 
@@ -329,7 +386,7 @@ public class GuJingActivity extends Activity {
 	 */
 	public void sbidGetData() {
 		// 获取设备号的文本
-		shebeihao = yimei_gujingequipment_edt.getText().toString().trim();
+		shebeihao = yimei_equipment_edt.getText().toString().trim();
 		Map<String, String> mapSbid = new HashMap<String, String>();
 		mapSbid.put("dbid", MyApplication.DBID);
 		mapSbid.put("usercode", MyApplication.user);
@@ -371,17 +428,17 @@ public class GuJingActivity extends Activity {
 						if (mListView != null) {
 							mListView.setAdapter(null);
 							scrollAdapter.notifyDataSetChanged();
-							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+							nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备或制程!", 0);
 						} else {
-							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+							nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备或制程!", 0);
 						}
 					} else {
-						yimei_pro_edt = yimei_gujingproNum_edt.getText()
-								.toString().trim();
+						yimei_pro_edt = yimei_proNum_edt.getText().toString()
+								.trim();
 						// 如果批次号+制程在库中存在
 						if (gujing_list.IsSid1AndZnco(yimei_pro_edt, zcno)) {
 							// 如果批次+设备+制程 在库中存在
@@ -392,7 +449,7 @@ public class GuJingActivity extends Activity {
 								List<Map<String, Object>> mesList = GetListMes_Procord(
 										shebeihao, zcno);
 								if (mesList != null) {
-									scrollAdapter = new GuJingScrollAdapter(
+									scrollAdapter = new ScrollAdapter(
 											gujingActivity, mesList);
 									mListView.setAdapter(scrollAdapter);
 									// 如果存在复选框选中
@@ -415,11 +472,9 @@ public class GuJingActivity extends Activity {
 							} else {
 								// 批号已经绑定设备
 								ToastUtil.showToast(gujingActivity, "《"
-										+ yimei_gujingproNum_edt.getText()
-												.toString()
+										+ yimei_proNum_edt.getText().toString()
 										+ "》批次号已绑定过设备号不能重复绑定~", 0);
-								yimei_gujingproNum_edt
-										.setSelectAllOnFocus(true);
+								yimei_proNum_edt.setSelectAllOnFocus(true);
 							}
 						} else {
 							// 去服务器拿值 并绑定设备号
@@ -444,6 +499,7 @@ public class GuJingActivity extends Activity {
 					} else {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
+						// if(updateTableSlikids==null)
 						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
 						qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 						jsonValue.put("slkid", jsonValue.get("sid"));
@@ -514,14 +570,14 @@ public class GuJingActivity extends Activity {
 								List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 										shebeihao, zcno);
 								if (getListMes_Procord != null) {
-									scrollAdapter = new GuJingScrollAdapter(
-											GuJingActivity.this,
+									scrollAdapter = new ScrollAdapter(
+											TongYongActivity.this,
 											getListMes_Procord);
 									mListView.setAdapter(scrollAdapter);
 									shangliao.setEnabled(true);
 									ToastUtil.showToast(
 											getApplicationContext(), "《"
-													+ yimei_gujingproNum_edt
+													+ yimei_proNum_edt
 															.getText()
 															.toString()
 													+ "》批次号已加载到列表中", 0);
@@ -558,17 +614,18 @@ public class GuJingActivity extends Activity {
 						if (mListView != null) {
 							mListView.setAdapter(null);
 							scrollAdapter.notifyDataSetChanged();
-							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+							nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
-									"没有该设备,请核对~!", 0);
+									"没有该设备或编号!", 0);
 						} else {
-							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+							nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备编号!", 0);
 						}
 					} else {
 						// 去服务器中拿设备号
 						Map<String, String> map = new HashMap<String, String>();
+
 						map.put("dbid", MyApplication.DBID);
 						map.put("usercode", MyApplication.user);
 						map.put("apiId", "assist");
@@ -602,19 +659,16 @@ public class GuJingActivity extends Activity {
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
 									if (getListMes_Procord != null) {
-										scrollAdapter = new GuJingScrollAdapter(
-												GuJingActivity.this,
+										scrollAdapter = new ScrollAdapter(
+												TongYongActivity.this,
 												getListMes_Procord);
 										mListView.setAdapter(scrollAdapter);
-										ToastUtil
-												.showToast(
-														getApplicationContext(),
-														"《"
-																+ yimei_gujingequipment_edt
-																		.getText()
-																		.toString()
-																+ "》设备号已加载到列表中",
-														0);
+										ToastUtil.showToast(
+												getApplicationContext(), "《"
+														+ yimei_equipment_edt
+																.getText()
+																.toString()
+														+ "》设备号已加载到列表中", 0);
 
 									} else {
 										shangliao.setEnabled(false);
@@ -635,12 +689,12 @@ public class GuJingActivity extends Activity {
 						List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 								shebeihao, zcno);
 						if (getListMes_Procord != null) {
-							scrollAdapter = new GuJingScrollAdapter(
-									GuJingActivity.this, getListMes_Procord);
+							scrollAdapter = new ScrollAdapter(
+									TongYongActivity.this, getListMes_Procord);
 							mListView.setAdapter(scrollAdapter);
 							ToastUtil.showToast(getApplicationContext(), "《"
-									+ yimei_gujingequipment_edt.getText()
-											.toString() + "》设备号已加载到列表中", 0);
+									+ yimei_equipment_edt.getText().toString()
+									+ "》设备号已加载到列表中", 0);
 						} else {
 							shangliao.setEnabled(false);
 							chuzhan.setEnabled(false);
@@ -672,7 +726,7 @@ public class GuJingActivity extends Activity {
 							mesPrecord m = updatekaigongSid1.get(i);
 							Log.i("mes", m.toString());
 							if (m.getState1().equals("01")
-									|| m.getState1().equals("02")) {
+									|| m.getState1().equals("02")) {								
 								// ------------------------修改服务器的俩张表（开工）
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
@@ -689,8 +743,8 @@ public class GuJingActivity extends Activity {
 												.format(MyApplication.now))) {
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
-									scrollAdapter = new GuJingScrollAdapter(
-											GuJingActivity.this,
+									scrollAdapter = new ScrollAdapter(
+											TongYongActivity.this,
 											getListMes_Procord);
 									mListView.setAdapter(scrollAdapter);
 
@@ -722,7 +776,8 @@ public class GuJingActivity extends Activity {
 							long chooseTime = MyApplication.ChooseTime(
 									m.getHpdate(),
 									MyApplication.df.format(MyApplication.now));
-							if (chooseTime > 30 || m.getHpdate()==null) {
+ 							int a = Integer.parseInt(ptime.get(zcno).toString());
+							if (chooseTime > Integer.parseInt(ptime.get(zcno).toString()) || m.getHpdate() == null || ptime==null) {
 								Log.i("mes", m.toString());
 								if (m.getState1().equals("03")) {
 									// ------------------------修改服务器的俩张表（出站）
@@ -741,8 +796,8 @@ public class GuJingActivity extends Activity {
 										Log.i("kaigongUpdata", "本地库已删除~");
 										List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 												shebeihao, zcno);
-										scrollAdapter = new GuJingScrollAdapter(
-												GuJingActivity.this,
+										scrollAdapter = new ScrollAdapter(
+												TongYongActivity.this,
 												getListMes_Procord);
 										mListView.setAdapter(scrollAdapter);
 
@@ -751,20 +806,30 @@ public class GuJingActivity extends Activity {
 									}
 								}
 							} else {
-								ToastUtil.showToast(gujingActivity, "时间为到，不能出站!",
+								ToastUtil.showToast(gujingActivity, "时间未到，不能出站！",
 										0);
 							}
-
 						}
 						updatekaigongSid1.clear();
 					} else {
 						ToastUtil.showToast(gujingActivity,
 								String.valueOf(jsonObject.get("message")), 0);
-						// Log.i("kaigongUpdata", "服务器修改开工状态失败");
+					}
+				}
+				if(string.equals("Tongyong_ptime")){
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(i));
+						if(jsonValue.containsKey("ptime")){							
+							ptime.put(jsonValue.get("id").toString(),jsonValue.get("ptime").toString());
+						}
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				ToastUtil.showToast(gujingActivity,e.toString(),0);
 			}
 		}
 	};
@@ -786,10 +851,10 @@ public class GuJingActivity extends Activity {
 			if (findList != null) {
 				mesList = new ArrayList<Map<String, Object>>();
 				Map<String, Object> mesMap = null;
-				GeneralCHScrollView headerScroll = (GeneralCHScrollView) findViewById(R.id.gujing_item_scroll_title);
+				CHScrollView headerScroll = (CHScrollView) findViewById(R.id.item_scroll_title);
 				// 添加头滑动事件
-				GeneralCHScrollView.add(headerScroll);
-				mListView = (ListView) findViewById(R.id.gujing_scroll_list);
+				mHScrollViews.add(headerScroll);
+				mListView = (ListView) findViewById(R.id.scroll_list);
 				Map<String, String> stateName = MyApplication.getStateName();
 				for (int i = 0; i < findList.size(); i++) {
 					mesPrecord mesItem = findList.get(i);
@@ -811,43 +876,39 @@ public class GuJingActivity extends Activity {
 	 * 全选方法
 	 */
 	protected void listenerQuanXuan() {
-		gujing_quanxuan
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (scrollAdapter == null) {
-							ToastUtil.showToast(getApplicationContext(),
-									"没有数据", 0);
-							gujing_quanxuan.setEnabled(false);
-							return;
-						}
-						if (isChecked) {
-							int initCheck = scrollAdapter.initCheck(true);
-							if (initCheck == -1) {
-								ToastUtil.showToast(getApplicationContext(),
-										"没有数据", 0);
-								gujing_quanxuan.setEnabled(false);
-							}
-							scrollAdapter.notifyDataSetChanged();
-						} else {
-							int initCheck = scrollAdapter.initCheck(false);
-							if (initCheck == -1) {
-								ToastUtil.showToast(getApplicationContext(),
-										"没有数据", 0);
-								gujing_quanxuan.setEnabled(false);
-							}
-							scrollAdapter.notifyDataSetChanged();
-						}
+		quanxuan.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (scrollAdapter == null) {
+					ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
+					quanxuan.setEnabled(false);
+					return;
+				}
+				if (isChecked) {
+					int initCheck = scrollAdapter.initCheck(true);
+					if (initCheck == -1) {
+						ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
+						quanxuan.setEnabled(false);
 					}
-				});
+					scrollAdapter.notifyDataSetChanged();
+				} else {
+					int initCheck = scrollAdapter.initCheck(false);
+					if (initCheck == -1) {
+						ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
+						quanxuan.setEnabled(false);
+					}
+					scrollAdapter.notifyDataSetChanged();
+				}
+			}
+		});
 
 	}
 
-	public static void addHViews(final GeneralCHScrollView hScrollView) {
-		if (!GeneralCHScrollView.isEmpty()) {
-			int size = GeneralCHScrollView.size();
-			GeneralCHScrollView scrollView = GeneralCHScrollView.get(size - 1);
+	public static void addHViews(final CHScrollView hScrollView) {
+		if (!mHScrollViews.isEmpty()) {
+			int size = mHScrollViews.size();
+			CHScrollView scrollView = mHScrollViews.get(size - 1);
 			final int scrollX = scrollView.getScrollX();
 			if (scrollX != 0) {
 				mListView.post(new Runnable() {
@@ -858,11 +919,11 @@ public class GuJingActivity extends Activity {
 				});
 			}
 		}
-		GeneralCHScrollView.add(hScrollView);
+		mHScrollViews.add(hScrollView);
 	}
 
 	public void onScrollChanged(int l, int t, int oldl, int oldt) {
-		for (GeneralCHScrollView scrollView : GeneralCHScrollView) {
+		for (CHScrollView scrollView : mHScrollViews) {
 			if (mTouchView != scrollView)
 				scrollView.smoothScrollTo(l, t);
 		}
@@ -877,7 +938,7 @@ public class GuJingActivity extends Activity {
 	};
 
 	/**
-	 * 获取选中的数据并且请求服务器
+	 * 获取选中的数据并且请求服务器 （开工，出站）
 	 * 
 	 * @param publicState
 	 */
@@ -904,6 +965,27 @@ public class GuJingActivity extends Activity {
 					}
 				}
 			}
+			String ShowstateName = null;
+			if ("kaigongUpdata".equals(publicState)) {
+				ShowstateName = "开工";
+			} else if ("chuzhanUpdata".equals(publicState)) {
+				ShowstateName = "出站";
+			}
+			if (zcno.equals("11")) {
+				if (count > 2) {
+					ToastUtil.showToast(TongYongActivity.this, "固晶"
+							+ ShowstateName + "最多是两批物料~", 0);
+					return;
+				}
+			}
+			if (zcno.equals("21")) {
+				if (count > 1) {
+					ToastUtil.showToast(TongYongActivity.this, "焊接"
+							+ ShowstateName + "最多是一批物料~", 0);
+					return;
+				}
+			}
+
 			switch (count) {
 			case 0:
 				ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
@@ -1022,34 +1104,75 @@ public class GuJingActivity extends Activity {
 	}
 
 	/**
+	 * 获取下框的值
+	 */
+	OnItemSelectedListener SelectValueListener = new OnItemSelectedListener() {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view,
+				int position, long id) {
+			if (position == 2) {
+				shangliao.setVisibility(View.GONE);
+			} else {
+				shangliao.setVisibility(View.VISIBLE);
+			}
+			switch (position) {
+			case 0:
+				zcno = "11";
+				break;
+			case 1:
+				zcno = "21";
+				break;
+			case 2:
+				zcno = "31";
+				break;
+			case 3:
+				zcno = "41";
+				break;
+			/*
+			 * case 4: zcno = "51"; break; case 5: zcno = "61"; break; case 6:
+			 * zcno = "71"; break; case 7: zcno = "81"; break; case 8: zcno =
+			 * "91"; break;
+			 */
+			}
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	/**
 	 * 判断文本框失去|获取焦点
 	 */
 	OnFocusChangeListener EditGetFocus = new OnFocusChangeListener() {
 
 		@Override
 		public void onFocusChange(View v, boolean hasFocus) {
-			if (v.getId() == R.id.yimei_gujinguser_edt) {
+			if (v.getId() == R.id.yimei_user_edt) {
 				if (!hasFocus) {
-					zuoyeyuan = yimei_gujinguser_edt.getText().toString()
-							.trim();
+					// ToastUtil.showToast(getApplicationContext(), "操作用户失去焦点",
+					// 0);
+					zuoyeyuan = yimei_user_edt.getText().toString().trim();
 				} else {
-					yimei_gujinguser_edt.setSelectAllOnFocus(true);
+					yimei_user_edt.setSelectAllOnFocus(true);
 				}
 			}
-			if (v.getId() == R.id.yimei_gujingequipment_edt) {
+			if (v.getId() == R.id.yimei_equipment_edt) {
 				if (hasFocus) {
 					Log.i("foucus", "设备号获取焦点");
-					yimei_gujingequipment_edt.setSelectAllOnFocus(true);
+					yimei_equipment_edt.setSelectAllOnFocus(true);
 				} else {
-					shebeihao = yimei_gujingequipment_edt.getText().toString()
-							.trim(); // 失去焦点给设备号赋值
+					shebeihao = yimei_equipment_edt.getText().toString().trim(); // 失去焦点给设备号赋值
 					shebeihao = shebeihao.toUpperCase().trim();
-					yimei_gujingequipment_edt.setText(shebeihao);
+					yimei_equipment_edt.setText(shebeihao);
 				}
 			}
-			if (v.getId() == R.id.yimei_gujingproNum_edt) {
+			if (v.getId() == R.id.yimei_proNum_edt) {
 				if (hasFocus) {
-					yimei_gujingproNum_edt.setSelectAllOnFocus(true);
+					yimei_proNum_edt.setSelectAllOnFocus(true);
 				}
 			}
 		}
@@ -1064,76 +1187,69 @@ public class GuJingActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
-			if (v.getId() == R.id.yimei_gujinguser_edt) {
+			if (v.getId() == R.id.yimei_user_edt) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
 						return false;
 					}
-					zuoyeyuan = yimei_gujinguser_edt.getText().toString()
-							.trim();
-					nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+					zuoyeyuan = yimei_user_edt.getText().toString().trim();
+					nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 					flag = true;
 				}
 			}
-			if (v.getId() == R.id.yimei_gujingequipment_edt) {
+			if (v.getId() == R.id.yimei_equipment_edt) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					shebeihao = yimei_gujingequipment_edt.getText().toString()
-							.trim();
+					shebeihao = yimei_equipment_edt.getText().toString().trim();
 					shebeihao = shebeihao.toUpperCase().trim();
-					yimei_gujingequipment_edt.setText(shebeihao);
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+					yimei_equipment_edt.setText(shebeihao);
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujinguser_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
 						return false;
 					}
-					if (yimei_gujingequipment_edt.getText().toString().trim()
+					if (yimei_equipment_edt.getText().toString().trim()
 							.equals("")
-							|| yimei_gujingequipment_edt.getText().toString()
-									.trim() == null) {
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 						return false;
 					} else {
+						Log.i("foucus", "设备号回车");
 						sbidGetData(); // 设备号的回车键
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
 						return true;
 					}
 				}
 			}
 			// 生产批号的回车事件
-			if (v.getId() == R.id.yimei_gujingproNum_edt) {
+			if (v.getId() == R.id.yimei_proNum_edt) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					if (yimei_gujinguser_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujinguser_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
 						return false;
 					}
-					if (yimei_gujingequipment_edt.getText().toString().trim()
+					if (yimei_equipment_edt.getText().toString().trim()
 							.equals("")
-							|| yimei_gujingequipment_edt.getText().toString()
-									.trim() == null) {
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
 						return false;
 					}
-					if (yimei_gujingproNum_edt.getText().toString().trim()
-							.equals("")
-							|| yimei_gujingproNum_edt.getText().toString()
-									.trim() == null) {
+					if (yimei_proNum_edt.getText().toString().trim().equals("")
+							|| yimei_proNum_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "批次号为空~", 0);
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
+						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
+						Log.i("foucus", "批次号回车");
 						return false;
 					} else {
 						sid1GetData(); // 生产批号回车事件
-						nextEditFocus((EditText) findViewById(R.id.yimei_gujingproNum_edt));
-						yimei_gujingproNum_edt.selectAll();
+						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
+						yimei_proNum_edt.selectAll();
 						flag = true;
 					}
 				}

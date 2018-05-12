@@ -113,6 +113,7 @@ public class BianDaiActivity extends Activity {
 					.getAction())) {
 				View rootview = getCurrentFocus();
 				int focusId = rootview.findFocus().getId();
+				Object tag = rootview.findFocus().getTag();
 				// 拿到pda扫描后的值
 				String barcodeData;
 				if (intent.getStringExtra("data") == null) {
@@ -122,7 +123,7 @@ public class BianDaiActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (focusId == 2131296257) { // 作业员
+				if (tag.equals("编带作业员")) { // 作业员
 					yimei_biandai_user_edt.setText(barcodeData);
 					if (yimei_biandai_user_edt.getText().toString().trim()
 							.equals("")
@@ -134,7 +135,7 @@ public class BianDaiActivity extends Activity {
 					}
 					MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 				}
-				if (focusId == 2131296258) { // 设备号
+				if (tag.equals("编带设备号")) { // 设备号
 					Log.i("id", "设备");
 					yimei_biandai_sbid_edt.setText(barcodeData);
 					if (yimei_biandai_user_edt.getText().toString().trim()
@@ -161,7 +162,7 @@ public class BianDaiActivity extends Activity {
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 				}
-				if (focusId == 2131296259) { // 批次号
+				if (tag.equals("编带批次号")) { // 批次号
 					Log.i("id", "批号");
 					yimei_biandai_proNum_edt.setText(barcodeData);
 					if (yimei_biandai_user_edt.getText().toString().trim()

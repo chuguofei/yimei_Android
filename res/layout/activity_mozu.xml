@@ -5,7 +5,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.yimei_v01.MoZuActivity" >
 
     <TableLayout
@@ -47,6 +46,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="模组作业员"
                 android:labelFor="@+id/yimei_mozu_user_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
@@ -67,6 +67,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="模组设备号"
                 android:labelFor="@+id/yimei_mozu_sbid_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
@@ -87,6 +88,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="模组批次号"
                 android:labelFor="@+id/yimei_mozu_proNum_edt"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />

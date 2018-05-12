@@ -39,12 +39,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -63,20 +65,27 @@ public class ShangLiaoActivity extends TabActivity {
 	private static ListView mListView1;
 	private static MaterialAdapter materialAdapter; // 材料适配器
 	private static ScanArealAdapter scanareaAdapter; // 扫描适配器
-	private mesPrecord mesObj; // 通用界面传来的对象
+	private mesPrecord mesObj; // 别的界面传来的对象
+	private String type; // 别的界面传过来的类型
 	private Button isBtnCheck; // 是否验证数量
 	// 界面上的文本框
 	private EditText yimei_shangliao_materialCode; // 材料代码
+	private EditText yimei_shangliao_materialPihao; //材料批次
+	private EditText yimei_shangliao_materialBinCode; //bincode
 	private EditText yimei_shangliao_NumDue; // 应发数量
 	private EditText yimei_shangliao_NumIssued; // 已发数量
 	private EditText yimei_shangliao_Num; // 数量上料
+	private TableRow yimei_shangliao_materialCode_TabRow; // 料号
+	private TableRow yimei_shangliao_materialPihao_TabRow; // 批号
+	private TableRow yimei_shangliao_materialBinCode_TabRow; // BinCode
 
 	private long yinfa; // 判断是否提示
 	private long yifa; // 判断是否提示
 	private Map<String, String> shuliangMap;
 	private int checkqty;
 	private List<Integer> MaxCid;
-
+	private String ActivtyCont; //辅助查询明细带的参数
+	private String picihao;
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -86,7 +95,10 @@ public class ShangLiaoActivity extends TabActivity {
 			if (MyApplication.INTENT_ACTION_SCAN_RESULT.equals(intent
 					.getAction())) {
 				View rootview = getCurrentFocus();
-				int focusId = rootview.findFocus().getId();
+				Object tag = rootview.findFocus().getTag();
+				if (tag == null) {
+					return;
+				}
 				// 拿到pda扫描后的值
 				String barcodeData;
 				if (intent.getStringExtra("data") == null) {
@@ -96,15 +108,70 @@ public class ShangLiaoActivity extends TabActivity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (focusId == 2131296325) { // 材料批号扫描    2131296325
+				if (tag.equals("上料代码")) { // 材料的文本框
 					yimei_shangliao_materialCode.setText(barcodeData);
-					if (yimei_shangliao_materialCode.getText().toString().trim() == ""
-							|| yimei_shangliao_materialCode.getText().toString().trim() == null) {
-						ToastUtil.showToast(getApplicationContext(), "材料代码不能为空！", 0);
+					if (yimei_shangliao_materialCode.getText().toString()
+							.trim().equals("")
+							|| yimei_shangliao_materialCode.getText()
+									.toString().trim() == null) {
+						ToastUtil.showToast(getApplicationContext(),
+								"材料代码不能为空！", 0);
 						return;
 					}
 					cailiao_EnterMethod();
 				}
+				if(tag.equals("上料批次号")){ //批次号文本框
+					yimei_shangliao_materialPihao.setText(barcodeData);
+					if (yimei_shangliao_materialPihao.getText().toString().trim().equals("")
+							|| yimei_shangliao_materialPihao.getText().toString().trim() == null) {
+						ToastUtil.showToast(getApplicationContext(), "材料批次不能为空！", 0);
+						return;
+					}
+					boolean flag = false;
+					for (int i = 0; i < materialAdapter.getCount(); i++) {
+						Map<String, String> map = (Map<String, String>) materialAdapter
+								.getItem(i);
+						if (map.get("Material_cailiaopici").equals(yimei_shangliao_materialPihao.getText()
+										.toString().trim())) {
+							flag = true;
+						}
+					}
+					if(type.equals("料号")){
+						picihao = yimei_shangliao_materialPihao.getText().toString().trim();
+					}else{
+						if(flag==false){
+							yimei_shangliao_materialPihao.selectAll();
+							ToastUtil.showToast(shangliaoActivity,"没有该批次号，请核对~",0);
+							return;
+						}
+					}
+					MyApplication.nextEditFocus(yimei_shangliao_Num);
+				}
+				if(tag.equals("上料bincode")){  //bincode文本框
+					yimei_shangliao_materialBinCode.setText(barcodeData);
+					if (yimei_shangliao_materialBinCode.getText().toString().trim().equals("")
+							|| yimei_shangliao_materialBinCode.getText().toString().trim() == null) {
+						ToastUtil.showToast(getApplicationContext(), "bincode不能为空！", 0);
+						return;
+					}
+					boolean flag = false;
+					for (int i = 0; i < materialAdapter.getCount(); i++) {
+						Map<String, String> map = (Map<String, String>) materialAdapter
+								.getItem(i);
+						if (map.get("Material_BinCode").equals(yimei_shangliao_materialBinCode.getText()
+										.toString().trim())) {
+							flag = true;
+						}
+					}
+					if(flag==false){
+						yimei_shangliao_materialBinCode.selectAll();
+						ToastUtil.showToast(shangliaoActivity,"没有该批bincode号，请核对~",0);
+						return;
+					}
+					MyApplication.nextEditFocus(yimei_shangliao_Num);
+				}
+				
+				
 			}
 		}
 	};
@@ -122,8 +189,17 @@ public class ShangLiaoActivity extends TabActivity {
 		myapp = (MyApplication) app;
 		myapp.addActivity_(this);
 		shangliaoActivity = this;
-		
+
 		mesObj = (mesPrecord) getIntent().getSerializableExtra("object");
+		type = getIntent().getSerializableExtra("type").toString();
+		String activity = getIntent().getSerializableExtra("activity").toString();
+		if(activity.equals("tongyong")){
+			ActivtyCont = "~mo_no='" + mesObj.getSlkid()+ "'";
+		}else if(activity.equals("gujing")){
+			ActivtyCont = "~mo_no='" + mesObj.getSlkid()+ "' and (gzl='M01' OR gzl='M03') and upid>'0'";
+		}
+		
+		
 		TabHost tabHost = this.getTabHost();
 
 		TabSpec tab1 = tabHost.newTabSpec("tab1").setIndicator("扫描区")
@@ -150,8 +226,6 @@ public class ShangLiaoActivity extends TabActivity {
 				}
 			}
 		});
-		// View findViewById = findViewById(R.id.yinchang);
-		// findViewById.setVisibility(View.GONE);
 		loadingMaterial();
 		// 加载扫描区数据
 		Map<String, String> map = new HashMap<>();
@@ -167,13 +241,37 @@ public class ShangLiaoActivity extends TabActivity {
 		super.onResume();
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
-		yimei_shangliao_materialCode = (EditText) findViewById(R.id.yimei_shangliao_materialCode); // 材料代码
-		yimei_shangliao_NumDue = (EditText) findViewById(R.id.yimei_shangliao_NumDue); // 应发
-		yimei_shangliao_NumIssued = (EditText) findViewById(R.id.yimei_shangliao_NumIssued); // 已发
-		yimei_shangliao_Num = (EditText) findViewById(R.id.yimei_shangliao_Num); // 数量
-
+		yimei_shangliao_materialCode_TabRow = (TableRow) findViewById(R.id.yimei_shangliao_materialCode_TabRow); //材料号Tab
+		yimei_shangliao_materialPihao_TabRow = (TableRow) findViewById(R.id.yimei_shangliao_materialPihao_TabRow);//批次号Tab
+		yimei_shangliao_materialBinCode_TabRow = (TableRow) findViewById(R.id.yimei_shangliao_materialBinCode_TabRow);//BincodeTab
+		yimei_shangliao_NumDue = (EditText) findViewById(R.id.yimei_shangliao_NumDue); // 应发Id
+		yimei_shangliao_NumIssued = (EditText) findViewById(R.id.yimei_shangliao_NumIssued); // 已发Id
+		yimei_shangliao_Num = (EditText) findViewById(R.id.yimei_shangliao_Num); // 数量Id
+		yimei_shangliao_materialCode = (EditText) findViewById(R.id.yimei_shangliao_materialCode); // 材料代码Id
+		yimei_shangliao_materialPihao = (EditText) findViewById(R.id.yimei_shangliao_materialPihao); // 批次号Id
+		yimei_shangliao_materialBinCode = (EditText) findViewById(R.id.yimei_shangliao_materialBinCode); // bincodeId
+		
 		yimei_shangliao_materialCode.setOnEditorActionListener(editEnter); // 材料代码的回车事件
 		yimei_shangliao_Num.setOnEditorActionListener(editEnter); // 数量回车的回车事件
+		yimei_shangliao_materialPihao.setOnEditorActionListener(editEnter); // 批次号回车的回车事件
+		yimei_shangliao_materialBinCode.setOnEditorActionListener(editEnter); // 批次号回车的回车事件
+		
+
+		yimei_shangliao_NumDue.setKeyListener(null); // 禁用应发文本
+		yimei_shangliao_NumIssued.setKeyListener(null); // 禁用已发文本
+		
+		yimei_shangliao_materialCode.setOnFocusChangeListener(EditGetFocus); // 材料批号的焦点事件
+		yimei_shangliao_materialPihao.setOnFocusChangeListener(EditGetFocus); // 材料批次的焦点事件
+		yimei_shangliao_Num.setOnFocusChangeListener(EditGetFocus); // 数量回车的焦点事件
+		yimei_shangliao_materialBinCode.setOnFocusChangeListener(EditGetFocus); //bincode焦点时间
+		
+		if (type.equals("料号")) { // 隐藏批号和bincode
+			yimei_shangliao_materialBinCode_TabRow.setVisibility(View.GONE);
+		} else if (type.equals("料号+批号")) { // 隐藏Bincode
+			yimei_shangliao_materialBinCode_TabRow.setVisibility(View.GONE);
+		} else if (type.equals("料号+bincode")) {   // 隐藏批次号
+			yimei_shangliao_materialPihao_TabRow.setVisibility(View.GONE);
+		}
 	};
 
 	@Override
@@ -184,9 +282,9 @@ public class ShangLiaoActivity extends TabActivity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
 		return super.onKeyUp(keyCode, event);
 	}
+	
 
 	/**
 	 * 回车事件（通用）
@@ -196,7 +294,7 @@ public class ShangLiaoActivity extends TabActivity {
 		@SuppressWarnings("unchecked")
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			if (v.getId() == R.id.yimei_shangliao_materialCode) {
+			if (v.getId() == R.id.yimei_shangliao_materialCode) { //材料批号
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					cailiao_EnterMethod();
 				}
@@ -207,8 +305,16 @@ public class ShangLiaoActivity extends TabActivity {
 							.trim().equals("")) {
 						nextEditFocus(yimei_shangliao_materialCode);
 						yimei_shangliao_Num.setText("");
-						ToastUtil.showToast(shangliaoActivity, "材料号不能为空", 0);
+						ToastUtil.showToast(shangliaoActivity, "材料号不能为空!", 0);
 						return false;
+					}
+					if(type.equals("料号+批号")){
+						if (yimei_shangliao_materialPihao.getText().toString().trim().equals("")
+								|| yimei_shangliao_materialPihao.getText().toString().trim() == null) {
+							ToastUtil.showToast(getApplicationContext(), "材料批次不能为空！", 0);
+							MyApplication.nextEditFocus(yimei_shangliao_materialPihao);
+							return false;
+						}
 					}
 					// =======================数量直接获取焦点
 					// 判断材料号输入是否正确=================
@@ -218,20 +324,62 @@ public class ShangLiaoActivity extends TabActivity {
 						Map<String, String> map = (Map<String, String>) materialAdapter
 								.getItem(i);
 						Log.i("Tag", map.get("Material_cailiaoNum"));
-						if (map.get("Material_cailiaoNum").equals(
-								yimei_shangliao_materialCode.getText()
-										.toString().trim())) {
-							isFlag = true;
+						if(type.equals("料号")){
+							if (map.get("Material_cailiaoNum").equals(
+									yimei_shangliao_materialCode.getText()
+											.toString().trim())) {
+								isFlag = true;
+							}
+						}else if(type.equals("料号+批号")){
+							if (map.get("Material_cailiaoNum").equals(
+									yimei_shangliao_materialCode.getText()
+											.toString().trim())&&map.get("Material_cailiaopici")
+											.equals(yimei_shangliao_materialPihao.getText()
+											.toString().trim())) {
+								
+								isFlag = true;
+							}
+						}else if(type.equals("料号+bincode")){
+							if (map.get("Material_cailiaoNum").equals(
+									yimei_shangliao_materialCode.getText()
+											.toString().trim())&&map.get("Material_cailiaopici")
+											.equals(yimei_shangliao_materialBinCode.getText()
+											.toString().trim())) {
+								isFlag = true;
+							}
+						}
+						
+					}
+					if(type.equals("料号")){
+						// 如果材料代码不存在
+						if (isFlag == false) {
+							showNormalDialog("没有该材料《"
+									+ yimei_shangliao_materialCode.getText()
+											.toString().trim() + "》");
+							nextEditFocus(yimei_shangliao_materialCode);
+							yimei_shangliao_materialCode.selectAll();
+							return false;
 						}
 					}
-					// 如果材料代码不存在
-					if (isFlag == false) {
-						showNormalDialog("没有该材料《"
-								+ yimei_shangliao_materialCode.getText()
-										.toString().trim() + "》");
-						nextEditFocus(yimei_shangliao_materialCode);
-						return false;
+					if(type.equals("料号+批号")){
+						// 如果材料代码不存在
+						if (isFlag == false) {
+							showNormalDialog("没有料号或批号，请检查~");
+							nextEditFocus(yimei_shangliao_materialPihao);
+							yimei_shangliao_materialPihao.selectAll();
+							return false;
+						}
 					}
+					if(type.equals("料号+bincode")){
+						// 如果材料代码不存在
+						if (isFlag == false) {
+							showNormalDialog("没有料号或bincode，请检查~");
+							nextEditFocus(yimei_shangliao_materialBinCode);
+							yimei_shangliao_materialBinCode.selectAll();
+							return false;
+						}
+					}
+					
 					// =======================数量直接获取焦点
 					// 判断材料号输入是否正确=================
 
@@ -288,11 +436,9 @@ public class ShangLiaoActivity extends TabActivity {
 					}
 					jsonSon.put("prd_no",
 							shuliangMap.get("Material_cailiaoNum"));
-					jsonSon.put("bat_no",
-							shuliangMap.get("Material_cailiaopici"));
+					jsonSon.put("bat_no",picihao==null?shuliangMap.get("Material_cailiaopici"):picihao);
 					jsonSon.put("BinCode", shuliangMap.get("Material_BinCode"));
-					jsonSon.put("prd_name",
-							shuliangMap.get("Material_cailiaoName"));
+					jsonSon.put("prd_name",shuliangMap.get("Material_cailiaoName"));
 					jsonSon.put("qty", yimei_shangliao_Num.getText());
 					jsonSon.put("dcid", GetAndroidMacUtil.getMac());
 					jsonSon.put("op", mesObj.getOp());
@@ -311,10 +457,91 @@ public class ShangLiaoActivity extends TabActivity {
 							httpMapKeyValueMethod, "insertServerMaterials");
 				}
 			}
+			if(v.getId() == R.id.yimei_shangliao_materialPihao){  //料号+批号
+				if(type.equals("料号+批号")){
+					if (yimei_shangliao_materialPihao.getText().toString().trim().equals("")
+							|| yimei_shangliao_materialPihao.getText().toString().trim() == null) {
+						ToastUtil.showToast(getApplicationContext(), "材料批次不能为空！", 0);
+						return false;
+					}
+				}
+				boolean flag = false;
+				for (int i = 0; i < materialAdapter.getCount(); i++) {
+					Map<String, String> map = (Map<String, String>) materialAdapter
+							.getItem(i);
+					if (map.get("Material_cailiaopici").equals(yimei_shangliao_materialPihao.getText()
+									.toString().trim())) {
+						flag = true;
+					}
+				}
+				if(type.equals("料号")){
+					picihao = yimei_shangliao_materialPihao.getText().toString().trim();
+				}else{
+					if(flag==false){
+						yimei_shangliao_materialPihao.selectAll();
+						ToastUtil.showToast(shangliaoActivity,"没有该批次号，请核对~",0);
+						return false;
+					}
+				}
+				MyApplication.nextEditFocus(yimei_shangliao_Num);
+			}
+			if(v.getId() == R.id.yimei_shangliao_materialBinCode){ //料号+bincode
+				if(type.equals("料号bincode")){
+					if (yimei_shangliao_materialBinCode.getText().toString().trim().equals("")
+							|| yimei_shangliao_materialBinCode.getText().toString().trim() == null) {
+						ToastUtil.showToast(getApplicationContext(), "bincode不能为空！", 0);
+						return false;
+					}
+				}
+				boolean flag = false;
+				for (int i = 0; i < materialAdapter.getCount(); i++) {
+					Map<String, String> map = (Map<String, String>) materialAdapter
+							.getItem(i);
+					if (map.get("Material_BinCode").equals(yimei_shangliao_materialBinCode.getText()
+									.toString().trim())) {
+						flag = true;
+					}
+				}
+				if(flag==false){
+					ToastUtil.showToast(shangliaoActivity,"没有该批bincode号，请核对~",0);
+					return false;
+				}
+				MyApplication.nextEditFocus(yimei_shangliao_Num);
+			}
 			return false;
 		}
 	};
 
+	/**
+	 * 判断文本框失去|获取焦点
+	 */
+	OnFocusChangeListener EditGetFocus = new OnFocusChangeListener() {
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (v.getId() == R.id.yimei_shangliao_materialCode) {
+				if (hasFocus) {
+					yimei_shangliao_materialCode.setSelectAllOnFocus(true);
+				}
+			}
+			if (v.getId() == R.id.yimei_shangliao_materialPihao) {
+				if (hasFocus) {
+					yimei_shangliao_materialPihao.setSelectAllOnFocus(true);
+				}
+			}
+			if (v.getId() == R.id.yimei_shangliao_materialBinCode) {
+				if (hasFocus) {
+					yimei_shangliao_materialBinCode.setSelectAllOnFocus(true);
+				}
+			}
+			if (v.getId() == R.id.yimei_shangliao_Num) {
+				if (hasFocus) {
+					yimei_shangliao_Num.setSelectAllOnFocus(true);
+				}
+			}
+		}
+	};
+	
 	/**
 	 * 弹出提示框
 	 * 
@@ -351,7 +578,7 @@ public class ShangLiaoActivity extends TabActivity {
 	};
 
 	/**
-	 * 
+	 * 材料明细
 	 */
 	private void loadingMaterial() {
 		Map<String, String> mapSbid = new HashMap<String, String>();
@@ -359,7 +586,7 @@ public class ShangLiaoActivity extends TabActivity {
 		mapSbid.put("usercode", MyApplication.user);
 		mapSbid.put("apiId", "assist");
 		mapSbid.put("assistid", "{MSMLLIST}");
-		mapSbid.put("cont", "~mo_no='" + mesObj.getSlkid() + "'");
+		mapSbid.put("cont", ActivtyCont); //根据不同的页面查询不同的明细
 		httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
 				"MaterialDetailed");
 	}
@@ -497,10 +724,9 @@ public class ShangLiaoActivity extends TabActivity {
 					// 已发数量
 					yimei_shangliao_NumIssued.setText(String.valueOf(yifaCount)
 							.equals("0") ? "" : String.valueOf(yifaCount));
-				}
-				else {
+				} else {
 					if (mListView1 != null) {
-//						mListView1.setAdapter(null);
+						// mListView1.setAdapter(null);
 						mListView1 = null;
 						scanareaAdapter.notifyDataSetChanged();
 					}
@@ -605,7 +831,7 @@ public class ShangLiaoActivity extends TabActivity {
 	}
 
 	/**
-	 * 材料批次回车
+	 * 材料代码回车
 	 * 
 	 * @param hScrollView
 	 */
@@ -675,12 +901,19 @@ public class ShangLiaoActivity extends TabActivity {
 								.trim() + "》上料数量已超！");
 				return false;
 			}
-			nextEditFocus(yimei_shangliao_Num);// 调到数量框
+			if(type.equals("料号")){
+				nextEditFocus(yimei_shangliao_materialPihao);
+			}else if(type.equals("料号+bincode")){
+				nextEditFocus(yimei_shangliao_materialBinCode);
+			}else{
+				nextEditFocus(yimei_shangliao_materialPihao);
+			}
 
 		}
 		return true;
 	}
 
+	
 	public static void addHViews(
 			final MaterialsBreakdownCHScrollView hScrollView) {
 		if (!MaterialsBreakdownCHScrollView.isEmpty()) {

@@ -69,6 +69,10 @@ public class RuKuActivity extends Activity {
 					.getAction())) {
 				View rootview = getCurrentFocus();
 				int focusId = rootview.findFocus().getId();
+				Object tag = rootview.findFocus().getTag();
+				if(tag == null){
+					return ;
+				}
 				// 拿到pda扫描后的值
 				String barcodeData;
 				if (intent.getStringExtra("data") == null) {
@@ -78,7 +82,7 @@ public class RuKuActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if(focusId == 2131296322){
+				if(tag.equals("生产入库作业员")){
 					yimei_ruku_user_edt.setText(barcodeData);
 					if (yimei_ruku_user_edt.getText().toString().trim()
 							.equals("")) {
@@ -89,7 +93,7 @@ public class RuKuActivity extends Activity {
 					zuoyeyuan = yimei_ruku_user_edt.getText().toString().trim();
 					MyApplication.nextEditFocus(yimei_ruku_proNum_edt);
 				}
-				if(focusId == 2131296323){
+				if(tag.equals("生产入库批次号")){
 					yimei_ruku_proNum_edt.setText(barcodeData);
 					if (yimei_ruku_user_edt.getText().toString().trim()
 							.equals("")) {

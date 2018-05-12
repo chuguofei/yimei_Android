@@ -55,7 +55,7 @@ public class JiaJiaoAdapter extends BaseAdapter {
 		}
 		Map<String, String> map = listData.get(position);
 		viewHolder.yimei_jiajiao_prtno.setText(map.get("prtno"));
-		viewHolder.yimei_jiajiao_prd_no.setText(map.get("prtno"));
+		viewHolder.yimei_jiajiao_prd_no.setText(map.get("prd_no"));
 		viewHolder.yimei_jiajiao_qty.setText(map.get("qty"));
 		viewHolder.yimei_jiajiao_indate.setText(map.get("indate"));
 		viewHolder.yimei_jiajiao_mkdate.setText(map.get("mkdate"));

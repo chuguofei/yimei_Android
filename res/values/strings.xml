@@ -34,7 +34,8 @@
     <string name="Data5">备注</string>
     <string name="mainTitle">主页面</string>
     <string name="gujing_type">制　程</string>
-    <string name="main_gujin">通用工站</string>
+    <string name="main_gujin">固晶工站</string>
+    <string name="main_tongyong">通用工站</string>
     <string name="main_hanxian">焊线</string>
     <string name="main_biandai">编带</string>
     <string name="main_kaoxiang">烤箱</string>
@@ -64,9 +65,15 @@
     <string name="isNum">验证数量</string>
 
     <!-- 加胶 -->
-    <string name="yimei_jiajiao_jidiaojinumber">胶机编号</string>
+    <string name="yimei_jiajiao_jidiaojinumber">点胶机号</string>
     <string name="yimei_jiajiao_jiaobeipihao">胶杯批号</string>
 
+    <!-- 混胶 -->
+    <string name="yimei_hunjiao_prtno">胶杯批号</string>
+    <string name="yimei_hunjiao_indate">混合时间</string>
+    <string name="yimei_hunjiao_newly_time">新到期时间</string>
+    
+    
     <!-- 加胶listview表头 -->
     <string name="yimei_jiajiao_sid">单号</string>
     <string name="yimei_jiajiao_zcno">制程代号</string>
@@ -125,12 +132,19 @@
     <string name="zhuangxiang_mm_dd">入库日期</string>
     <string name="zhuangxiang_sc_dd">送检日期</string>
     
+    <string name="zhuangxiang_dig_chukudan">出库单号</string>
+    <string name="zhuangxiang_dig_shoudingdan">受定单号</string>
+    <string name="zhuangxiang_dig_kuhudingdan">客户订单号</string>
+    <string name="zhuangxiang_dig_chuhuobeizhu">出货备注</string>
+    <string name="zhuangxiang_dig_prdName">产品机型</string>
+    
     <!-- title -->
     <string name="shangliaoTitle">上料</string>
     <string name="jiajiaoTitle">加胶登记</string>
     <string name="mozuTitle">模组</string>
     <string name="rukuTitle">生产入库</string>
     <string name="zhuangxiangTitle">装箱作业</string>
+    <string name="hunjiaoTitle">混胶登记</string>
     <string name="action_settings">Settings</string>
 
 </resources>

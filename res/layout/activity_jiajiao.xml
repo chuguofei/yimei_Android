@@ -5,7 +5,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.yimei_v01.JiaJiaoActivity" >
 
     <TableLayout
@@ -32,6 +31,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="加胶作业员"
                 android:labelFor="@+id/yimei_jiajiao_user"
                 android:paddingLeft="10dp" />
         </TableRow>
@@ -52,6 +52,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="加胶胶机编号"
                 android:labelFor="@+id/yimei_jiajiao_jidiaojinumber"
                 android:paddingLeft="5dp" />
         </TableRow>
@@ -72,6 +73,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:tag="加胶胶杯批号"
                 android:labelFor="@+id/yimei_jiajiao_jiaobeipihao"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />

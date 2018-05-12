@@ -6,7 +6,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.yimei_v01.ZhuangXiangActivity" >
 
     <LinearLayout
@@ -30,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
-
+		
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,6 +78,7 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
+                            android:tag="装箱入库申请"
                             android:labelFor="@+id/yimei_zhuangxiang_chukushenqing"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -123,6 +123,7 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
+                            android:tag="装箱作业批次号"
                             android:labelFor="@+id/yimei_zhuangxiang_bat_no"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -171,7 +172,6 @@
                             android:paddingLeft="10dp" />
                     </TableRow>
                     <!-- 产品型号 -->
-                    <!--
                     <TableRow android:layout_marginTop="8dp" >
 
                         <TextView
@@ -190,7 +190,7 @@
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_canpinxinghao"
                             android:paddingLeft="10dp" />
-                    </TableRow>-->
+                    </TableRow>
                     <!-- 产品代号 -->
 
                     <TableRow android:layout_marginTop="8dp" >
@@ -235,7 +235,7 @@
                     </TableRow>
                     <!-- 受定单号 -->
 
-                    <TableRow android:layout_marginTop="8dp" >
+                   <!--  <TableRow android:layout_marginTop="8dp" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -253,7 +253,7 @@
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_shoudingdanhao"
                             android:paddingLeft="10dp" />
-                    </TableRow>
+                    </TableRow> -->
 
                     <TableRow android:layout_marginTop="8dp" >
 
@@ -308,6 +308,20 @@
                                 android:layout_height="fill_parent"
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_bat_no"
+                                android:textColor="#850" />
+                            
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_canpindaihao"
+                                android:textColor="#850" />
+                            
+                            <TextView
+                                android:layout_width="100dip"
+                                android:layout_height="fill_parent"
+                                android:gravity="center"
+                                android:text="@string/zhuangxiang_canpinxinghao"
                                 android:textColor="#850" />
 
                             <TextView

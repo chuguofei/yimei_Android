@@ -44,6 +44,10 @@ public class ZhuangXiangAdapter extends BaseAdapter {
 					.findViewById(R.id.zhuangxiang_bincode);
 			viewHolder.zhuangxiang_qty = (TextView) convertView
 					.findViewById(R.id.zhuangxiang_qty);
+			viewHolder.zhuangxiang_prd_no = (TextView) convertView
+					.findViewById(R.id.zhuangxiang_prd_no);
+			viewHolder.zhuangxiang_prd_name = (TextView) convertView
+					.findViewById(R.id.zhuangxiang_prd_name);
 
 			convertView.setTag(viewHolder);
 		} else {// 如果缓存池中有对应的view缓存，则直接通过getTag取出viewHolder
@@ -52,8 +56,10 @@ public class ZhuangXiangAdapter extends BaseAdapter {
 		Map<String, String> map = listData.get(position);
 		viewHolder.zhuangxiang_cid.setText(map.get("zhuangxiang_cid"));
 		viewHolder.zhuangxiang_bat_no.setText(map.get("zhuangxiang_bat_no"));
-		viewHolder.zhuangxiang_bincode.setText(map.get("zhuangxiang_bincode"));
-		viewHolder.zhuangxiang_qty.setText(map.get("zhuangxiang_qty"));
+		viewHolder.zhuangxiang_bincode.setText(map.get("zhuangxiang_bincode")==null?"":map.get("zhuangxiang_bincode"));
+		viewHolder.zhuangxiang_qty.setText(map.get("zhuangxiang_qty")==null?"":map.get("zhuangxiang_qty"));
+		viewHolder.zhuangxiang_prd_no.setText(map.get("zhuangxiang_prd_no")==null?"":map.get("zhuangxiang_prd_no"));
+		viewHolder.zhuangxiang_prd_name.setText(map.get("zhuangxiang_prd_name")==null?"":map.get("zhuangxiang_prd_name"));
 		return convertView;
 	}
 
@@ -62,6 +68,8 @@ public class ZhuangXiangAdapter extends BaseAdapter {
 		public TextView zhuangxiang_bat_no;
 		public TextView zhuangxiang_bincode;
 		public TextView zhuangxiang_qty;
+		public TextView zhuangxiang_prd_no;
+		public TextView zhuangxiang_prd_name;
 	}
 
 	@Override

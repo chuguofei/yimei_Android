@@ -6,7 +6,7 @@
     android:orientation="horizontal" >
 
     <com.yimei.scrollview.GeneralCHScrollView
-        android:id="@+id/zhuangxiang_item_scroll"
+        android:id="@+id/hunjiao_item_scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
@@ -18,43 +18,21 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/zhuangxiang_cid"
+                android:id="@+id/hunjiao_prtno"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#850" />
 
             <TextView
-                android:id="@+id/zhuangxiang_bat_no"
+                android:id="@+id/hunjiao_indate"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#850" />
 
             <TextView
-                android:id="@+id/zhuangxiang_prd_no"
-                android:layout_width="100dip"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="@string/zhuangxiang_canpindaihao"
-                android:textColor="#850" />
-
-            <TextView
-                android:id="@+id/zhuangxiang_prd_name"
-                android:layout_width="100dip"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:textColor="#850" />
-
-            <TextView
-                android:id="@+id/zhuangxiang_bincode"
-                android:layout_width="100dip"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:textColor="#850" />
-
-            <TextView
-                android:id="@+id/zhuangxiang_qty"
+                android:id="@+id/hunjiao_newly_time"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"

@@ -1,7 +1,7 @@
 package com.yimei.util;
 
 import com.yimei.activity.BianDaiActivity;
-import com.yimei.activity.GuJingActivity;
+import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.HanXianActivity;
 
 import android.app.Activity;
@@ -18,7 +18,7 @@ public class JumpPage extends Activity{
 		} else if (caidan.equals("D0002")) {
 			// 跳到用户所属权限的页面
 			Intent intent = new Intent(activity,
-					GuJingActivity.class);
+					TongYongActivity.class);
 			startActivity(intent);
 		}else if(caidan.equals("D0003")){
 			Intent intent = new Intent(activity,

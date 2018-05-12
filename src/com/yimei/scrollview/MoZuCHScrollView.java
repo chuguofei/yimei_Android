@@ -1,6 +1,6 @@
 package com.yimei.scrollview;
 
-import com.yimei.activity.GuJingActivity;
+import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.MoZuActivity;
 
 import android.content.Context;

@@ -5,11 +5,10 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.yimei_v01.MainActivity" >
+    tools:context="com.example.yimei_v01.GujingActivity" >
 
     <TableLayout
-        android:id="@+id/tab"
+        android:id="@+id/gujing_tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
@@ -21,25 +20,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/gujing_type" />
-
-            <Spinner
-                android:id="@+id/selectValue"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:background="@drawable/shape_edittext"
-                android:entries="@array/spingarr" />
-        </TableRow>
-
-        <TableRow android:layout_marginTop="20dp" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="@string/yimei_gujing_user" />
 
             <EditText
-                android:id="@+id/yimei_user_edt"
+                android:id="@+id/yimei_gujinguser_edt"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
@@ -47,11 +31,11 @@
                 android:maxLength="12"
                 android:enabled="true"
                 android:imeOptions="actionDone"
+                android:tag="固晶作业员"
                 android:inputType="text"
-                android:labelFor="@+id/yimei_user_edt"
+                android:labelFor="@+id/yimei_gujinguser_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
-
         <TableRow android:paddingTop="20dp" >
 
             <TextView
@@ -60,7 +44,7 @@
                 android:text="@string/yimei_gujing_equipment" />
 
             <EditText
-                android:id="@+id/yimei_equipment_edt"
+                android:id="@+id/yimei_gujingequipment_edt"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
@@ -68,7 +52,8 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:labelFor="@+id/yimei_equipment_edt"
+                android:tag="固晶设备号"
+                android:labelFor="@+id/yimei_gujingequipment_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
 
@@ -80,7 +65,7 @@
                 android:text="@string/yimei_gujing_proNum" />
 
             <EditText
-                android:id="@+id/yimei_proNum_edt"
+                android:id="@+id/yimei_gujingproNum_edt"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
@@ -88,7 +73,8 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:labelFor="@+id/yimei_proNum_edt"
+                android:tag="固晶批次号"
+                android:labelFor="@+id/yimei_gujingproNum_edt"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
         </TableRow>
@@ -100,7 +86,7 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/ruliao"
+                android:id="@+id/gujing_ruliao"
                 android:layout_width="0dip"
                 android:layout_height="40dp"
                 android:layout_margin="5dip"
@@ -109,7 +95,7 @@
                 android:text="@string/ruliao" />
 
             <Button
-                android:id="@+id/kaigong"
+                android:id="@+id/gujing_kaigong"
                 android:layout_width="0dip"
                 android:layout_height="40dp"
                 android:layout_margin="5dip"
@@ -118,7 +104,7 @@
                 android:text="@string/kaigong" />
 
             <Button
-                android:id="@+id/chuzhan"
+                android:id="@+id/gujing_chuzhan"
                 android:layout_width="0dip"
                 android:layout_height="40dp"
                 android:layout_margin="5dip"
@@ -129,16 +115,16 @@
     </TableLayout>
 
     <LinearLayout
-        android:id="@+id/data_title"
+        android:id="@+id/gujing_data_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tab"
+        android:layout_below="@+id/gujing_tab"
         android:background="#ccc"
         android:minHeight="40dip"
         android:orientation="horizontal" >
 
-        <com.yimei.scrollview.CHScrollView
-            android:id="@+id/item_scroll_title"
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/gujing_item_scroll_title"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -150,7 +136,7 @@
                 android:orientation="horizontal" >
 
                 <CheckBox
-                    android:id="@+id/quanxuan"
+                    android:id="@+id/gujing_quanxuan"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_weight="2"
@@ -192,14 +178,14 @@
                     android:text="@string/Data5"
                     android:textColor="#850" />
             </LinearLayout>
-        </com.yimei.scrollview.CHScrollView>
+        </com.yimei.scrollview.GeneralCHScrollView>
     </LinearLayout>
 
     <ListView
-        android:id="@+id/scroll_list"
+        android:id="@+id/gujing_scroll_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/data_title"
+        android:layout_below="@id/gujing_data_title"
         android:cacheColorHint="@android:color/transparent"
         android:scrollbars="none" >
     </ListView>
