@@ -2,6 +2,7 @@ package com.yimei.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +12,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
 
 	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
-	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
+//	 public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
 	 public static final String DBID = "01";
 //	 public static final String DBID = "mes";
@@ -47,33 +49,40 @@ public class MyApplication extends Application {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
 	}
 
-	public static long ChooseTime(String kaigongTime,String nowTime){
-		if(kaigongTime.length()==16){
+	public static int ChooseTime(String kaigongTime){
+		if(kaigongTime==null){
+			return 999;
+		}
+		if(kaigongTime!=null&&kaigongTime.length()==16){
 			kaigongTime+=":00";
 		}
-		long xiangchaTime = 0;
+		long xiangchaTime = 0,nowTime=0;
 	    try {
-			long nd = 1000 * 24 * 60 * 60;
-			long nh = 1000 * 60 * 60;
-			long nm = 1000 * 60;
-			// long ns = 1000;
-			// 获得两个时间的毫秒时间差异
-			long a =df.parse(nowTime).getTime();
-			long b =df.parse(kaigongTime).getTime();
-			long diff = df.parse(nowTime).getTime() - df.parse(kaigongTime).getTime();
-			// 计算差多少天
-			long day = diff / nd;
-			// 计算差多少小时
-			long hour = diff % nd / nh;
-			// 计算差多少分钟
-			long min = diff % nd % nh / nm;
-			xiangchaTime = min;
-			// 计算差多少秒//输出结果
-			System.out.println(day + "天" + hour + "小时" + min + "分钟");
+	    	Calendar c = Calendar.getInstance();
+	    	nowTime = c.getTimeInMillis();
+	    	xiangchaTime =Math.abs(nowTime - df.parse(kaigongTime).getTime());
+
+//			long nd = 1000 * 24 * 60 * 60;
+//			long nh = 1000 * 60 * 60;
+//			long nm = 1000 * 60;
+//			// long ns = 1000;
+//			// 获得两个时间的毫秒时间差异
+//			long a =df.parse(nowTime).getTime();
+//			long b =df.parse(kaigongTime).getTime();
+//			long diff = df.parse(nowTime).getTime() - df.parse(kaigongTime).getTime();
+//			// 计算差多少天
+//			long day = diff / nd;
+//			// 计算差多少小时
+//			long hour = diff % nd / nh;
+//			// 计算差多少分钟
+//			long min = diff % nd % nh / nm;
+//			xiangchaTime = min;
+//			// 计算差多少秒//输出结果
+//			System.out.println(day + "天" + hour + "小时" + min + "分钟");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    return xiangchaTime;
+	    return (int)xiangchaTime/1000/60;
 	}
 	
 	@SuppressLint("SimpleDateFormat")

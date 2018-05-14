@@ -720,8 +720,8 @@ public class GuJingActivity extends Activity {
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
 							long chooseTime = MyApplication.ChooseTime(
-									m.getHpdate(),
-									MyApplication.df.format(MyApplication.now));
+									m.getHpdate()
+									);
 							if (chooseTime > 30 || m.getHpdate()==null) {
 								Log.i("mes", m.toString());
 								if (m.getState1().equals("03")) {

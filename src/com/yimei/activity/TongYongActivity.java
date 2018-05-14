@@ -773,9 +773,9 @@ public class TongYongActivity extends Activity {
 									.parseInt(jsonObject.get("id").toString()) == 1) {
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
-							long chooseTime = MyApplication.ChooseTime(
-									m.getHpdate(),
-									MyApplication.df.format(MyApplication.now));
+							int chooseTime = MyApplication.ChooseTime(
+									m.getHpdate()
+									);//MyApplication.df.format(MyApplication.now)
  							int a = Integer.parseInt(ptime.get(zcno).toString());
 							if (chooseTime > Integer.parseInt(ptime.get(zcno).toString()) || m.getHpdate() == null || ptime==null) {
 								Log.i("mes", m.toString());
