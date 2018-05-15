@@ -1,12 +1,9 @@
 package com.yimei.activity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
@@ -15,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,7 +37,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
@@ -51,7 +46,6 @@ import com.yimei.scrollview.CHScrollView;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
-import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
 
 public class TongYongActivity extends Activity {
@@ -84,7 +78,7 @@ public class TongYongActivity extends Activity {
 	private static JSONObject newJson; // 拿新sid存在json
 	private static String currSlkid;
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
-	private Map<String,String> ptime = new HashMap<String,String>();
+	private Map<String, String> ptime = new HashMap<String, String>();
 
 	/**
 	 * 获取pda扫描（广播）
@@ -205,9 +199,10 @@ public class TongYongActivity extends Activity {
 		kaigong.setOnClickListener(kaigongClick); // 开工点击事件
 		chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
 		shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
-		
-		Map<String,String> map = MyApplication.QueryBatNo("M_PROCESS5","");
-		httpRequestQueryRecord(MyApplication.MESURL,map,"Tongyong_ptime");
+
+		// 取出站的时间
+		Map<String, String> map = MyApplication.QueryBatNo("M_PROCESS5", "");
+		httpRequestQueryRecord(MyApplication.MESURL, map, "Tongyong_ptime");
 	};
 
 	/**
@@ -513,7 +508,7 @@ public class TongYongActivity extends Activity {
 						jsonValue.put("sbid", shebeihao);
 						jsonValue.put("smake", MyApplication.user);
 						jsonValue.put("mkdate",
-								MyApplication.df.format(new Date()));
+								MyApplication.GetServerNowTime());
 						jsonValue.put("sbuid", "D0001");
 						newJson = jsonValue;
 						Map<String, String> mesIdMap = MyApplication
@@ -726,12 +721,13 @@ public class TongYongActivity extends Activity {
 							mesPrecord m = updatekaigongSid1.get(i);
 							Log.i("mes", m.toString());
 							if (m.getState1().equals("01")
-									|| m.getState1().equals("02")) {								
+									|| m.getState1().equals("02")) {
 								// ------------------------修改服务器的俩张表（开工）
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
-												MyApplication.user,m.getState1(), "03",
+												MyApplication.user,
+												m.getState1(), "03",
 												m.getSid1(), m.getSlkid(),
 												zcno, "200");
 								httpRequestQueryRecord(MyApplication.MESURL,
@@ -739,8 +735,8 @@ public class TongYongActivity extends Activity {
 								// ------------------------修改服务器的俩张表（开工）
 
 								if (gujing_list.kaigongState1Update(
-										m.getSid1(), MyApplication.df
-												.format(MyApplication.now))) {
+										m.getSid1(),
+										MyApplication.GetServerNowTime())) {
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
 									scrollAdapter = new ScrollAdapter(
@@ -773,11 +769,12 @@ public class TongYongActivity extends Activity {
 									.parseInt(jsonObject.get("id").toString()) == 1) {
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
-							int chooseTime = MyApplication.ChooseTime(
-									m.getHpdate()
-									);//MyApplication.df.format(MyApplication.now)
- 							int a = Integer.parseInt(ptime.get(zcno).toString());
-							if (chooseTime > Integer.parseInt(ptime.get(zcno).toString()) || m.getHpdate() == null || ptime==null) {
+							int chooseTime = MyApplication.ChooseTime(m
+									.getHpdate());
+							int a = Integer
+									.parseInt(ptime.get(zcno).toString());
+							if (chooseTime > Integer.parseInt(ptime.get(zcno)
+									.toString()) || ptime == null) {
 								Log.i("mes", m.toString());
 								if (m.getState1().equals("03")) {
 									// ------------------------修改服务器的俩张表（出站）
@@ -806,8 +803,8 @@ public class TongYongActivity extends Activity {
 									}
 								}
 							} else {
-								ToastUtil.showToast(gujingActivity, "时间未到，不能出站！",
-										0);
+								ToastUtil.showToast(gujingActivity,
+										"时间未到，不能出站！", 0);
 							}
 						}
 						updatekaigongSid1.clear();
@@ -816,20 +813,22 @@ public class TongYongActivity extends Activity {
 								String.valueOf(jsonObject.get("message")), 0);
 					}
 				}
-				if(string.equals("Tongyong_ptime")){
+				if (string.equals("Tongyong_ptime")) {
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
-					for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
+					for (int i = 0; i < ((JSONArray) jsonObject.get("values"))
+							.size(); i++) {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(i));
-						if(jsonValue.containsKey("ptime")){							
-							ptime.put(jsonValue.get("id").toString(),jsonValue.get("ptime").toString());
+						if (jsonValue.containsKey("ptime")) {
+							ptime.put(jsonValue.get("id").toString(), jsonValue
+									.get("ptime").toString());
 						}
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				ToastUtil.showToast(gujingActivity,e.toString(),0);
+				ToastUtil.showToast(gujingActivity, e.toString(), 0);
 			}
 		}
 	};
@@ -862,7 +861,7 @@ public class TongYongActivity extends Activity {
 					mesMap.put("checkMap", mesItem);
 					mesMap.put("sid1", mesItem.getSid1());
 					mesMap.put("slkid", stateName.get(mesItem.getState1()));
-					mesMap.put("prd_no", mesItem.getPrd_name());
+					mesMap.put("prd_no", mesItem.getPrd_no());
 					mesMap.put("qty", mesItem.getQty());
 					mesMap.put("remark", mesItem.getRemark());
 					mesList.add(mesMap);

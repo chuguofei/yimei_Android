@@ -456,8 +456,7 @@ public class GuJingActivity extends Activity {
 						jsonValue.put("sys_stated", "3");
 						jsonValue.put("sbid", shebeihao);
 						jsonValue.put("smake", MyApplication.user);
-						jsonValue.put("mkdate",
-								MyApplication.df.format(new Date()));
+						jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 						jsonValue.put("sbuid", "D0001");
 						newJson = jsonValue;
 						Map<String, String> mesIdMap = MyApplication
@@ -685,8 +684,7 @@ public class GuJingActivity extends Activity {
 								// ------------------------修改服务器的俩张表（开工）
 
 								if (gujing_list.kaigongState1Update(
-										m.getSid1(), MyApplication.df
-												.format(MyApplication.now))) {
+										m.getSid1(), MyApplication.GetServerNowTime())) {
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
 									scrollAdapter = new GuJingScrollAdapter(
@@ -797,7 +795,7 @@ public class GuJingActivity extends Activity {
 					mesMap.put("checkMap", mesItem);
 					mesMap.put("sid1", mesItem.getSid1());
 					mesMap.put("slkid", stateName.get(mesItem.getState1()));
-					mesMap.put("prd_no", mesItem.getPrd_name());
+					mesMap.put("prd_no", mesItem.getPrd_no());
 					mesMap.put("qty", mesItem.getQty());
 					mesMap.put("remark", mesItem.getRemark());
 					mesList.add(mesMap);

@@ -57,7 +57,6 @@ public class MoZuActivity extends Activity {
 	public HorizontalScrollView mTouchView;
 	private static List<MoZuCHScrollView> MoZuCHScrollViews = new ArrayList<MoZuCHScrollView>(); // 行+标题滚动
 	private static MoZuAdapter MoZuAdapter; // 适配器
-	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 
 	private EditText yimei_mozu_user_edt;
 	private EditText yimei_mozu_sbid_edt;
@@ -130,7 +129,7 @@ public class MoZuActivity extends Activity {
 					}
 					shebeihao = yimei_mozu_sbid_edt.getText().toString().trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao,"S%");
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -163,7 +162,7 @@ public class MoZuActivity extends Activity {
 					}
 					picihao = yimei_mozu_proNum_edt.getText().toString().trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao, zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					yimei_mozu_proNum_edt.selectAll();
@@ -424,7 +423,7 @@ public class MoZuActivity extends Activity {
 					}
 					Log.i("sbid", "设备号回车");
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao,"S%");
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -461,7 +460,7 @@ public class MoZuActivity extends Activity {
 					}
 					Log.i("zcno", shebeihao);
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao, zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -641,7 +640,7 @@ public class MoZuActivity extends Activity {
 					jsonValue.put("sbid", shebeihao);
 					jsonValue.put("zcno", zcno);
 					jsonValue.put("smake", MyApplication.user);
-					jsonValue.put("mkdate", df.format(new Date()));
+					jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 					jsonValue.put("sbuid", "D0001");
 					newJson = jsonValue;
 					Map<String, String> mesIdMap = MyApplication

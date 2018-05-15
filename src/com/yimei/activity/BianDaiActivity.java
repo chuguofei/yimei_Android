@@ -55,7 +55,6 @@ public class BianDaiActivity extends Activity {
 	private static List<BianDaiCHScrollView> BianDaiScrollViews = new ArrayList<BianDaiCHScrollView>();
 	private static ListView mListView;
 	private static BianDaiAdapter BianDaiAdapter; // 适配器
-	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 
 	private EditText yimei_biandai_user_edt;
 	private EditText yimei_biandai_sbid_edt;
@@ -75,6 +74,7 @@ public class BianDaiActivity extends Activity {
 	private List<mesPrecord> updateListState; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
 	private List<Map<String, Object>> biandaiPrdNocomparison; //
 	private static JSONObject newJson; // 拿新sid存在json
+	private Map<String,String> ptime = new HashMap<String,String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +101,10 @@ public class BianDaiActivity extends Activity {
 			biandai_kaigong.setEnabled(true);
 			biandai_chuzhan.setEnabled(true);
 		}
+		
+		//取出站的时间
+		Map<String,String> map = MyApplication.QueryBatNo("M_PROCESS5","");
+		httpRequestQueryRecord(MyApplication.MESURL,map,"biandai_ptime");
 	}
 
 	/**
@@ -157,7 +161,7 @@ public class BianDaiActivity extends Activity {
 					shebeihao = yimei_biandai_user_edt.getText().toString()
 							.trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, MyApplication.BIANDAI_ZCNO);
+							.IsSbidQuery_biandai(shebeihao, MyApplication.BIANDAI_ZCNO);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
@@ -193,7 +197,7 @@ public class BianDaiActivity extends Activity {
 					lot_no = yimei_biandai_proNum_edt.getText().toString()
 							.trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, MyApplication.BIANDAI_ZCNO);
+							.IsSbidQuery_biandai(shebeihao, MyApplication.BIANDAI_ZCNO);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					yimei_biandai_proNum_edt.selectAll();
@@ -334,6 +338,7 @@ public class BianDaiActivity extends Activity {
 					JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
 					// 如果是入站状态改变
 					if (publicState.equals("kaigongUpdata")) {
+						mes_precord.setHpdate(MyApplication.GetServerNowTime());
 						// 如果状态是入站和上料都可以开工
 						if (json.get("state1").toString().equals("01")) {
 							Map<String, String> updateTimeMethod = MyApplication
@@ -341,30 +346,27 @@ public class BianDaiActivity extends Activity {
 											MyApplication.user, "01", "03",
 											mes_precord.getSid(), zuoyeyuan,
 											MyApplication.BIANDAI_ZCNO, "202");
-
+							
 							httpRequestQueryRecord(MyApplication.MESURL,
 									updateTimeMethod, publicState);
-						} else if (json.get("state1").toString().equals("02")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "02", "03",
-											mes_precord.getSid(), zuoyeyuan,
-											MyApplication.BIANDAI_ZCNO, "202");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
-						} else if (json.get("state1").toString().equals("03")) {
+						}else if (json.get("state1").toString().equals("03")) {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次已是开工状态！", 0);
 						}
 					} else if (publicState.equals("chuzhanUpdata")) {
 						if (json.get("state1").toString().equals("03")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "03", "04",
-											mes_precord.getSid(), zuoyeyuan,
-											MyApplication.BIANDAI_ZCNO, "202");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
+							int chooseTime = MyApplication.ChooseTime(mes_precord.getHpdate());
+							if (chooseTime > Integer.parseInt(ptime.get(MyApplication.BIANDAI_ZCNO)) || ptime==null) {
+								Map<String, String> updateTimeMethod = MyApplication
+										.updateServerTimeMethod(MyApplication.DBID,
+												MyApplication.user, "03", "04",
+												mes_precord.getSid(), zuoyeyuan,
+												MyApplication.BIANDAI_ZCNO, "202");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateTimeMethod, publicState);
+							}else{
+								ToastUtil.showToast(biandaiActivity, "时间未到，不能出站！",0);
+							}
 						} else if (json.get("state1").toString().equals("02")) {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次不能出站！", 0);
@@ -390,7 +392,6 @@ public class BianDaiActivity extends Activity {
 					boolean isChecked) {
 				if (BianDaiAdapter == null) {
 					ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
-					quanxuan.setEnabled(false);
 					return;
 				}
 				if (isChecked) {
@@ -459,7 +460,7 @@ public class BianDaiActivity extends Activity {
 					}
 					Log.i("sbid", "设备号回车");
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, MyApplication.BIANDAI_ZCNO);
+							.IsSbidQuery_biandai(shebeihao, MyApplication.BIANDAI_ZCNO);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
@@ -496,19 +497,9 @@ public class BianDaiActivity extends Activity {
 						Log.i("foucus", "批次号回车");
 						return false;
 					}
-					/*
-					 * // 查询lot表是否存在批次 Map<String, String> map = new
-					 * HashMap<String, String>(); map.put("dbid",
-					 * MyApplication.DBID); map.put("usercode",
-					 * MyApplication.user); map.put("apiId", "assist");
-					 * map.put("assistid", "{TESTLOTQUERY}"); map.put("cont",
-					 * "~lotno='" + lot_no + "'");
-					 * httpRequestQueryRecord(MyApplication.MESURL, map,
-					 * "ListViewIsLotNo");
-					 */
 					Log.i("sbid", "批次号回车");
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery(shebeihao, MyApplication.BIANDAI_ZCNO);
+							.IsSbidQuery_biandai(shebeihao, MyApplication.BIANDAI_ZCNO);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
@@ -528,172 +519,218 @@ public class BianDaiActivity extends Activity {
 			super.handleMessage(msg);
 			Bundle b = msg.getData();
 			String string = b.getString("type");
-			if (string.equals("IsSbidQuery")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
-					Log.i("code", jsonObject.get("code").toString());
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						BianDaiAdapter.notifyDataSetChanged();
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
+			try {
+				if (string.equals("IsSbidQuery")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
+						Log.i("code", jsonObject.get("code").toString());
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							BianDaiAdapter.notifyDataSetChanged();
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
+						} else {
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
+						}
 					} else {
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
-					}
-				} else {
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}");
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ MyApplication.BIANDAI_ZCNO + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"shebeiQuery");
-				}
-			}
-			if (string.equals("IsSbidQuery1")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
-					Log.i("code", jsonObject.get("code").toString());
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						BianDaiAdapter.notifyDataSetChanged();
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
-					} else {
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
-					}
-					return;
-				} else {
-					// 查询lot表是否存在批次
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{TESTLOTQUERY}");
-					map.put("cont", "~lotno='" + lot_no + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"ListViewIsLotNo");
-				}
-			}
-			if ("shebeiQuery".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					biandaiPrdNocomparison = mesList;
-					BianDaiAdapter = new BianDaiAdapter(BianDaiActivity.this,
-							mesList);
-					mListView.setAdapter(BianDaiAdapter);
-					ToastUtil.showToast(getApplicationContext(), "《"
-							+ shebeihao + "》设备号已加载到列表中", 0);
-					if (mListView == null) {
-						biandai_kaigong.setEnabled(false);
-						biandai_chuzhan.setEnabled(false);
-					} else {
-						biandai_kaigong.setEnabled(true);
-						biandai_chuzhan.setEnabled(true);
-					}
-				} else {
-					// 清空列表
-					// ToastUtil.showToast(getApplicationContext(), "该设备没有记录",
-					// 0);
-					if (mListView != null) {
-						biandai_kaigong.setEnabled(true);
-						biandai_chuzhan.setEnabled(true);
-						mListView.setAdapter(null);
-						mListView = null;
-						BianDaiAdapter.notifyDataSetChanged();
-						MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
-					} else {
-						biandai_kaigong.setEnabled(false);
-						biandai_chuzhan.setEnabled(false);
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}");
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ MyApplication.BIANDAI_ZCNO + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"shebeiQuery");
 					}
 				}
-			}
-			if ("shebeiQuery1".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+				if (string.equals("IsSbidQuery1")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
 
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					BianDaiAdapter = new BianDaiAdapter(BianDaiActivity.this,
-							mesList);
-					mListView.setAdapter(BianDaiAdapter);
-					ToastUtil.showToast(getApplicationContext(), "《" + lot_no
-							+ "》测试号加载到列表中~", 0);
-					if (mListView == null) {
-						biandai_kaigong.setEnabled(false);
-						biandai_chuzhan.setEnabled(false);
-					} else {
-						biandai_kaigong.setEnabled(true);
-						biandai_chuzhan.setEnabled(true);
-					}
-				} else {
-					// 清空列表
-					// ToastUtil.showToast(getApplicationContext(),
-					// "该设备没有记录111",0);
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						mListView = null;
-						BianDaiAdapter.notifyDataSetChanged();
-						MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
-					}
-					if (mListView == null) {
-						biandai_kaigong.setEnabled(false);
-						biandai_chuzhan.setEnabled(false);
-					} else {
-						biandai_kaigong.setEnabled(true);
-						biandai_chuzhan.setEnabled(true);
-					}
-				}
-			}
-			if ("updateRefresh".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1
-						|| Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					if (mesList != null) {
-						BianDaiAdapter = new BianDaiAdapter(
-								BianDaiActivity.this, mesList);
-						mListView.setAdapter(BianDaiAdapter);
-						BianDaiAdapter.notifyDataSetChanged();
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
+						Log.i("code", jsonObject.get("code").toString());
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							BianDaiAdapter.notifyDataSetChanged();
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
+						} else {
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
+						}
 						return;
 					} else {
-						mListView.setAdapter(null);
-						BianDaiAdapter.notifyDataSetChanged();
+						// 查询lot表是否存在批次
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{TESTLOTQUERY}");
+						map.put("cont", "~lotno='" + lot_no + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"ListViewIsLotNo");
 					}
-
 				}
-			}
-			if ("ListViewIsLotNo".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					// 如果有批号
-					if (mListView != null) {
+				if ("shebeiQuery".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+						if(biandaiPrdNocomparison!=null){
+							biandaiPrdNocomparison.clear();
+						}
+						if(mesList!=null){							
+							biandaiPrdNocomparison = mesList;
+						}
+						BianDaiAdapter = new BianDaiAdapter(BianDaiActivity.this,
+								mesList);
+						mListView.setAdapter(BianDaiAdapter);
+						ToastUtil.showToast(getApplicationContext(), "《"
+								+ shebeihao + "》设备号已加载到列表中", 0);
+						if (mListView == null) {
+							biandai_kaigong.setEnabled(false);
+							biandai_chuzhan.setEnabled(false);
+						} else {
+							biandai_kaigong.setEnabled(true);
+							biandai_chuzhan.setEnabled(true);
+						}
+					} else {
+						// 清空列表
+						if (mListView != null) {
+							biandai_kaigong.setEnabled(true);
+							biandai_chuzhan.setEnabled(true);
+							mListView.setAdapter(null);
+							mListView = null;
+							BianDaiAdapter.notifyDataSetChanged();
+							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
+						} else {
+							biandai_kaigong.setEnabled(false);
+							biandai_chuzhan.setEnabled(false);
+						}
+					}
+				}
+				if ("shebeiQuery1".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+						BianDaiAdapter = new BianDaiAdapter(BianDaiActivity.this,
+								mesList);
+						mListView.setAdapter(BianDaiAdapter);
+						ToastUtil.showToast(getApplicationContext(), "《" + lot_no
+								+ "》测试号加载到列表中~", 0);
+						yimei_biandai_proNum_edt.selectAll();
+						if (mListView == null) {
+							biandai_kaigong.setEnabled(false);
+							biandai_chuzhan.setEnabled(false);
+						} else {
+							biandai_kaigong.setEnabled(true);
+							biandai_chuzhan.setEnabled(true);
+						}
+					} else {
+						// 清空列表
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							mListView = null;
+							BianDaiAdapter.notifyDataSetChanged();
+							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
+						}
+						if (mListView == null) {
+							biandai_kaigong.setEnabled(false);
+							biandai_chuzhan.setEnabled(false);
+						} else {
+							biandai_kaigong.setEnabled(true);
+							biandai_chuzhan.setEnabled(true);
+						}
+					}
+				}
+				if ("updateRefresh".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1
+							|| Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+						if (mesList != null) {
+							BianDaiAdapter = new BianDaiAdapter(
+									BianDaiActivity.this, mesList);
+							mListView.setAdapter(BianDaiAdapter);
+							BianDaiAdapter.notifyDataSetChanged();
+							return;
+						} else {
+							mListView.setAdapter(null);
+							BianDaiAdapter.notifyDataSetChanged();
+							//如果等于空可以扫新的批号
+							biandaiPrdNocomparison.clear();
+						}
+
+					}
+				}
+				if ("ListViewIsLotNo".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						// 如果有批号
+						if (mListView != null) {
+							// 循环列表
+							int count = 0;
+							for (int i = 0; i < BianDaiAdapter.getCount(); i++) {
+								Map<String, Object> map = (Map<String, Object>) BianDaiAdapter.getItem(i);
+								if (map.get("lotno").equals(lot_no)) {
+									count++;
+									BianDaiAdapter.state.put(i, true);
+								}
+							}
+							HashMap<Integer, Boolean> a = BianDaiAdapter.Getstate();
+							if (count > 0) {
+								BianDaiAdapter.notifyDataSetChanged();
+								ToastUtil.showToast(getApplicationContext(), "《"
+										+ lot_no + "》测试号存在,已经帮你选中", 0);
+							} else {
+								// 去服务器拿
+								// 查询制程和批次是否存在
+								Map<String, String> map = new HashMap<String, String>();
+								map.put("dbid", MyApplication.DBID);
+								map.put("usercode", MyApplication.user);
+								map.put("apiId", "assist");
+								map.put("assistid", "{MSBMOLIST}");
+								map.put("cont", "~lotno='" + lot_no
+										+ "' and zcno='"
+										+ MyApplication.BIANDAI_ZCNO + "'");
+								httpRequestQueryRecord(MyApplication.MESURL, map,
+										"ServerIsZcnoAndLotNo");
+							}
+						} else {
+							// 去服务器拿
+							// 查询制程和批次是否存在
+							Map<String, String> map = new HashMap<String, String>();
+							map.put("dbid", MyApplication.DBID);
+							map.put("usercode", MyApplication.user);
+							map.put("apiId", "assist");
+							map.put("assistid", "{MSBMOLIST}");
+							map.put("cont", "~lotno='" + lot_no + "' and zcno='"
+									+ MyApplication.BIANDAI_ZCNO + "'");
+							httpRequestQueryRecord(MyApplication.MESURL, map,
+									"ServerIsZcnoAndLotNo");
+						}
+					} else {
 						// 循环列表
 						int count = 0;
-						List<Map<String, Object>> ListMesPitch = BianDaiAdapter.listData;
-						for (int i = 0; i < ListMesPitch.size(); i++) {
-							Map<String, Object> map = ListMesPitch.get(i);
+						for (int i = 0; i < BianDaiAdapter.getCount(); i++) {
+							Map<String, Object> map = (Map<String, Object>) BianDaiAdapter.getItem(i);
 							if (map.get("lotno").equals(lot_no)) {
 								count++;
 								BianDaiAdapter.state.put(i, true);
@@ -704,230 +741,221 @@ public class BianDaiActivity extends Activity {
 							BianDaiAdapter.notifyDataSetChanged();
 							ToastUtil.showToast(getApplicationContext(), "《"
 									+ lot_no + "》测试号存在,已经帮你选中", 0);
-						} else {
-							// 去服务器拿
-							// 查询制程和批次是否存在
-							Map<String, String> map = new HashMap<String, String>();
-							map.put("dbid", MyApplication.DBID);
-							map.put("usercode", MyApplication.user);
-							map.put("apiId", "assist");
-							map.put("assistid", "{MSBMOLIST}");
-							map.put("cont", "~lotno='" + lot_no
-									+ "' and zcno='"
-									+ MyApplication.BIANDAI_ZCNO + "'");
-							httpRequestQueryRecord(MyApplication.MESURL, map,
-									"ServerIsZcnoAndLotNo");
+						}else{
+							// 提示没有该批号
+							ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
+							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 						}
+					}
+				}
+				if ("ServerIsZcnoAndLotNo".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 如果有设备号 就绑定过 （提示：已经绑定过设备）
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						ToastUtil.showToast(getApplication(), "《" + lot_no
+								+ "》测试号已绑定过设备号！", 0);
 					} else {
-						// 去服务器拿
-						// 查询制程和批次是否存在
+						// （json） 拿数据
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("dbid", MyApplication.DBID);
 						map.put("usercode", MyApplication.user);
 						map.put("apiId", "assist");
-						map.put("assistid", "{MSBMOLIST}");
-						map.put("cont", "~lotno='" + lot_no + "' and zcno='"
-								+ MyApplication.BIANDAI_ZCNO + "'");
-						httpRequestQueryRecord(MyApplication.MESURL, map,
-								"ServerIsZcnoAndLotNo");
+						map.put("assistid", "{TESTLOTQUERY}");
+						map.put("cont", "~lotno='" + lot_no + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map, "json");
 					}
-				} else {
-					// 提示没有该批号
-					ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
-					MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 				}
-			}
-			if ("ServerIsZcnoAndLotNo".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 如果有设备号 就绑定过 （提示：已经绑定过设备）
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					ToastUtil.showToast(getApplication(), "《" + lot_no
-							+ "》测试号已绑定过设备号！", 0);
-				} else {
-					// （json） 拿数据
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{TESTLOTQUERY}");
-					map.put("cont", "~lotno='" + lot_no + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map, "json");
-				}
-			}
-			if ("json".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
-							.get("values")).get(0));
+				if ("json".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(0));
 
-					if (biandaiPrdNocomparison != null) {
-						for (int i = 0; i < biandaiPrdNocomparison.size(); i++) {
-							Map<String, Object> map = biandaiPrdNocomparison
-									.get(i);
-							mesPrecord mespre = (mesPrecord) map
-									.get("biandai_item_title");
-							if (mListView != null) {
-								if (mespre.getPrd_no() != jsonValue
-										.get("prd_no")) {
-									showNormalDialog("扫入的测试批次机型与设备当前批次的机型不符！\n不能入站，请先将当前批次出站后再入站生产!");
-									return;
+						if (biandaiPrdNocomparison.size() != 0) {
+							for (int i = 0; i < biandaiPrdNocomparison.size(); i++) {
+								Map<String, Object> map = biandaiPrdNocomparison
+										.get(i);
+								mesPrecord mespre = (mesPrecord) map
+										.get("biandai_item_title");
+								if (mListView != null) {
+									if (!mespre.getPrd_no().equals(jsonValue
+											.get("prd_no"))) {
+										showNormalDialog("扫入的测试批次机型与设备当前批次的机型不符！\n不能入站，请先将当前批次出站后再入站生产!");
+										return;
+									}
 								}
 							}
+						}else{
+							List<Map<String, Object>> queryList = QueryList(jsonObject);
+							biandaiPrdNocomparison = queryList;
+						}
+
+						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
+						sid1 = jsonValue.get("sid1").toString(); // 修改服务器表的sid1
+						qtyv = jsonValue.get("qty").toString(); // (201)批次数量
+						lot_no1 = jsonValue.get("lotno").toString();
+						jsonValue.put("slkid", jsonValue.get("sid"));
+						jsonValue.put("sid", "");
+						jsonValue.put("state1", "01");
+						jsonValue.put("state", "0");
+						jsonValue.put("prd_name", jsonValue.get("prd_name"));
+						jsonValue.put("dcid", GetAndroidMacUtil.getMac());
+						jsonValue.put("op", zuoyeyuan);
+						jsonValue.put("sys_stated", "3");
+						jsonValue.put("sbid", shebeihao);
+						jsonValue.put("zcno", MyApplication.BIANDAI_ZCNO);
+						jsonValue.put("smake", MyApplication.user);
+						jsonValue.put("mkdate", MyApplication.GetServerNowTime());
+						jsonValue.put("sbuid", "D0001");
+						newJson = jsonValue;
+						Map<String, String> mesIdMap = MyApplication
+								.httpMapKeyValueMethod(MyApplication.DBID,
+										"savedata", MyApplication.user,
+										jsonValue.toJSONString(), "D0001WEB", "1");
+						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap, "id");
+					}
+				}
+				if ("updateServerTable".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					String a = jsonObject.toString();
+				}
+				if (string.equals("id")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					JSONObject jsondata = (JSONObject) jsonObject.get("data");
+					String newsid = jsondata.get("sid").toString(); // 拿到返回的sib1
+					if (newsid != "") {
+
+						// ----------------------------------------入站
+						// 修改服务器俩张表
+						String sidAndlotno = sid1 + ";" + lot_no1;
+						Map<String, String> updateServerTable = MyApplication
+								.UpdateServerTableMethod(MyApplication.DBID,
+										MyApplication.user, "00", "01",
+										sidAndlotno, currSlkid,
+										MyApplication.BIANDAI_ZCNO, "200");
+						httpRequestQueryRecord(MyApplication.MESURL,
+								updateServerTable, "updateServerTable");
+						// ----------------------------------------入站
+						// 修改服务器俩张表
+
+						// ----------------------------------------上料准备
+						Map<String, String> ShangLiaoReadyMethod = MyApplication
+								.ShangLiaoReadyMethod(MyApplication.DBID,
+										MyApplication.user, sid1,
+										MyApplication.BIANDAI_ZCNO, zuoyeyuan,
+										shebeihao, currSlkid, qtyv, "0", "0", "201");
+						httpRequestQueryRecord(MyApplication.MESURL,
+								ShangLiaoReadyMethod, "ShangLiaoReadyMethod");
+						// ----------------------------------------上料准备
+
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ MyApplication.BIANDAI_ZCNO + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"shebeiQuery1");
+
+					}
+				}
+				if ("kaigongUpdata".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
+							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+						for (int i = 0; i < updateListState.size(); i++) {
+							mesPrecord m = updateListState.get(i);
+							Log.i("mes", m.toString());
+							if (m.getState1().equals("01")
+									|| m.getState1().equals("02")) {
+								// ------------------------修改服务器的俩张表（开工）
+								String sidAndlotno = m.getSid1() + ";"
+										+ m.getLotno();
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user, "01", "03",
+												sidAndlotno, m.getSlkid(),
+												MyApplication.BIANDAI_ZCNO, "200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable");
+								// ------------------------修改服务器的俩张表（开工）
+							}
+						}
+						updateListState.clear();
+						// 刷新列表
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ MyApplication.BIANDAI_ZCNO + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"updateRefresh");
+					} else {
+						ToastUtil.showToast(biandaiActivity,
+								String.valueOf(jsonObject.get("message")), 0);
+					}
+				}
+				if (string.equals("chuzhanUpdata")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
+							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+						for (int i = 0; i < updateListState.size(); i++) {
+							mesPrecord m = updateListState.get(i);
+							Log.i("mes", m.toString());
+							if (m.getState1().equals("03")) {
+								// ------------------------修改服务器的俩张表（出站）
+								String sidAndlotno = m.getSid1() + ";"
+										+ m.getLotno();
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user, "03", "04",
+												sidAndlotno, m.getSlkid(),
+												MyApplication.BIANDAI_ZCNO, "200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable1");
+							}
+						}
+						updateListState.clear();
+						// 刷新列表
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ MyApplication.BIANDAI_ZCNO + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"updateRefresh");
+					}
+				}
+				if(string.equals("biandai_ptime")){
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(i));
+						if(jsonValue.containsKey("ptime")){							
+							ptime.put(jsonValue.get("id").toString(),jsonValue.get("ptime").toString());
 						}
 					}
-
-					currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
-					sid1 = jsonValue.get("sid1").toString(); // 修改服务器表的sid1
-					qtyv = jsonValue.get("qty").toString(); // (201)批次数量
-					lot_no1 = jsonValue.get("lotno").toString();
-					jsonValue.put("slkid", jsonValue.get("sid"));
-					jsonValue.put("sid", "");
-					jsonValue.put("state1", "01");
-					jsonValue.put("state", "0");
-					jsonValue.put("prd_name", jsonValue.get("prd_name"));
-					jsonValue.put("dcid", GetAndroidMacUtil.getMac());
-					jsonValue.put("op", zuoyeyuan);
-					jsonValue.put("sys_stated", "3");
-					jsonValue.put("sbid", shebeihao);
-					jsonValue.put("zcno", MyApplication.BIANDAI_ZCNO);
-					jsonValue.put("smake", MyApplication.user);
-					jsonValue.put("mkdate", df.format(new Date()));
-					jsonValue.put("sbuid", "D0001");
-					newJson = jsonValue;
-					Map<String, String> mesIdMap = MyApplication
-							.httpMapKeyValueMethod(MyApplication.DBID,
-									"savedata", MyApplication.user,
-									jsonValue.toJSONString(), "D0001WEB", "1");
-					httpRequestQueryRecord(MyApplication.MESURL, mesIdMap, "id");
 				}
-			}
-			if ("updateServerTable".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				String a = jsonObject.toString();
-			}
-			if (string.equals("id")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				JSONObject jsondata = (JSONObject) jsonObject.get("data");
-				String newsid = jsondata.get("sid").toString(); // 拿到返回的sib1
-				if (newsid != "") {
-
-					// ----------------------------------------入站
-					// 修改服务器俩张表
-					String sidAndlotno = sid1 + ";" + lot_no1;
-					Map<String, String> updateServerTable = MyApplication
-							.UpdateServerTableMethod(MyApplication.DBID,
-									MyApplication.user, "00", "01",
-									sidAndlotno, currSlkid,
-									MyApplication.BIANDAI_ZCNO, "200");
-					httpRequestQueryRecord(MyApplication.MESURL,
-							updateServerTable, "updateServerTable");
-					// ----------------------------------------入站
-					// 修改服务器俩张表
-
-					// ----------------------------------------上料准备
-					Map<String, String> ShangLiaoReadyMethod = MyApplication
-							.ShangLiaoReadyMethod(MyApplication.DBID,
-									MyApplication.user, sid1,
-									MyApplication.BIANDAI_ZCNO, zuoyeyuan,
-									shebeihao, currSlkid, qtyv, "0", "0", "201");
-					httpRequestQueryRecord(MyApplication.MESURL,
-							ShangLiaoReadyMethod, "ShangLiaoReadyMethod");
-					// ----------------------------------------上料准备
-
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ MyApplication.BIANDAI_ZCNO + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"shebeiQuery1");
-
-				}
-			}
-			if ("kaigongUpdata".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 0
-						|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
-					for (int i = 0; i < updateListState.size(); i++) {
-						mesPrecord m = updateListState.get(i);
-						Log.i("mes", m.toString());
-						if (m.getState1().equals("01")
-								|| m.getState1().equals("02")) {
-							// ------------------------修改服务器的俩张表（开工）
-							String sidAndlotno = m.getSid1() + ";"
-									+ m.getLotno();
-							Map<String, String> updateServerTable = MyApplication
-									.UpdateServerTableMethod(
-											MyApplication.DBID,
-											MyApplication.user, "01", "03",
-											sidAndlotno, m.getSlkid(),
-											MyApplication.BIANDAI_ZCNO, "200");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateServerTable, "updateServerTable");
-							// ------------------------修改服务器的俩张表（开工）
-						}
-					}
-					updateListState.clear();
-					// 刷新列表
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ MyApplication.BIANDAI_ZCNO + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"updateRefresh");
-				} else {
-					ToastUtil.showToast(biandaiActivity,
-							String.valueOf(jsonObject.get("message")), 0);
-				}
-			}
-			if (string.equals("chuzhanUpdata")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 0
-						|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
-					for (int i = 0; i < updateListState.size(); i++) {
-						mesPrecord m = updateListState.get(i);
-						Log.i("mes", m.toString());
-						if (m.getState1().equals("03")) {
-							// ------------------------修改服务器的俩张表（出站）
-							String sidAndlotno = m.getSid1() + ";"
-									+ m.getLotno();
-							Map<String, String> updateServerTable = MyApplication
-									.UpdateServerTableMethod(
-											MyApplication.DBID,
-											MyApplication.user, "03", "04",
-											sidAndlotno, m.getSlkid(),
-											MyApplication.BIANDAI_ZCNO, "200");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateServerTable, "updateServerTable1");
-						}
-					}
-					updateListState.clear();
-					// 刷新列表
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ MyApplication.BIANDAI_ZCNO + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"updateRefresh");
-				}
+			} catch (Exception e) {
+				ToastUtil.showToast(biandaiActivity,e.toString(),0);
 			}
 		}
 	};

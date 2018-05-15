@@ -1,6 +1,7 @@
 package com.yimei.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.yimei.adapter.MainMyAdapter;
 import com.yimei.entity.Main_map;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private ListView lv;
 	private GridView gv;
 	static MyApplication myapp;
 	public static MainActivity mainActivity;
@@ -54,12 +54,12 @@ public class MainActivity extends Activity {
 		list.add(m1);
 		list.add(m2);
 		list.add(m3);*/
-//		lv = (ListView) findViewById(R.id.Main_list_view);
 		gv = (GridView) findViewById(R.id.Main_gridlist_view);
 		adapter = new MainMyAdapter(list, MainActivity.this);
-//		lv.setAdapter(adapter);
 		gv.setAdapter(adapter);
-		
+		Log.i("ServerTime",MyApplication.GetServerNowTime());
+		Log.i("ServerTime",MyApplication.df.format(new Date()));
+		Log.i("ServerTime","加3小时："+MyApplication.GetHunJiaoAdd_3(3));
 	}
 	
 	private boolean mIsExit;

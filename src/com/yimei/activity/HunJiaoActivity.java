@@ -51,7 +51,9 @@ public class HunJiaoActivity extends Activity {
 	private String zuoyeyuan;
 	private String sbid; // 设备号
 	private String prtno; // 胶杯批号
-	private Calendar nowTime = Calendar.getInstance(); 
+	
+	private Calendar nowTime = Calendar.getInstance();
+	
 	static MyApplication myapp;
 	public static HunJiaoActivity hunjiaoActivity;
 
@@ -319,8 +321,8 @@ public class HunJiaoActivity extends Activity {
 								jsonValue.put("qty",jsonValue.get("effective_time")==null?"":jsonValue.get("effective_time"));
 								jsonValue.put("op",zuoyeyuan);
 								jsonValue.put("dcid",GetAndroidMacUtil.getMac());
-								nowTime.add(Calendar.HOUR_OF_DAY,Integer.parseInt(jsonValue.get("effective_time").toString()));
-								jsonValue.put("newly_time",MyApplication.df.format(nowTime.getTime())); //加3小时后的时间
+								//加3小时
+								jsonValue.put("newly_time",MyApplication.GetHunJiaoAdd_3(Integer.parseInt(jsonValue.get("effective_time").toString()))); //加3小时后的时间
 								jsonValue.put("sbuid", "D2009");
 								jsonValue.put("zcno", "31");
 								jsonValue.put("sbid",sbid);
@@ -330,7 +332,7 @@ public class HunJiaoActivity extends Activity {
 								jsonValue.put("prd_no",jsonValue.get("prdno")); 
 								jsonValue.put("prd_name",jsonValue.get("name"));
 								jsonValue.put("edate",jsonValue.get("vdate"));
-								jsonValue.put("indate",MyApplication.df.format(MyApplication.now));
+								jsonValue.put("indate",MyApplication.GetServerNowTime());
 								
 								//************批次号添加
 								Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(

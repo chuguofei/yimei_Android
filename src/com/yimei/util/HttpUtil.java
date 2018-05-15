@@ -34,13 +34,15 @@ public class HttpUtil {
 					connection.getOutputStream());
 			StringBuffer tempParams = new StringBuffer();
 			int pos = 0;
-			for (String key : map.keySet()) {
-				if (pos > 0) {
-					tempParams.append("&");
+			if (map != null) {
+				for (String key : map.keySet()) {
+					if (pos > 0) {
+						tempParams.append("&");
+					}
+					tempParams.append(String.format("%s=%s", key,
+							URLEncoder.encode(map.get(key), "utf-8")));
+					pos++;
 				}
-				tempParams.append(String.format("%s=%s", key,
-						URLEncoder.encode(map.get(key), "utf-8")));
-				pos++;
 			}
 			out.writeBytes(tempParams.toString());
 			InputStream in = connection.getInputStream();
@@ -51,13 +53,13 @@ public class HttpUtil {
 			while ((line = reader.readLine()) != null) {
 				response.append(line);
 			}
-			Log.i("response",response.toString());
+			Log.i("response", response.toString());
 			responseJson = response.toString();
 		} catch (Exception e) {
-//			e.printStackTrace();
+			// e.printStackTrace();
 			responseJson = "-1";
-			Log.i("httpPost",responseJson);
-//			throw new RuntimeException("服务器连接失败");
+			Log.i("httpPost", responseJson);
+			// throw new RuntimeException("服务器连接失败");
 		} finally {
 			if (reader != null) {
 				try {

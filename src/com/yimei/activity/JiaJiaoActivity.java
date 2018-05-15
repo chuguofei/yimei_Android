@@ -411,7 +411,7 @@ public class JiaJiaoActivity extends Activity {
 						jsonValue.put("op", zuoyeyuan);
 						jsonValue.put("sbid", sbid);
 						jsonValue.put("prtno", jsonValue.get("prtno"));
-						jsonValue.put("indate",MyApplication.df.format(MyApplication.now));
+						jsonValue.put("indate",MyApplication.GetServerNowTime());
 						jsonValue.put("edate", jsonValue.get("vdate"));// 到期时间
 						jsonValue.put("mkdate", jsonValue.get("tprn"));// 胶杯打印时间
 						jsonValue.put("slkid", jsonValue.get("mo_no"));// 工单号（制令单号）
@@ -441,12 +441,13 @@ public class JiaJiaoActivity extends Activity {
 								.updateServerJiaJiao(MyApplication.DBID,
 										MyApplication.user, sbid, jiaobeipihao,
 										"300");
+						String a = jiaobeipihao;
 						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
 								"updateServerJiaJiao");
 
 					} else {
 						ToastUtil.showToast(getApplicationContext(),
-								"服务器处理异（添加）)！", 0);
+								"服务器处理异（savedata）)！", 0);
 					}
 				}
 				if (string.equals("updateServerJiaJiao")) { // 查询列表

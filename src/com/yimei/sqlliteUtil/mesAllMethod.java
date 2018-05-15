@@ -66,7 +66,7 @@ public class mesAllMethod {
 							+ "prd_no,qty,bok,zcno1,state1,state,hpdate,dcid,smake,mkdate,remark,bfirst) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 					new Object[] {mes.getSid(),mes.getSid1(), mes.getSbuid(),
 							mes.getZcno(), mes.getOp(), mes.getSbid(),
-							mes.getSlkid(), mes.getPrd_name(), mes.getQty(),
+							mes.getSlkid(), mes.getPrd_no(), mes.getQty(),
 							mes.getBok(), mes.getZcno1(), mes.getState1(),
 							mes.getState(), mes.getHpdate(), mes.getDcid(),
 							mes.getSmake(), mes.getRemark(),

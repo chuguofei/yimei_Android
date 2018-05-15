@@ -72,7 +72,7 @@ public class LoginActivity extends Activity {
 	                bundle.putString("pwd",login_edit_pwd.getText().toString());
 	                //再把bundle中的数据传给intent，以传输过去
 	                intent.putExtras(bundle);
-					startActivity(intent);
+					startActivity(intent);					
 				}
 			}
 		});

@@ -1,9 +1,10 @@
-package com.yimei.activity;
+ package com.yimei.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,22 +18,23 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
-//	 public static final String MESURL = "http://59.53.182.251:8088/mes/api";
+//	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
+	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
-	 public static final String DBID = "01";
-//	 public static final String DBID = "mes";
+	public static final String DBID = "01";
+	// public static final String DBID = "mes";
 	// 李老师宿舍
 	// public static final String MESURL = "http://192.168.8.107:8080/mes/api";
 	// public static final String MESURL = "http://192.168.8.105:8080/mes/api";
 	// 李老师公司
-//	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
-//	 public static final String MESURL = "http://192.168.5.84:9050/jd/api";
+	// public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
-//	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
-	//冯哥宿舍
+	// public static final String MESURL = "http://192.168.5.86:9999/jd/api";
+	// 冯哥宿舍
 	// public static final String MESURL = "http://192.168.8.102:9999/jd/api";
+	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";
 	public static String user = "";
 
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
@@ -49,46 +51,91 @@ public class MyApplication extends Application {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
 	}
 
-	public static int ChooseTime(String kaigongTime){
-		if(kaigongTime==null){
+	/**
+	 * 获取服务器时间
+	 * 
+	 * @return
+	 */
+	public static String GetServerNowTime() {
+//		GregorianCalendar g = new GregorianCalendar();
+		Calendar c = Calendar.getInstance();
+		if (ServerTimeCha < 0) {
+			Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
+			String a = df.format(d.getTime());
+			return df.format(d.getTime());
+		} else {
+			Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+//			g.setTime(d);
+			return df.format(d.getTime());
+		}
+	}
+	
+	/**
+	 * 胶杯加3小时
+	 * 
+	 * @return
+	 */
+	public static String GetHunJiaoAdd_3(int num) {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.HOUR_OF_DAY,num);
+		if (ServerTimeCha < 0) {
+			Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
+			String a = df.format(d.getTime());
+			return df.format(d.getTime());
+		} else {
+			Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+			String a = df.format(d.getTime());
+			return df.format(d.getTime());
+		}
+	}
+
+	/**
+	 * 出站时间
+	 * 
+	 * @param kaigongTime
+	 * @return
+	 */
+	public static int ChooseTime(String kaigongTime) {
+		if (kaigongTime == null) {
 			return 999;
 		}
-		if(kaigongTime!=null&&kaigongTime.length()==16){
-			kaigongTime+=":00";
+		if (kaigongTime != null && kaigongTime.length() == 16) {
+			kaigongTime += ":00";
 		}
-		long xiangchaTime = 0,nowTime=0;
-	    try {
-	    	Calendar c = Calendar.getInstance();
-	    	nowTime = c.getTimeInMillis();
-	    	xiangchaTime =Math.abs(nowTime - df.parse(kaigongTime).getTime());
+		long xiangchaTime = 0, nowTime = 0;
+		try {
+			Calendar c = Calendar.getInstance();
+			nowTime = c.getTimeInMillis();
+			xiangchaTime = Math.abs(nowTime - df.parse(kaigongTime).getTime());
 
-//			long nd = 1000 * 24 * 60 * 60;
-//			long nh = 1000 * 60 * 60;
-//			long nm = 1000 * 60;
-//			// long ns = 1000;
-//			// 获得两个时间的毫秒时间差异
-//			long a =df.parse(nowTime).getTime();
-//			long b =df.parse(kaigongTime).getTime();
-//			long diff = df.parse(nowTime).getTime() - df.parse(kaigongTime).getTime();
-//			// 计算差多少天
-//			long day = diff / nd;
-//			// 计算差多少小时
-//			long hour = diff % nd / nh;
-//			// 计算差多少分钟
-//			long min = diff % nd % nh / nm;
-//			xiangchaTime = min;
-//			// 计算差多少秒//输出结果
-//			System.out.println(day + "天" + hour + "小时" + min + "分钟");
+			// long nd = 1000 * 24 * 60 * 60;
+			// long nh = 1000 * 60 * 60;
+			// long nm = 1000 * 60;
+			// // long ns = 1000;
+			// // 获得两个时间的毫秒时间差异
+			// long a =df.parse(nowTime).getTime();
+			// long b =df.parse(kaigongTime).getTime();
+			// long diff = df.parse(nowTime).getTime() -
+			// df.parse(kaigongTime).getTime();
+			// // 计算差多少天
+			// long day = diff / nd;
+			// // 计算差多少小时
+			// long hour = diff % nd / nh;
+			// // 计算差多少分钟
+			// long min = diff % nd % nh / nm;
+			// xiangchaTime = min;
+			// // 计算差多少秒//输出结果
+			// System.out.println(day + "天" + hour + "小时" + min + "分钟");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    return (int)xiangchaTime/1000/60;
+		return (int) xiangchaTime / 1000 / 60;
 	}
-	
+
 	@SuppressLint("SimpleDateFormat")
 	public static SimpleDateFormat df = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");// 设置日期格式
-	public static Date now = new Date(); // 当前时间
+	public static long ServerTimeCha = 0;
 
 	public static final String GUJING_ZCNO = "11";
 	public static final String HANJIE_ZCNO = "21";
@@ -132,19 +179,37 @@ public class MyApplication extends Application {
 	}
 
 	/**
-	 * 查询是否有设备号和制程
+	 * 查询是否有设备号和制程 （编带）
 	 * 
 	 * @param sbid
 	 * @param zcno
 	 * @return
 	 */
-	public static Map<String, String> IsSbidQuery(String sbid, String zcno) {
+	public static Map<String, String> IsSbidQuery_biandai(String sbid,
+			String zcno) {
 		Map<String, String> mapSbid = new HashMap<String, String>();
 		mapSbid.put("dbid", MyApplication.DBID);
 		mapSbid.put("usercode", MyApplication.user);
 		mapSbid.put("apiId", "assist");
 		mapSbid.put("assistid", "{MESEQUTM}");
-		mapSbid.put("cont", "~id='" + sbid + "' and zc_id like 'S%' ");
+		mapSbid.put("cont", "~id='" + sbid + "' and zc_id='71' ");
+		return mapSbid;
+	}
+
+	/**
+	 * 查询是否有设备号和制程 （模组）
+	 * 
+	 * @param sbid
+	 * @param zcno
+	 * @return
+	 */
+	public static Map<String, String> IsSbidQuery_mozu(String sbid, String zcno) {
+		Map<String, String> mapSbid = new HashMap<String, String>();
+		mapSbid.put("dbid", MyApplication.DBID);
+		mapSbid.put("usercode", MyApplication.user);
+		mapSbid.put("apiId", "assist");
+		mapSbid.put("assistid", "{MESEQUTM}");
+		mapSbid.put("cont", "~id='" + sbid + "' and zc_id like '" + zcno + "' ");
 		return mapSbid;
 	}
 
