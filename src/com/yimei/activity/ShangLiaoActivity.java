@@ -197,6 +197,8 @@ public class ShangLiaoActivity extends TabActivity {
 			ActivtyCont = "~mo_no='" + mesObj.getSlkid()+ "'";
 		}else if(activity.equals("gujing")){
 			ActivtyCont = "~mo_no='" + mesObj.getSlkid()+ "' and (gzl='M01' OR gzl='M03') and upid>'0'";
+		}else if(activity.equals("Tongyong_mozu")){
+			ActivtyCont = "~mo_no='" + mesObj.getSlkid()+ "'";
 		}
 		
 		
@@ -601,206 +603,210 @@ public class ShangLiaoActivity extends TabActivity {
 			super.handleMessage(msg);
 			Bundle b = msg.getData();
 			String type = b.getString("type");
-			if ("MaterialDetailed".equals(type)) { // 材料号
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-					ToastUtil
-							.showToast(getApplicationContext(), "该工单号没有材料!", 0);
-				} else {
+			try {
+				if ("MaterialDetailed".equals(type)) { // 材料号
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+						ToastUtil
+								.showToast(getApplicationContext(), "该工单号没有材料!", 0);
+					} else {
 
-					JSONArray Values = (JSONArray) jsonObject.get("values");
-					List<Map<String, String>> listMap = new ArrayList<>();
-					Map<String, String> map = null;
-					for (int i = 0; i < Values.size(); i++) {
-						Map<String, String> Valuesmap = (Map<String, String>) Values
-								.get(i);
-						map = new HashMap<String, String>();
-						map.put("Material_xiangci",
-								String.valueOf(Valuesmap.get("itm")));
-						map.put("Material_cailiaoNum", Valuesmap.get("prd_no"));
-						map.put("Material_cailiaoName",
-								Valuesmap.get("prd_name"));
-						map.put("Material_BinCode",
-								Valuesmap.get("bincode") == null ? ""
-										: Valuesmap.get("bincode"));
-						map.put("Material_cailiaopici",
-								Valuesmap.get("bat_no") == null ? ""
-										: Valuesmap.get("bat_no"));
-						String Material_SumNum;
-						if (String.valueOf(Valuesmap.get("qty_rsv")) != null) {
-							Material_SumNum = String.valueOf(
-									Valuesmap.get("qty_rsv")).substring(
-									0,
-									String.valueOf(Valuesmap.get("qty_rsv"))
-											.indexOf("."));
-						} else {
-							Material_SumNum = "";
-						}
-						map.put("Material_SumNum", Material_SumNum);
-						map.put("Material_tidaipin",
-								Valuesmap.get("prd_no_chg"));
-						map.put("Material_info", "");
-						listMap.add(map);
-					}
-					MaterialsBreakdownCHScrollView headerScroll = (MaterialsBreakdownCHScrollView) findViewById(R.id.MaterialsBreakdowni_scroll_title);
-					// 添加头滑动事件
-					MaterialsBreakdownCHScrollView.add(headerScroll);
-					mListView = (ListView) findViewById(R.id.MaterialsBreakdown_scroll_list);
-					materialAdapter = new MaterialAdapter(
-							ShangLiaoActivity.this, listMap);
-					mListView.setAdapter(materialAdapter);
-					materialAdapter.notifyDataSetChanged();
-					Log.i("jsonObj", Values.toString());
-				}
-			}
-			if ("QueryMrecorda".equals(type)) { // 扫描区
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == -1) { // 不存在辅助
-					showNormalDialog("系统错误，请联系管理员~");
-					return;
-				}
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) { // 扫描区添加值
-					JSONArray Values = (JSONArray) jsonObject.get("values");
-					List<Map<String, String>> listMap = new ArrayList<>();
-					Map<String, String> map = null;
-					MaxCid = new ArrayList<>();
-					for (int i = 0; i < Values.size(); i++) {
-						Map<String, String> Valuesmap = (Map<String, String>) Values
-								.get(i);
-						map = new HashMap<String, String>();
-						map.put("ScanArea_xiangci",
-								String.valueOf(Valuesmap.get("cid")));
-						map.put("ScannArea_cailiaodaima",
-								Valuesmap.get("prd_no"));
-						map.put("ScannArea_cailiaopici",
-								Valuesmap.get("bat_no"));
-						map.put("ScannArea_cailiaoName",
-								Valuesmap.get("prd_name"));
-						map.put("ScannArea_BinCode", Valuesmap.get("bincode"));
-						map.put("ScannArea_cailiaoshuNum",
-								String.valueOf(Valuesmap.get("qty")));
-						map.put("ScannArea_verification",
-								Valuesmap.get("yzrem"));
-						map.put("ScannArea_unit",
-								Valuesmap.get("unit") == null ? "" : String
-										.valueOf(Valuesmap.get("unit")));
-
-						MaxCid.add(Integer.parseInt(String.valueOf(Valuesmap
-								.get("cid")))); // 取最大值的集合
-						listMap.add(map);
-					}
-					Log.i("num", Collections.max(MaxCid).toString());
-					ScanAreaCHScrollView headerScroll = (ScanAreaCHScrollView) findViewById(R.id.ScanArea_scroll_title);
-					// 添加头滑动事件
-					ScanAreaCHScrollView.add(headerScroll);
-					mListView1 = (ListView) findViewById(R.id.ScanArea_scroll_list);
-					scanareaAdapter = new ScanArealAdapter(
-							ShangLiaoActivity.this, listMap);
-					mListView1.setAdapter(scanareaAdapter);
-					scanareaAdapter.notifyDataSetChanged();
-
-					// 显示已发
-					long yifaCount = 0;
-					if (scanareaAdapter != null) {
-						// 循环扫描的列表（判断数量有没有超出）
-						for (int i = 0; i < scanareaAdapter.getCount(); i++) {
-							Map<String, String> map1 = (Map<String, String>) scanareaAdapter
-									.getItem(i);
-							if (map1.get("ScannArea_cailiaodaima").equals(
-									yimei_shangliao_materialCode.getText()
-											.toString().trim())) {
-								yifaCount += Long.parseLong(map1.get(
-										"ScannArea_cailiaoshuNum").substring(
+						JSONArray Values = (JSONArray) jsonObject.get("values");
+						List<Map<String, String>> listMap = new ArrayList<>();
+						Map<String, String> map = null;
+						for (int i = 0; i < Values.size(); i++) {
+							Map<String, String> Valuesmap = (Map<String, String>) Values
+									.get(i);
+							map = new HashMap<String, String>();
+							map.put("Material_xiangci",
+									String.valueOf(Valuesmap.get("itm")));
+							map.put("Material_cailiaoNum", Valuesmap.get("prd_no"));
+							map.put("Material_cailiaoName",
+									Valuesmap.get("prd_name"));
+							map.put("Material_BinCode",
+									Valuesmap.get("bincode") == null ? ""
+											: Valuesmap.get("bincode"));
+							map.put("Material_cailiaopici",
+									Valuesmap.get("bat_no") == null ? ""
+											: Valuesmap.get("bat_no"));
+							String Material_SumNum;
+							if (String.valueOf(Valuesmap.get("qty_rsv")) != null) {
+								Material_SumNum = String.valueOf(
+										Valuesmap.get("qty_rsv")).substring(
 										0,
-										map1.get("ScannArea_cailiaoshuNum")
-												.indexOf(".")));
+										String.valueOf(Valuesmap.get("qty_rsv"))
+												.indexOf("."));
+							} else {
+								Material_SumNum = "";
+							}
+							map.put("Material_SumNum", Material_SumNum);
+							map.put("Material_tidaipin",
+									Valuesmap.get("prd_no_chg"));
+							map.put("Material_info", "");
+							listMap.add(map);
+						}
+						MaterialsBreakdownCHScrollView headerScroll = (MaterialsBreakdownCHScrollView) findViewById(R.id.MaterialsBreakdowni_scroll_title);
+						// 添加头滑动事件
+						MaterialsBreakdownCHScrollView.add(headerScroll);
+						mListView = (ListView) findViewById(R.id.MaterialsBreakdown_scroll_list);
+						materialAdapter = new MaterialAdapter(
+								ShangLiaoActivity.this, listMap);
+						mListView.setAdapter(materialAdapter);
+						materialAdapter.notifyDataSetChanged();
+						Log.i("jsonObj", Values.toString());
+					}
+				}
+				if ("QueryMrecorda".equals(type)) { // 扫描区
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == -1) { // 不存在辅助
+						showNormalDialog("系统错误，请联系管理员~");
+						return;
+					}
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) { // 扫描区添加值
+						JSONArray Values = (JSONArray) jsonObject.get("values");
+						List<Map<String, String>> listMap = new ArrayList<>();
+						Map<String, String> map = null;
+						MaxCid = new ArrayList<>();
+						for (int i = 0; i < Values.size(); i++) {
+							Map<String, String> Valuesmap = (Map<String, String>) Values
+									.get(i);
+							map = new HashMap<String, String>();
+							map.put("ScanArea_xiangci",
+									String.valueOf(Valuesmap.get("cid")));
+							map.put("ScannArea_cailiaodaima",
+									Valuesmap.get("prd_no"));
+							map.put("ScannArea_cailiaopici",
+									Valuesmap.get("bat_no"));
+							map.put("ScannArea_cailiaoName",
+									Valuesmap.get("prd_name"));
+							map.put("ScannArea_BinCode", Valuesmap.get("bincode"));
+							map.put("ScannArea_cailiaoshuNum",
+									String.valueOf(Valuesmap.get("qty")));
+							map.put("ScannArea_verification",
+									Valuesmap.get("yzrem"));
+							map.put("ScannArea_unit",
+									Valuesmap.get("unit") == null ? "" : String
+											.valueOf(Valuesmap.get("unit")));
 
+							MaxCid.add(Integer.parseInt(String.valueOf(Valuesmap
+									.get("cid")))); // 取最大值的集合
+							listMap.add(map);
+						}
+						Log.i("num", Collections.max(MaxCid).toString());
+						ScanAreaCHScrollView headerScroll = (ScanAreaCHScrollView) findViewById(R.id.ScanArea_scroll_title);
+						// 添加头滑动事件
+						ScanAreaCHScrollView.add(headerScroll);
+						mListView1 = (ListView) findViewById(R.id.ScanArea_scroll_list);
+						scanareaAdapter = new ScanArealAdapter(
+								ShangLiaoActivity.this, listMap);
+						mListView1.setAdapter(scanareaAdapter);
+						scanareaAdapter.notifyDataSetChanged();
+
+						// 显示已发
+						long yifaCount = 0;
+						if (scanareaAdapter != null) {
+							// 循环扫描的列表（判断数量有没有超出）
+							for (int i = 0; i < scanareaAdapter.getCount(); i++) {
+								Map<String, String> map1 = (Map<String, String>) scanareaAdapter
+										.getItem(i);
+								if (map1.get("ScannArea_cailiaodaima").equals(
+										yimei_shangliao_materialCode.getText()
+												.toString().trim())) {
+									yifaCount += Long.parseLong(map1.get(
+											"ScannArea_cailiaoshuNum").substring(
+											0,
+											map1.get("ScannArea_cailiaoshuNum")
+													.indexOf(".")));
+
+								}
 							}
 						}
-					}
 
-					// 已发数量
-					yimei_shangliao_NumIssued.setText(String.valueOf(yifaCount)
-							.equals("0") ? "" : String.valueOf(yifaCount));
-				} else {
-					if (mListView1 != null) {
-						// mListView1.setAdapter(null);
-						mListView1 = null;
-						scanareaAdapter.notifyDataSetChanged();
-					}
-				}
-
-				Log.i("jsonObject", jsonObject.toString());
-			}
-			if ("insertServerMaterials".equals(type)) { // 向服务器添加主子对象成功后
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
-					if (MaxCid != null) {
-						MaxCid.clear();
-					}
-					ToastUtil.showToast(shangliaoActivity, "添加成功", 0);
-					nextEditFocus(yimei_shangliao_materialCode);
-					yimei_shangliao_materialCode.selectAll();
-
-					// 加载扫描区数据
-					Map<String, String> map = new HashMap<>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSMRECORDA}");
-					map.put("cont", "~sid='" + mesObj.getSid1() + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"QueryMrecorda");
-
-					if (mesObj.getState1().equals("01")) {
-						Map<String, String> updateTimeMethod = MyApplication
-								.updateServerTimeMethod(MyApplication.DBID,
-										MyApplication.user, "01", "02",
-										mesObj.getSid(), mesObj.getOp(),
-										mesObj.getZcno(), "202");
-						httpRequestQueryRecord(MyApplication.MESURL,
-								updateTimeMethod, "UpdataServerShangLiaoState");
-					}
-
-				} else {
-					ToastUtil.showToast(shangliaoActivity, "服务器处理异常", 0);
-				}
-			}
-			if ("UpdataServerShangLiaoState".equals(type)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 1) {
-
-					if (mesObj.getState1().equals("01")) {
-						// ------------------------修改服务器的俩张表（开工）
-						Map<String, String> updateServerTable = MyApplication
-								.UpdateServerTableMethod(MyApplication.DBID,
-										MyApplication.user, "01", "02",
-										mesObj.getSid1(), mesObj.getSlkid(),
-										mesObj.getZcno(), "200");
-						httpRequestQueryRecord(MyApplication.MESURL,
-								updateServerTable, "updateServerTable");
-						// ------------------------修改服务器的俩张表（开工）
-						mesAllMethod mesUpdatelocal = new mesAllMethod(
-								ShangLiaoActivity.this);
-						if (mesUpdatelocal.shanliaoState1Update(mesObj
-								.getSid1())) { // 修改本地状态
-							/*
-							 * ToastUtil.showToast(ShangLiaoActivity.this,
-							 * "上料页面修改状态成功", 0);
-							 */
-							mesObj.setState1("02"); // 修改传来的状态
-						} else {
-							ToastUtil.showToast(ShangLiaoActivity.this,
-									"状态修改失败", 0);
+						// 已发数量
+						yimei_shangliao_NumIssued.setText(String.valueOf(yifaCount)
+								.equals("0") ? "" : String.valueOf(yifaCount));
+					} else {
+						if (mListView1 != null) {
+							// mListView1.setAdapter(null);
+							mListView1 = null;
+							scanareaAdapter.notifyDataSetChanged();
 						}
 					}
 
-					Log.i("mesObj", mesObj.toString());
+					Log.i("jsonObject", jsonObject.toString());
 				}
+				if ("insertServerMaterials".equals(type)) { // 向服务器添加主子对象成功后
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
+						if (MaxCid != null) {
+							MaxCid.clear();
+						}
+						ToastUtil.showToast(shangliaoActivity, "添加成功", 0);
+						nextEditFocus(yimei_shangliao_materialCode);
+						yimei_shangliao_materialCode.selectAll();
+
+						// 加载扫描区数据
+						Map<String, String> map = new HashMap<>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSMRECORDA}");
+						map.put("cont", "~sid='" + mesObj.getSid1() + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"QueryMrecorda");
+
+						if (mesObj.getState1().equals("01")) {
+							Map<String, String> updateTimeMethod = MyApplication
+									.updateServerTimeMethod(MyApplication.DBID,
+											MyApplication.user, "01", "02",
+											mesObj.getSid(), mesObj.getOp(),
+											mesObj.getZcno(), "202");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									updateTimeMethod, "UpdataServerShangLiaoState");
+						}
+
+					} else {
+						ToastUtil.showToast(shangliaoActivity, "服务器处理异常", 0);
+					}
+				}
+				if ("UpdataServerShangLiaoState".equals(type)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+
+						if (mesObj.getState1().equals("01")) {
+							// ------------------------修改服务器的俩张表（开工）
+							Map<String, String> updateServerTable = MyApplication
+									.UpdateServerTableMethod(MyApplication.DBID,
+											MyApplication.user, "01", "02",
+											mesObj.getSid1(), mesObj.getSlkid(),
+											mesObj.getZcno(), "200");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									updateServerTable, "updateServerTable");
+							// ------------------------修改服务器的俩张表（开工）
+							mesAllMethod mesUpdatelocal = new mesAllMethod(
+									ShangLiaoActivity.this);
+							if (mesUpdatelocal.shanliaoState1Update(mesObj
+									.getSid1())) { // 修改本地状态
+								/*
+								 * ToastUtil.showToast(ShangLiaoActivity.this,
+								 * "上料页面修改状态成功", 0);
+								 */
+								mesObj.setState1("02"); // 修改传来的状态
+							} else {
+								ToastUtil.showToast(ShangLiaoActivity.this,
+										"状态修改失败", 0);
+							}
+						}
+
+						Log.i("mesObj", mesObj.toString());
+					}
+				}
+			} catch (Exception e) {
+				ToastUtil.showToast(ShangLiaoActivity.this,e.toString(),0);
 			}
 		}
 	};

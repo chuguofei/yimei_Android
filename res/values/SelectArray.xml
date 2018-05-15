@@ -15,11 +15,9 @@
         -->
     </string-array>
     <string-array name="mozuType">
-        <item>SMD</item>
         <item>喷码</item>
         <item>卡板</item>
         <item>印刷</item>
-        <item>贴片</item>
         <item>回流焊</item>
         <item>高温点亮</item>
         <item>外观</item>

@@ -102,7 +102,7 @@ public class TongYongActivity extends Activity {
 				} else {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
-				if (tag.equals("通用作业员")) { // 2131296268 2131361805
+				if (tag.equals("通用作业员")) {
 					Log.i("id", "作业员");
 					yimei_user_edt.setText(barcodeData);
 					if (yimei_user_edt.getText().toString().trim().equals("")

@@ -43,6 +43,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -71,6 +72,7 @@ public class MoZuActivity extends Activity {
 	private CheckBox quanxuan; // 全选按钮
 	private Button mozu_kaigong;// 开工按钮
 	private Button mozu_chuzhan;// 出站按钮
+	private Button mozu_shangliao;// 上料按钮
 	private String zcno;
 	private Spinner selectValue; // 下拉框
 	private List<mesPrecord> updateListState; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
@@ -162,7 +164,7 @@ public class MoZuActivity extends Activity {
 					}
 					picihao = yimei_mozu_proNum_edt.getText().toString().trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao,"S");
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					yimei_mozu_proNum_edt.selectAll();
@@ -190,10 +192,12 @@ public class MoZuActivity extends Activity {
 
 		quanxuan = (CheckBox) findViewById(R.id.mozu_quanxuan); // 全选按钮
 		listenerQuanXuan();
+		mozu_shangliao = (Button) findViewById(R.id.mozu_shangliao); // 获取开工id
 		mozu_kaigong = (Button) findViewById(R.id.mozu_kaigong); // 获取开工id
 		mozu_chuzhan = (Button) findViewById(R.id.mozu_chuzhan); // 获取开工id
 		mozu_kaigong.setOnClickListener(kaigongClick); // 开工点击事件
 		mozu_chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
+		mozu_shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
 		if (mListView == null) {
 			mozu_kaigong.setEnabled(false);
 			mozu_chuzhan.setEnabled(false);
@@ -213,7 +217,6 @@ public class MoZuActivity extends Activity {
 					boolean isChecked) {
 				if (MoZuAdapter == null) {
 					ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
-					quanxuan.setEnabled(false);
 					return;
 				}
 				if (isChecked) {
@@ -262,6 +265,104 @@ public class MoZuActivity extends Activity {
 			}
 		}
 	};
+	
+	/**
+	 * 上料点击事件
+	 */
+	OnClickListener shangliaoClick = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// 查看有没有选中的数据
+			HashMap<Integer, Boolean> state = MoZuAdapter.Getstate();
+			if (state == null) {
+				ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+			} else {
+				int count = 0;
+				mesPrecord mesObj = null;
+				for (int j = 0; j < MoZuAdapter.getCount(); j++) {
+					if (state.get(j)) {
+						if (state.get(j) != null) {
+							@SuppressWarnings("unchecked")
+							// 取listview中的数据
+							HashMap<String, Object> map = (HashMap<String, Object>) MoZuAdapter
+									.getItem(j);
+							mesPrecord m = (mesPrecord) map.get("mozu_item_title"); // 取选中工单号
+							mesObj = m;
+							count++;
+						}
+					}
+				}
+				switch (count) {
+				case 0:
+					ToastUtil.showToast(mozuActivity, "请选中一条记录!", 0);
+					break;
+				case 1:
+					showPopupMenu(v, mesObj);
+					break;
+				default:
+					// 多选
+					ToastUtil.showToast(mozuActivity, "不可以多选!", 0);
+					break;
+				}
+			}
+		}
+	};
+	
+	/**
+	 * 选择上料验证方式
+	 * 
+	 * @param view
+	 */
+	private void showPopupMenu(View view, final mesPrecord m) {
+		// View当前PopupMenu显示的相对View的位置
+		PopupMenu popupMenu = new PopupMenu(this, view);
+
+		// menu布局
+		popupMenu.getMenuInflater().inflate(R.menu.shangliaoitem,
+				popupMenu.getMenu());
+
+		// menu的item点击事件
+		popupMenu
+				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						String a = item.getTitle().toString();
+						if (item.getTitle().equals("料号")) { // 料号
+							JumpShangliao("料号", m);
+						} else if (item.getTitle().equals("料号+批号")) { // 料号+批号
+							JumpShangliao("料号+批号", m);
+						} else if (item.getTitle().equals("料号+BinCode")) { // 料号+bincode
+							JumpShangliao("料号+bincode", m);
+						}
+						return false;
+					}
+				});
+
+		// PopupMenu关闭事件
+		popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+			@Override
+			public void onDismiss(PopupMenu menu) {
+				// ToastUtil.showToast(gujingActivity, "关闭PopupMenu", 0);
+			}
+		});
+
+		popupMenu.show();
+	}
+	
+	/**
+	 * 选择上料的类型需传的类型
+	 */
+	public void JumpShangliao(String jumpMes, mesPrecord m) {
+		Intent intent = new Intent();
+		intent.setClass(mozuActivity, ShangLiaoActivity.class);// 跳转到上料页面
+		Bundle bundle = new Bundle();
+		bundle.putString("activity", "Tongyong_mozu");
+		bundle.putString("type", jumpMes); // 要传的类型
+		bundle.putSerializable("object", m);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
 
 	/**
 	 * 获取选中的数据并且请求服务器
@@ -460,7 +561,7 @@ public class MoZuActivity extends Activity {
 					}
 					Log.i("zcno", shebeihao);
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao, zcno);
+							.IsSbidQuery_mozu(shebeihao,"S");
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -932,10 +1033,7 @@ public class MoZuActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
-			switch (position) {
-			case 0:
-				zcno = "S";
-				break;
+			switch (position+1) {
 			case 1:
 				zcno = "S01";
 				break;
@@ -943,48 +1041,45 @@ public class MoZuActivity extends Activity {
 				zcno = "S02";
 				break;
 			case 3:
-				zcno = "S03";
-				break;
-			case 4:
 				zcno = "S04";
 				break;
-			case 5:
+			case 4:
 				zcno = "S05";
 				break;
-			case 6:
+			case 5:
 				zcno = "S06";
 				break;
-			case 7:
+			case 6:
 				zcno = "S07";
 				break;
-			case 8:
+			case 7:
 				zcno = "S08";
 				break;
-			case 9:
+			case 8:
 				zcno = "S09";
 				break;
-			case 10:
+			case 9:
 				zcno = "S10";
 				break;
-			case 11:
+			case 10:
 				zcno = "S11";
 				break;
-			case 12:
+			case 11:
 				zcno = "S12";
 				break;
-			case 13:
+			case 12:
 				zcno = "S13";
 				break;
-			case 14:
+			case 13:
 				zcno = "S14";
 				break;
-			case 15:
+			case 14:
 				zcno = "S15";
 				break;
-			case 16:
+			case 15:
 				zcno = "S20";
 				break;
-			case 17:
+			case 16:
 				zcno = "S21";
 				break;
 			}

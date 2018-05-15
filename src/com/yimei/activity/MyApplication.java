@@ -1,4 +1,4 @@
- package com.yimei.activity;
+package com.yimei.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-//	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
+//	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
 	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
 	public static final String DBID = "01";
@@ -27,7 +27,7 @@ public class MyApplication extends Application {
 	// public static final String MESURL = "http://192.168.8.107:8080/mes/api";
 	// public static final String MESURL = "http://192.168.8.105:8080/mes/api";
 	// 李老师公司
-	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
 	// public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
@@ -57,7 +57,7 @@ public class MyApplication extends Application {
 	 * @return
 	 */
 	public static String GetServerNowTime() {
-//		GregorianCalendar g = new GregorianCalendar();
+		// GregorianCalendar g = new GregorianCalendar();
 		Calendar c = Calendar.getInstance();
 		if (ServerTimeCha < 0) {
 			Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
@@ -65,11 +65,11 @@ public class MyApplication extends Application {
 			return df.format(d.getTime());
 		} else {
 			Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
-//			g.setTime(d);
+			// g.setTime(d);
 			return df.format(d.getTime());
 		}
 	}
-	
+
 	/**
 	 * 胶杯加3小时
 	 * 
@@ -77,7 +77,7 @@ public class MyApplication extends Application {
 	 */
 	public static String GetHunJiaoAdd_3(int num) {
 		Calendar c = Calendar.getInstance();
-		c.add(Calendar.HOUR_OF_DAY,num);
+		c.add(Calendar.HOUR_OF_DAY, num);
 		if (ServerTimeCha < 0) {
 			Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
 			String a = df.format(d.getTime());
