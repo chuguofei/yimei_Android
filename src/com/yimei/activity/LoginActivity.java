@@ -1,8 +1,13 @@
 package com.yimei.activity;
 
+import com.yimei.util.ToastUtil;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
@@ -10,10 +15,13 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
@@ -42,6 +50,15 @@ public class LoginActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "亲，请检查网络是否开启~", 0).show();
 		}
 		btn = (Button) findViewById(R.id.login_btn_login);
+		btn.setOnLongClickListener(new Button.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				ToastUtil.showToastLocation(loginActivity,"按钮长按",0);
+				showNormalDialog();
+				return true;
+			}
+		});
 		btn.setOnClickListener(new Button.OnClickListener() {
 
 			@Override
@@ -77,6 +94,52 @@ public class LoginActivity extends Activity {
 			}
 		});
 
+	}
+	
+	/**
+	 * 弹出提示框
+	 * 
+	 * @param mes
+	 */
+	private void showNormalDialog() {
+		LayoutInflater inflater = getLayoutInflater();
+		 View  dialog = inflater.inflate(R.layout.activity_newversion_dig,(ViewGroup) findViewById(R.id.dialog));
+		 final EditText editText = (EditText) dialog.findViewById(R.id.dig_et);
+
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				LoginActivity.this);
+		normalDialog.setTitle("版本更新");
+		normalDialog.setView(dialog);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(editText.getText().toString().equals("shineonadmin")){
+							ToastUtil.showToastLocation(loginActivity,"下载新的版本",0);
+							try {
+								ProgressDialog progressDialog = new ProgressDialog(loginActivity);
+								progressDialog.setTitle("提示");
+								progressDialog.setMessage("正在下载...");
+								progressDialog.setIndeterminate(false);
+								progressDialog.setMax(100);
+								progressDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+								progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL); // 进度条类型
+								progressDialog.show();
+								new DownloadAPK(progressDialog,LoginActivity.this).execute(MyApplication.MESDOWNLOADAPKURL);
+							} catch (Exception e) {
+								ToastUtil.showToastLocation(loginActivity,"服务器异常,请联系管理员!",0);
+							}
+						}else{
+							ToastUtil.showToastLocation(loginActivity,"密码错误",0);
+							showNormalDialog();
+							return;
+						}
+					}
+				});
+		normalDialog.setNegativeButton("取消", null);
+		// 显示
+		normalDialog.show();
 	}
 	
 	protected void onResume() {

@@ -284,11 +284,11 @@ public class RuKuActivity extends Activity {
 				rukuActivity);
 		normalDialog.setTitle("提示");
 		normalDialog.setMessage(mes);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
 		normalDialog.setPositiveButton("确定",
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToastUtil.showToast(rukuActivity, "点击了确定", 0);
 						mListView.setAdapter(null);
 						RuKuAdapter.notifyDataSetChanged();
 						InitMM0Data();

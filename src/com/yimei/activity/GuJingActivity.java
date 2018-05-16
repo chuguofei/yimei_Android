@@ -41,6 +41,7 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fast
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.adapter.GuJingScrollAdapter;
+import com.yimei.adapter.ScrollAdapter;
 import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.sqlliteUtil.mesAllMethod;
@@ -76,6 +77,7 @@ public class GuJingActivity extends Activity {
 	private static JSONObject newJson; // 拿新sid存在json
 	private static String currSlkid;
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
+	private Map<String, String> ptime = new HashMap<String, String>();
 
 	/**
 	 * 获取pda扫描（广播）
@@ -198,6 +200,10 @@ public class GuJingActivity extends Activity {
 		kaigong.setOnClickListener(kaigongClick); // 开工点击事件
 		chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
 		shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
+
+		// 取出站的时间
+		Map<String, String> map = MyApplication.QueryBatNo("M_PROCESS5", "");
+		httpRequestQueryRecord(MyApplication.MESURL, map, "gujing_ptime");
 	};
 
 	/**
@@ -370,7 +376,9 @@ public class GuJingActivity extends Activity {
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
-							scrollAdapter.notifyDataSetChanged();
+							if (scrollAdapter != null) {
+								scrollAdapter.notifyDataSetChanged();
+							}
 							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备或制程!", 0);
@@ -456,7 +464,8 @@ public class GuJingActivity extends Activity {
 						jsonValue.put("sys_stated", "3");
 						jsonValue.put("sbid", shebeihao);
 						jsonValue.put("smake", MyApplication.user);
-						jsonValue.put("mkdate",MyApplication.GetServerNowTime());
+						jsonValue.put("mkdate",
+								MyApplication.GetServerNowTime());
 						jsonValue.put("sbuid", "D0001");
 						newJson = jsonValue;
 						Map<String, String> mesIdMap = MyApplication
@@ -556,7 +565,9 @@ public class GuJingActivity extends Activity {
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
-							scrollAdapter.notifyDataSetChanged();
+							if (scrollAdapter != null) {
+								scrollAdapter.notifyDataSetChanged();
+							}
 							nextEditFocus((EditText) findViewById(R.id.yimei_gujingequipment_edt));
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备,请核对~!", 0);
@@ -587,6 +598,8 @@ public class GuJingActivity extends Activity {
 								.get("values")).size(); i++) {
 							JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 									.get("values")).get(i));
+							jsonValue.put("sbid", jsonValue.get("sbid")
+									.toString().toUpperCase());
 							mesPrecord new_mes = jsonValue
 									.toJavaObject(mesPrecord.class);
 							if (!gujing_list.IsSid1AndZncoAndSbid(
@@ -657,8 +670,12 @@ public class GuJingActivity extends Activity {
 							chuzhan.setEnabled(true);
 						}
 					} else {
-						mListView.setAdapter(null);
-						scrollAdapter.notifyDataSetChanged();
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							if (scrollAdapter != null) {
+								scrollAdapter.notifyDataSetChanged();
+							}
+						}
 					}
 				}
 				if (string.equals("kaigongUpdata")) {
@@ -676,7 +693,8 @@ public class GuJingActivity extends Activity {
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
-												MyApplication.user,m.getState1(), "03",
+												MyApplication.user,
+												m.getState1(), "03",
 												m.getSid1(), m.getSlkid(),
 												zcno, "200");
 								httpRequestQueryRecord(MyApplication.MESURL,
@@ -684,7 +702,8 @@ public class GuJingActivity extends Activity {
 								// ------------------------修改服务器的俩张表（开工）
 
 								if (gujing_list.kaigongState1Update(
-										m.getSid1(), MyApplication.GetServerNowTime())) {
+										m.getSid1(),
+										MyApplication.GetServerNowTime())) {
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
 									scrollAdapter = new GuJingScrollAdapter(
@@ -717,42 +736,30 @@ public class GuJingActivity extends Activity {
 									.parseInt(jsonObject.get("id").toString()) == 1) {
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
-							long chooseTime = MyApplication.ChooseTime(
-									m.getHpdate()
-									);
-							if (chooseTime > 30 || m.getHpdate()==null) {
-								Log.i("mes", m.toString());
-								if (m.getState1().equals("03")) {
-									// ------------------------修改服务器的俩张表（出站）
-									Map<String, String> updateServerTable = MyApplication
-											.UpdateServerTableMethod(
-													MyApplication.DBID,
-													MyApplication.user, "03",
-													"04", m.getSid1(),
-													m.getSlkid(), zcno, "200");
-									httpRequestQueryRecord(
-											MyApplication.MESURL,
-											updateServerTable,
-											"updateServerTable");
+							if (m.getState1().equals("03")) {
+								// ------------------------修改服务器的俩张表（出站）
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user, "03", "04",
+												m.getSid1(), m.getSlkid(),
+												zcno, "200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable");
 
-									if (gujing_list.delSid(m.getSid())) {
-										Log.i("kaigongUpdata", "本地库已删除~");
-										List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
-												shebeihao, zcno);
-										scrollAdapter = new GuJingScrollAdapter(
-												GuJingActivity.this,
-												getListMes_Procord);
-										mListView.setAdapter(scrollAdapter);
+								if (gujing_list.delSid(m.getSid())) {
+									Log.i("kaigongUpdata", "本地库已删除~");
+									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
+											shebeihao, zcno);
+									scrollAdapter = new GuJingScrollAdapter(
+											GuJingActivity.this,
+											getListMes_Procord);
+									mListView.setAdapter(scrollAdapter);
 
-									} else {
-										Log.i("kaigongUpdata", "本地库删除失败");
-									}
+								} else {
+									Log.i("kaigongUpdata", "本地库删除失败");
 								}
-							} else {
-								ToastUtil.showToast(gujingActivity, "时间为到，不能出站!",
-										0);
 							}
-
 						}
 						updatekaigongSid1.clear();
 					} else {
@@ -761,8 +768,21 @@ public class GuJingActivity extends Activity {
 						// Log.i("kaigongUpdata", "服务器修改开工状态失败");
 					}
 				}
+				if (string.equals("gujing_ptime")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					for (int i = 0; i < ((JSONArray) jsonObject.get("values"))
+							.size(); i++) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(i));
+						if (jsonValue.containsKey("ptime")) {
+							ptime.put(jsonValue.get("id").toString(), jsonValue
+									.get("ptime").toString());
+						}
+					}
+				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				ToastUtil.showToastLocation(gujingActivity, e.toString(), 0);
 			}
 		}
 	};
@@ -915,6 +935,7 @@ public class GuJingActivity extends Activity {
 					JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
 					// 如果是入站状态改变
 					if (publicState.equals("kaigongUpdata")) {
+						mes_precord.setHpdate(MyApplication.GetServerNowTime());
 						// 如果状态是入站和上料都可以开工
 						if (json.get("state1").toString().equals("01")) {
 							Map<String, String> updateTimeMethod = MyApplication
@@ -937,14 +958,25 @@ public class GuJingActivity extends Activity {
 									"选中的批次已是开工状态！", 0);
 						}
 					} else if (publicState.equals("chuzhanUpdata")) {
+
 						if (json.get("state1").toString().equals("03")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "03", "04",
-											mes_precord.getSid(), zuoyeyuan,
-											zcno, "202");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
+							int chooseTime = MyApplication
+									.ChooseTime(mes_precord.getHpdate());
+							if (chooseTime > Integer.parseInt(ptime
+									.get(MyApplication.GUJING_ZCNO))
+									|| ptime == null) {
+								Map<String, String> updateTimeMethod = MyApplication
+										.updateServerTimeMethod(
+												MyApplication.DBID,
+												MyApplication.user, "03", "04",
+												mes_precord.getSid(),
+												zuoyeyuan, zcno, "202");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateTimeMethod, publicState);
+							} else {
+								ToastUtil.showToast(gujingActivity,
+										"时间未到，不能出站！", 0);
+							}
 						} else if (json.get("state1").toString().equals("02")) {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次不能出站！", 0);
@@ -952,6 +984,7 @@ public class GuJingActivity extends Activity {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次不能出站！", 0);
 						}
+
 					}
 
 				}

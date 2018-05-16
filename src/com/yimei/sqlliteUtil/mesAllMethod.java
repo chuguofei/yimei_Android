@@ -223,7 +223,7 @@ public class mesAllMethod {
 						"select prd_name,zcno,op,sbid,sid1,aa,ab,ac,slkid,sid,sbuid,prd_no,qty,bok,clid,unit,"
 								+ "zcno1,state1,state,creftimes,erid,hpdate,dcid,smake,mkdate,iid,"
 								+ "remark,bfirst from mes_precord where sbid=? and zcno=?",
-						new String[]{sbid,zcno});
+						new String[]{sbid.toString().toUpperCase(),zcno});
 //		List<mes_precord> list = new ArrayList<mes_precord>();
 		List<mesPrecord> list = null;
 		if (cursor != null) {

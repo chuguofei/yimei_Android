@@ -78,7 +78,7 @@ public class Test extends AndroidTestCase{
 	public void findList(){
 		mesAllMethod mes = new mesAllMethod(this.getContext());
 		List<mesPrecord> findList = mes.findAll();
-		if(findList!=null){
+		if(findList.size()>0){
 			Log.i("Tag","--有数据");
 		}else{
 			Log.i("Tag","--展示没有数据");

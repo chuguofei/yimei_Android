@@ -199,9 +199,11 @@ public class MoZuActivity extends Activity {
 		mozu_chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
 		mozu_shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
 		if (mListView == null) {
+			mozu_shangliao.setEnabled(false);
 			mozu_kaigong.setEnabled(false);
 			mozu_chuzhan.setEnabled(false);
 		} else {
+			mozu_shangliao.setEnabled(true);
 			mozu_kaigong.setEnabled(true);
 			mozu_chuzhan.setEnabled(true);
 		}
@@ -798,9 +800,11 @@ public class MoZuActivity extends Activity {
 					ToastUtil.showToast(getApplicationContext(), "《" + picihao
 							+ "》测试号加载到列表中~", 0);
 					if (mListView == null) {
+						mozu_shangliao.setEnabled(false);
 						mozu_kaigong.setEnabled(false);
 						mozu_chuzhan.setEnabled(false);
 					} else {
+						mozu_shangliao.setEnabled(true);
 						mozu_kaigong.setEnabled(true);
 						mozu_chuzhan.setEnabled(true);
 					}
@@ -812,9 +816,11 @@ public class MoZuActivity extends Activity {
 						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
 					}
 					if (mListView == null) {
+						mozu_shangliao.setEnabled(false);
 						mozu_kaigong.setEnabled(false);
 						mozu_chuzhan.setEnabled(false);
 					} else {
+						mozu_shangliao.setEnabled(true);
 						mozu_kaigong.setEnabled(true);
 						mozu_chuzhan.setEnabled(true);
 					}
@@ -832,9 +838,11 @@ public class MoZuActivity extends Activity {
 					ToastUtil.showToast(getApplicationContext(), "《"
 							+ shebeihao + "》设备号已加载到列表中", 0);
 					if (mListView == null) {
+						mozu_shangliao.setEnabled(false);
 						mozu_kaigong.setEnabled(false);
 						mozu_chuzhan.setEnabled(false);
 					} else {
+						mozu_shangliao.setEnabled(true);
 						mozu_kaigong.setEnabled(true);
 						mozu_chuzhan.setEnabled(true);
 					}
@@ -843,6 +851,7 @@ public class MoZuActivity extends Activity {
 					// ToastUtil.showToast(getApplicationContext(), "该设备没有记录",
 					// 0);
 					if (mListView != null) {
+						mozu_shangliao.setEnabled(true);
 						mozu_kaigong.setEnabled(true);
 						mozu_chuzhan.setEnabled(true);
 						mListView.setAdapter(null);
@@ -850,6 +859,7 @@ public class MoZuActivity extends Activity {
 
 						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
 					} else {
+						mozu_shangliao.setEnabled(false);
 						mozu_kaigong.setEnabled(false);
 						mozu_chuzhan.setEnabled(false);
 					}

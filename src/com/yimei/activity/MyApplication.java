@@ -19,19 +19,20 @@ import android.widget.EditText;
 public class MyApplication extends Application {
 
 //	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
-	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
+	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk"; 
+//	 public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
 	public static final String DBID = "01";
-	// public static final String DBID = "mes";
+//	 public static final String DBID = "mes";
 	// 李老师宿舍
-	// public static final String MESURL = "http://192.168.8.107:8080/mes/api";
+//	 public static final String MESURL = "http://192.168.8.107:8080/mes/api";
 	// public static final String MESURL = "http://192.168.8.105:8080/mes/api";
 	// 李老师公司
-	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
 	// public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
-	// public static final String MESURL = "http://192.168.5.86:9999/jd/api";
+//	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
 	// public static final String MESURL = "http://192.168.8.102:9999/jd/api";
 	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";
@@ -105,29 +106,18 @@ public class MyApplication extends Application {
 		long xiangchaTime = 0, nowTime = 0;
 		try {
 			Calendar c = Calendar.getInstance();
-			nowTime = c.getTimeInMillis();
+			if (ServerTimeCha < 0) {
+				Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
+				String a = df.format(d.getTime());
+				nowTime = d.getTime();
+			} else {
+				Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+				String a = df.format(d.getTime());
+				nowTime = d.getTime();
+			}
 			xiangchaTime = Math.abs(nowTime - df.parse(kaigongTime).getTime());
-
-			// long nd = 1000 * 24 * 60 * 60;
-			// long nh = 1000 * 60 * 60;
-			// long nm = 1000 * 60;
-			// // long ns = 1000;
-			// // 获得两个时间的毫秒时间差异
-			// long a =df.parse(nowTime).getTime();
-			// long b =df.parse(kaigongTime).getTime();
-			// long diff = df.parse(nowTime).getTime() -
-			// df.parse(kaigongTime).getTime();
-			// // 计算差多少天
-			// long day = diff / nd;
-			// // 计算差多少小时
-			// long hour = diff % nd / nh;
-			// // 计算差多少分钟
-			// long min = diff % nd % nh / nm;
-			// xiangchaTime = min;
-			// // 计算差多少秒//输出结果
-			// System.out.println(day + "天" + hour + "小时" + min + "分钟");
 		} catch (Exception e) {
-			e.printStackTrace();
+			return 1;
 		}
 		return (int) xiangchaTime / 1000 / 60;
 	}

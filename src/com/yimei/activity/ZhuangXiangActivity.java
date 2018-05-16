@@ -935,6 +935,7 @@ public class ZhuangXiangActivity extends TabActivity {
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
 				zhuangxiangActivity);
 		normalDialog.setTitle("提示");
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
 		normalDialog.setSingleChoiceItems(
 			    str, checkNum,
 			     new DialogInterface.OnClickListener() {
