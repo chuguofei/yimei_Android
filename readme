@@ -9,5 +9,13 @@
 	编带：
 		TESTLOTQUERY //批次号查询 （lot_no）	
 	
+	制程查询：
+		M_PROCESS //查询所有制程
+	制具：
+		MOZREGISTER //查询货物代号和模具id
+		
+视图:	view_moulda //查询制具登记的主子表
+	
 	
 查辅助方法： MyApplication.QueryBatNo(辅助名,where查询);  //通用只要查数据都可以用
+		MyApplication.httpMapKeyValueMethod(); //服务器的增删改查

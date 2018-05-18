@@ -113,6 +113,21 @@
             android:name=".HunJiaoActivity"
             android:label="@string/hunjiaoTitle" >
         </activity>
+         <!-- 制具领出页面 -->
+        <activity
+            android:name=".ZhiJuLingChuActivity"
+            android:label="@string/zhijulingchuTitle" >
+        </activity>
+         <!-- 制具清洗页面 -->
+        <activity
+            android:name=".ZhiJuQingXiActivity"
+            android:label="@string/zhijuQingXiTitle" >
+        </activity>
+        <!-- 制具入库页面 -->
+        <activity
+            android:name=".ZhiJuRukKuActivity"
+            android:label="@string/zhijuRuKuTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

@@ -54,7 +54,7 @@ public class LoginActivity extends Activity {
 			
 			@Override
 			public boolean onLongClick(View v) {
-				ToastUtil.showToastLocation(loginActivity,"按钮长按",0);
+				ToastUtil.showToastLocation(loginActivity,"进入跟新系统窗口",0);
 				showNormalDialog();
 				return true;
 			}

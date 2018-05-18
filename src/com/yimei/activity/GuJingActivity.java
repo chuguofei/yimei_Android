@@ -435,7 +435,7 @@ public class GuJingActivity extends Activity {
 							map.put("dbid", MyApplication.DBID);
 							map.put("usercode", MyApplication.user);
 							map.put("apiId", "assist");
-							map.put("assistid", "{MOZCLIST}");
+							map.put("assistid", "{MOZCLISTWEB}");
 							map.put("cont", "~sid1='" + yimei_pro_edt
 									+ "' and zcno='" + zcno + "'");
 							httpRequestQueryRecord(MyApplication.MESURL, map,
@@ -443,38 +443,52 @@ public class GuJingActivity extends Activity {
 						}
 					}
 				}
-				if (string.equals("json")) {
-					JSONObject jsonObject = JSON.parseObject(b.getString(
-							"jsonObj").toString());
+				if (string.equals("json")) { // 没有批次号
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-						ToastUtil.showToast(getApplicationContext(), "没有该批次号!",
-								0);
+						ToastUtil.showToast(getApplicationContext(), "没有该批次号!",0);
+						return;
 					} else {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
-						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
-						qtyv = jsonValue.get("qty").toString(); // (201)批次数量
-						jsonValue.put("slkid", jsonValue.get("sid"));
-						jsonValue.put("sid", "");
-						jsonValue.put("state1", "01");
-						jsonValue.put("state", "0");
-						jsonValue.put("prd_no", jsonValue.get("prd_name"));
-						jsonValue.put("dcid", GetAndroidMacUtil.getMac());
-						jsonValue.put("op", zuoyeyuan);
-						jsonValue.put("sys_stated", "3");
-						jsonValue.put("sbid", shebeihao);
-						jsonValue.put("smake", MyApplication.user);
-						jsonValue.put("mkdate",
-								MyApplication.GetServerNowTime());
-						jsonValue.put("sbuid", "D0001");
-						newJson = jsonValue;
-						Map<String, String> mesIdMap = MyApplication
-								.httpMapKeyValueMethod(MyApplication.DBID,
-										"savedata", MyApplication.user,
-										jsonValue.toJSONString(), "D0001WEB",
-										"1");
-						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
-								"id");
+						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
+							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",0);
+							yimei_gujingproNum_edt.selectAll();
+							return;
+						} else if (jsonValue.get("state").toString().equals("02")
+								|| jsonValue.get("state").toString().equals("03")) {
+							ToastUtil.showToast(gujingActivity, "该批号已经入站!", 0);
+							yimei_gujingproNum_edt.selectAll();
+							return;
+						} else if (jsonValue.get("state").toString().equals("04")) {
+							ToastUtil.showToast(gujingActivity, "该批号已经出站!", 0);
+							yimei_gujingproNum_edt.selectAll();
+							return;
+						} else {
+							currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
+							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
+							jsonValue.put("slkid", jsonValue.get("sid"));
+							jsonValue.put("sid", "");
+							jsonValue.put("state1", "01");
+							jsonValue.put("state", "0");
+							jsonValue.put("prd_no", jsonValue.get("prd_name"));
+							jsonValue.put("dcid", GetAndroidMacUtil.getMac());
+							jsonValue.put("op", zuoyeyuan);
+							jsonValue.put("sys_stated", "3");
+							jsonValue.put("sbid", shebeihao);
+							jsonValue.put("smake", MyApplication.user);
+							jsonValue.put("mkdate",
+									MyApplication.GetServerNowTime());
+							jsonValue.put("sbuid", "D0001");
+							newJson = jsonValue;
+							Map<String, String> mesIdMap = MyApplication
+									.httpMapKeyValueMethod(MyApplication.DBID,
+											"savedata", MyApplication.user,
+											jsonValue.toJSONString(),
+											"D0001WEB", "1");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									mesIdMap, "id");
+						}
 					}
 				}
 				if (string.equals("id")) {
@@ -829,37 +843,31 @@ public class GuJingActivity extends Activity {
 	 * 全选方法
 	 */
 	protected void listenerQuanXuan() {
-		gujing_quanxuan
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (scrollAdapter == null) {
-							ToastUtil.showToast(getApplicationContext(),
-									"没有数据", 0);
-							gujing_quanxuan.setEnabled(false);
-							return;
-						}
-						if (isChecked) {
-							int initCheck = scrollAdapter.initCheck(true);
-							if (initCheck == -1) {
-								ToastUtil.showToast(getApplicationContext(),
-										"没有数据", 0);
-								gujing_quanxuan.setEnabled(false);
-							}
-							scrollAdapter.notifyDataSetChanged();
-						} else {
-							int initCheck = scrollAdapter.initCheck(false);
-							if (initCheck == -1) {
-								ToastUtil.showToast(getApplicationContext(),
-										"没有数据", 0);
-								gujing_quanxuan.setEnabled(false);
-							}
-							scrollAdapter.notifyDataSetChanged();
-						}
+		gujing_quanxuan.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (scrollAdapter == null) {
+					ToastUtil.showToast(getApplicationContext(), "没有数据", 0);
+					return;
+				}
+				if (isChecked) {
+					int initCheck = scrollAdapter.initCheck(true);
+					scrollAdapter.notifyDataSetChanged();
+					if (initCheck == -1) {
+						ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+						return;
 					}
-				});
-
+				} else {
+					int initCheck = scrollAdapter.initCheck(false);
+					scrollAdapter.notifyDataSetChanged();
+					if (initCheck == -1) {
+						ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+						return;
+					}
+				}
+			}
+		});
 	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
@@ -922,6 +930,20 @@ public class GuJingActivity extends Activity {
 					}
 				}
 			}
+
+			String ShowstateName = null;
+			if ("kaigongUpdata".equals(publicState)) {
+				ShowstateName = "开工";
+			} else if ("chuzhanUpdata".equals(publicState)) {
+				ShowstateName = "出站";
+			}
+			if (zcno.equals("11")) {
+				if (count > 2) {
+					ToastUtil.showToast(GuJingActivity.this, "固晶"
+							+ ShowstateName + "最多是两批物料~", 0);
+					return;
+				}
+			}
 			switch (count) {
 			case 0:
 				ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
@@ -962,7 +984,7 @@ public class GuJingActivity extends Activity {
 						if (json.get("state1").toString().equals("03")) {
 							int chooseTime = MyApplication
 									.ChooseTime(mes_precord.getHpdate());
-							if (chooseTime > Integer.parseInt(ptime
+							if (chooseTime >= Integer.parseInt(ptime
 									.get(MyApplication.GUJING_ZCNO))
 									|| ptime == null) {
 								Map<String, String> updateTimeMethod = MyApplication
@@ -974,8 +996,7 @@ public class GuJingActivity extends Activity {
 								httpRequestQueryRecord(MyApplication.MESURL,
 										updateTimeMethod, publicState);
 							} else {
-								ToastUtil.showToast(gujingActivity,
-										"时间未到，不能出站！", 0);
+								ToastUtil.showToast(getApplicationContext(),"选中的批次不能出站,已开工"+chooseTime+"分！", 0);
 							}
 						} else if (json.get("state1").toString().equals("02")) {
 							ToastUtil.showToast(getApplicationContext(),

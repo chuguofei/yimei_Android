@@ -18,23 +18,24 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-//	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
-	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk"; 
-//	 public static final String MESURL = "http://59.53.182.251:8088/mes/api";
+//	 public static final String MESURL = "http://192.168.7.15:8088/mes/api";
+	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk";
+	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
 	public static final String DBID = "01";
-//	 public static final String DBID = "mes";
+	// public static final String DBID = "mes";
 	// 李老师宿舍
-//	 public static final String MESURL = "http://192.168.8.107:8080/mes/api";
+//	public static final String MESURL = "http://192.168.8.107:8080/mes/api";
 	// public static final String MESURL = "http://192.168.8.105:8080/mes/api";
 	// 李老师公司
-	public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+//	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
-	// public static final String MESURL = "http://192.168.5.84:9050/jd/api";
+	 public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
-//	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
+	// public static final String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
 	// public static final String MESURL = "http://192.168.8.102:9999/jd/api";
+	
 	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";
 	public static String user = "";
 
@@ -58,17 +59,12 @@ public class MyApplication extends Application {
 	 * @return
 	 */
 	public static String GetServerNowTime() {
-		// GregorianCalendar g = new GregorianCalendar();
+		//GregorianCalendar g = new GregorianCalendar();
 		Calendar c = Calendar.getInstance();
-		if (ServerTimeCha < 0) {
-			Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
-			String a = df.format(d.getTime());
-			return df.format(d.getTime());
-		} else {
-			Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
-			// g.setTime(d);
-			return df.format(d.getTime());
-		}
+		Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+		String a = df.format(d.getTime());
+		// g.setTime(d);
+		return df.format(d.getTime());
 	}
 
 	/**
@@ -106,15 +102,10 @@ public class MyApplication extends Application {
 		long xiangchaTime = 0, nowTime = 0;
 		try {
 			Calendar c = Calendar.getInstance();
-			if (ServerTimeCha < 0) {
-				Date d = new Date(c.getTimeInMillis() - Math.abs(ServerTimeCha));
-				String a = df.format(d.getTime());
-				nowTime = d.getTime();
-			} else {
-				Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
-				String a = df.format(d.getTime());
-				nowTime = d.getTime();
-			}
+			Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+			String a = df.format(d.getTime());
+			nowTime = d.getTime();
+
 			xiangchaTime = Math.abs(nowTime - df.parse(kaigongTime).getTime());
 		} catch (Exception e) {
 			return 1;
@@ -216,14 +207,16 @@ public class MyApplication extends Application {
 	}
 
 	/**
-	 * 拿id前提交的json对象(添加)
+	 * 服务器(增删改查)
 	 * 
 	 * @param dbid
 	 * @param apiId
 	 *            （savedata）
 	 * @param usercode
 	 * @param jsonstr
+	 *            （json串）
 	 * @param pcell
+	 *            （对象名）
 	 * @param datatype
 	 *            （1）
 	 * @return
@@ -348,6 +341,22 @@ public class MyApplication extends Application {
 		map.put("usercode", usercode);
 		map.put("sbid", sbidv);
 		map.put("prtno", prtnov);
+		map.put("apiId", "mesudp");
+		map.put("id", id);
+		return map;
+	}
+
+	/**
+	 * 模具 400
+	 * 
+	 */
+	public static Map<String, String> updateServerMoJu(String dbid,
+			String usercode, String zct, String mojuid, String id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("dbid", dbid);
+		map.put("usercode", usercode);
+		map.put("newstate", zct);
+		map.put("sbid", mojuid);
 		map.put("apiId", "mesudp");
 		map.put("id", id);
 		return map;

@@ -79,13 +79,11 @@ public class LoadingActivity extends Activity {
 			if (string.equals("GetServerTime")) {
 				String jsonObj = b.getString("jsonObj");
 				long ServetTime = Long.parseLong(jsonObj, 16);
+				String a = MyApplication.df.format(new Date(ServetTime));
 				Calendar c = Calendar.getInstance();
 				long nowTime = c.getTimeInMillis();
-				if (ServetTime - nowTime > 0) {
-					MyApplication.ServerTimeCha = ServetTime - nowTime;
-				} else {
-					MyApplication.ServerTimeCha = ServetTime - nowTime;
-				}
+				String b1 = MyApplication.df.format(new Date(nowTime));
+				MyApplication.ServerTimeCha = ServetTime - nowTime;
 			}
 		}
 	};
@@ -237,7 +235,21 @@ public class LoadingActivity extends Activity {
 									HunJiaoActivity.class);
 							startActivity(intent);
 						}
-
+						if (caidan.equals("E5005")) { // 制具领出
+							Intent intent = new Intent(LoadingActivity.this,
+									ZhiJuLingChuActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("E5006")) { // 制具清洗
+							Intent intent = new Intent(LoadingActivity.this,
+									ZhiJuQingXiActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("E5004")) { // 制具入库
+							Intent intent = new Intent(LoadingActivity.this,
+									ZhiJuRukKuActivity.class);
+							startActivity(intent);
+						}
 						break;
 					case 0:
 						Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

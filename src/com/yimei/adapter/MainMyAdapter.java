@@ -13,6 +13,9 @@ import com.yimei.activity.LoadingActivity;
 import com.yimei.activity.LoginActivity;
 import com.yimei.activity.MoZuActivity;
 import com.yimei.activity.R;
+import com.yimei.activity.ZhiJuLingChuActivity;
+import com.yimei.activity.ZhiJuQingXiActivity;
+import com.yimei.activity.ZhiJuRukKuActivity;
 import com.yimei.activity.ZhuangXiangActivity;
 import com.yimei.activity.R.id;
 import com.yimei.activity.R.layout;
@@ -134,6 +137,21 @@ public class MainMyAdapter extends BaseAdapter {
 				if (mainMap.getKey().equals("D2009")) { //混胶作业
 					Intent intent = new Intent(context,
 							HunJiaoActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("E5005")) { //制具领出
+					Intent intent = new Intent(context,
+							ZhiJuLingChuActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("E5006")) { //制具清洗
+					Intent intent = new Intent(context,
+							ZhiJuQingXiActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("E5004")) { //制具清洗
+					Intent intent = new Intent(context,
+							ZhiJuRukKuActivity.class);
 					v.getContext().startActivity(intent);
 				}
 			}

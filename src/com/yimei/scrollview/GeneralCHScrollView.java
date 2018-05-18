@@ -5,10 +5,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
-
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.RuKuActivity;
+import com.yimei.activity.ZhiJuLingChuActivity;
+import com.yimei.activity.ZhiJuQingXiActivity;
+import com.yimei.activity.ZhiJuRukKuActivity;
 import com.yimei.activity.ZhuangXiangActivity;
 
 public class GeneralCHScrollView extends HorizontalScrollView {
@@ -39,7 +41,15 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("混胶登记")) {
 			activity = (HunJiaoActivity) context;
 		}
-		
+		if (title.equals("制具领出")) {
+			activity = (ZhiJuLingChuActivity) context;
+		}
+		if (title.equals("制具清洗")) {
+			activity = (ZhiJuQingXiActivity) context;
+		}
+		if (title.equals("制具入库")) {
+			activity = (ZhiJuRukKuActivity) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -60,6 +70,15 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof HunJiaoActivity) {
 			((HunJiaoActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof ZhiJuLingChuActivity) {
+			((ZhiJuLingChuActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof ZhiJuQingXiActivity) {
+			((ZhiJuQingXiActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof ZhiJuRukKuActivity) {
+			((ZhiJuRukKuActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -90,6 +109,27 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof HunJiaoActivity) {
 			if (((HunJiaoActivity) activity).mTouchView == this) {
 				((HunJiaoActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof ZhiJuLingChuActivity) {
+			if (((ZhiJuLingChuActivity) activity).mTouchView == this) {
+				((ZhiJuLingChuActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof ZhiJuQingXiActivity) {
+			if (((ZhiJuQingXiActivity) activity).mTouchView == this) {
+				((ZhiJuQingXiActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof ZhiJuRukKuActivity) {
+			if (((ZhiJuRukKuActivity) activity).mTouchView == this) {
+				((ZhiJuRukKuActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
