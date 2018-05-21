@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    <com.yimei.scrollview.GeneralCHScrollView
+        android:id="@+id/zhijuruku_item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/yimei_zhijuruku_op"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_zhijuruku_sbid"
+                android:layout_width="100dip"
+                android:gravity="center"
+                android:layout_height="fill_parent"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_zhijuruku_mkdate"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850"
+                 />
+        </LinearLayout>
+    </com.yimei.scrollview.GeneralCHScrollView>
+
+</LinearLayout>

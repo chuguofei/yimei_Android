@@ -250,6 +250,16 @@ public class LoadingActivity extends Activity {
 									ZhiJuRukKuActivity.class);
 							startActivity(intent);
 						}
+						if (caidan.equals("D6004")) { // //加锡膏登记
+							Intent intent = new Intent(LoadingActivity.this,
+									JiaXiGaoActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("E0001")) { // //加锡膏登记
+							Intent intent = new Intent(LoadingActivity.this,
+									SCFLActivity.class);
+							startActivity(intent);
+						}
 						break;
 					case 0:
 						Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

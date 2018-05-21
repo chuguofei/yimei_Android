@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -74,8 +75,8 @@ public class ZhuangXiangActivity extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_zhuangxiang);
-		//2835A09-30H10-P3NN-3A2  180425TS011045_1 
 		Application app = getApplication();
 		myapp = (MyApplication) app;
 		myapp.addActivity_(this);

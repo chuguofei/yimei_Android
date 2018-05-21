@@ -21,13 +21,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/gujing_type" />
-
-            <Spinner
+            
+             <Spinner
                 android:id="@+id/mozu_selectValue"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
-                android:background="@drawable/shape_edittext"
-                android:entries="@array/mozuType" />
+                android:background="@drawable/shape_edittext" />
         </TableRow>
 
         <TableRow android:layout_marginTop="20dp" >

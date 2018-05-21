@@ -1,0 +1,408 @@
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/tabhost"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    tools:context="com.example.yimei_v01.SCFLActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TabWidget>
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/scfl_tab1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    android:id="@+id/SCFLScanArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:shrinkColumns="0,1,2" >
+
+                    <!-- 用户名 -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_biandai_user" />
+
+                        <EditText
+                            android:id="@+id/yimei_SCFL_user"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_SCFL_user"
+                            android:paddingLeft="10dp"
+                            android:tag="生产发料作业员" />
+                    </TableRow>
+
+                    <!-- 制令单号 -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scfl_mo_no" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_mo_no"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_scfl_mo_no"
+                            android:paddingLeft="10dp"
+                            android:tag="生产发料制令号" />
+                    </TableRow>
+                    <!-- 材料号 -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scfl_prd_no" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_prd_no"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_scfl_prd_no"
+                            android:paddingLeft="10dp"
+                            android:tag="生产发料材料号" />
+                    </TableRow>
+                    <!-- 批次号 -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scfl_bat_no" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_bat_no"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_scfl_bat_no"
+                            android:paddingLeft="10dp"
+                            android:tag="生产发料批次号" />
+                    </TableRow>
+                    <!-- bincode -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scfl_bincode" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_bincode"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:tag="生产发料bincode"
+                            android:labelFor="@+id/yimei_scfl_bincode"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+
+                    <!-- 数量 -->
+
+                    <TableRow android:layout_marginTop="6dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scfl_qty" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_qty"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:ems="10"
+                            android:enabled="true"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:tag="生产发料数量"
+                            android:labelFor="@+id/yimei_scfl_qty"
+                            android:paddingLeft="10dp" />
+                    </TableRow>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal" >
+
+                        <!-- 应发数 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yimei_shangliao_NumDue"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei__scfl_yingfa"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:editable="false"
+                            android:ems="10"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei__scfl_yingfa"
+                            android:maxLength="12"
+                            android:paddingLeft="10dp"
+                            android:textColor="#032eff" />
+                        <!-- 已发数 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/yimei_shangliao_NumIssued"
+                            android:textColor="#032eff" />
+
+                        <EditText
+                            android:id="@+id/yimei_scfl_yifa"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/shape_edittext"
+                            android:editable="false"
+                            android:ems="10"
+                            android:inputType="text"
+                            android:labelFor="@+id/yimei_scfl_yifa"
+                            android:maxLength="12"
+                            android:paddingLeft="10dp"
+                            android:textColor="#032eff" />
+                    </LinearLayout>
+                </TableLayout>
+
+                <LinearLayout
+                    android:id="@+id/scfl_scan_data_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="#ccc"
+                    android:minHeight="40dip"
+                    android:orientation="horizontal" >
+
+                    <com.yimei.scrollview.GeneralCHScrollView
+                        android:id="@+id/scfl_scan_scroll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/xiangci"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_gdic"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_name"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_qty"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_sph"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_prd_mark"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_spc"
+                                android:textColor="#850" />
+                        </LinearLayout>
+                    </com.yimei.scrollview.GeneralCHScrollView>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/scfl_scan_scroll_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/scfl_scan_data_title"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:scrollbars="none" >
+                </ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/scfl_tab2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <!-- 工单所需物料 -->
+
+                <LinearLayout
+                    android:id="@+id/scfl_materials_data_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ccc"
+                    android:minHeight="40dip"
+                    android:orientation="horizontal" >
+
+                    <com.yimei.scrollview.GeneralCHScrollView
+                        android:id="@+id/scfl_materials_scroll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/xiangci"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_prd_no"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_name"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_bincode"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_wh"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_unit"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_qty_rsv"
+                                android:textColor="#850" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:text="@string/scfl_materials_qty_lost"
+                                android:textColor="#850" />
+                        </LinearLayout>
+                    </com.yimei.scrollview.GeneralCHScrollView>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/scfl_materials_scroll_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/scfl_materials_data_title"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:scrollbars="none" >
+                </ListView>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+</TabHost>

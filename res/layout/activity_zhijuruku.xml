@@ -1,0 +1,133 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    tools:context="com.example.yimei_v01.ZhiJuRuKuActivity" >
+
+    <TableLayout
+        android:id="@+id/zhijuruku_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_user" />
+
+            <EditText
+                android:id="@+id/yimei_zhijuruku_user_edt"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_zhijuruku_user_edt"
+                android:paddingLeft="10dp"
+                android:tag="制具入库作业员" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_zhijulingchu_zcno" />
+
+            <Spinner
+                android:id="@+id/zhijuruku_selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:tag="制具入库制程号" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_zhijulingchu_mojuId" />
+
+            <EditText
+                android:id="@+id/yimei_zhijuruku_mojuId"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_zhijuruku_mojuId"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:tag="制具入库模具编号" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/zhijuruku_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/zhijuruku_tab"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/zhijuruku_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="作业员"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:text="模具编号"
+                    android:gravity="center" 
+                    android:textColor="#850"
+                    />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:text="入站时间"
+                    android:gravity="center"
+                    android:textColor="#850"
+                     />
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/zhijuruku_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/zhijuruku_data_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>

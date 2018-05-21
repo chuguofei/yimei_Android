@@ -317,14 +317,12 @@ public class BianDaiActivity extends Activity {
 				if (state.get(j)) {
 					if (state.get(j) != null) {
 						@SuppressWarnings("unchecked")
-						HashMap<String, Object> map = (HashMap<String, Object>) BianDaiAdapter
-								.getItem(j);
+						HashMap<String, Object> map = (HashMap<String, Object>) BianDaiAdapter.getItem(j);
 
 						if (updateListState == null) {
 							updateListState = new ArrayList<mesPrecord>();
 						}
-						mesPrecord m = (mesPrecord) map
-								.get("biandai_item_title");
+						mesPrecord m = (mesPrecord) map.get("biandai_item_title");
 						updateListState.add(m);
 						count++;
 					}
@@ -532,7 +530,7 @@ public class BianDaiActivity extends Activity {
 			Bundle b = msg.getData();
 			String string = b.getString("type");
 			try {
-				if (string.equals("IsSbidQuery")) {
+				if (string.equals("IsSbidQuery")) {  //设备号查询
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
@@ -561,7 +559,7 @@ public class BianDaiActivity extends Activity {
 								"shebeiQuery");
 					}
 				}
-				if (string.equals("IsSbidQuery1")) {
+				if (string.equals("IsSbidQuery1")) { //批次号回车查询设备号
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 
@@ -591,7 +589,7 @@ public class BianDaiActivity extends Activity {
 								"ListViewIsLotNo");
 					}
 				}
-				if ("shebeiQuery".equals(string)) {
+				if ("shebeiQuery".equals(string)) {  //设备号记录查询
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					// 判断设备号+制程在服务器中是否有数据
@@ -670,7 +668,7 @@ public class BianDaiActivity extends Activity {
 						}
 					}
 				}
-				if ("updateRefresh".equals(string)) {
+				if ("updateRefresh".equals(string)) { //刷新列表
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					// 判断设备号+制程在服务器中是否有数据
@@ -856,8 +854,7 @@ public class BianDaiActivity extends Activity {
 							jsonValue.put("sbid", shebeihao);
 							jsonValue.put("zcno", MyApplication.BIANDAI_ZCNO);
 							jsonValue.put("smake", MyApplication.user);
-							jsonValue.put("mkdate",
-									MyApplication.GetServerNowTime());
+							jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 							jsonValue.put("sbuid", "D0001");
 							newJson = jsonValue;
 							Map<String, String> mesIdMap = MyApplication
@@ -888,7 +885,7 @@ public class BianDaiActivity extends Activity {
 
 						// ----------------------------------------入站
 						// 修改服务器俩张表
-						String sidAndlotno = sid1 + ";" + lot_no1;
+						String sidAndlotno = sid1 + ";" + lot_no1+";"+shebeihao;
 						Map<String, String> updateServerTable = MyApplication
 								.UpdateServerTableMethod(MyApplication.DBID,
 										MyApplication.user, "00", "01",
@@ -936,7 +933,7 @@ public class BianDaiActivity extends Activity {
 									|| m.getState1().equals("02")) {
 								// ------------------------修改服务器的俩张表（开工）
 								String sidAndlotno = m.getSid1() + ";"
-										+ m.getLotno();
+										+ m.getLotno()+";"+m.getSbid()==null?shebeihao:m.getSbid();
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
@@ -966,7 +963,7 @@ public class BianDaiActivity extends Activity {
 								String.valueOf(jsonObject.get("message")), 0);
 					}
 				}
-				if (string.equals("chuzhanUpdata")) {
+				if (string.equals("chuzhanUpdata")) {  
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
@@ -977,8 +974,7 @@ public class BianDaiActivity extends Activity {
 							Log.i("mes", m.toString());
 							if (m.getState1().equals("03")) {
 								// ------------------------修改服务器的俩张表（出站）
-								String sidAndlotno = m.getSid1() + ";"
-										+ m.getLotno();
+								String sidAndlotno = m.getSid1() + ";"+ m.getLotno()+";"+m.getSbid()==null?shebeihao:m.getSbid();
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
@@ -1004,7 +1000,7 @@ public class BianDaiActivity extends Activity {
 								"updateRefresh");
 					}
 				}
-				if (string.equals("biandai_ptime")) {
+				if (string.equals("biandai_ptime")) {  //拿卡出站时间
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					for (int i = 0; i < ((JSONArray) jsonObject.get("values"))

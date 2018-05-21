@@ -1,0 +1,481 @@
+package com.yimei.activity;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.adapter.JiaXiGaoAdapter;
+import com.yimei.adapter.ZhiJuRuKuAdapter;
+import com.yimei.scrollview.GeneralCHScrollView;
+import com.yimei.util.GetAndroidMacUtil;
+import com.yimei.util.OkHttpUtils;
+import com.yimei.util.ToastUtil;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+
+public class JiaXiGaoActivity extends Activity {
+
+	public HorizontalScrollView mTouchView;
+	private static List<GeneralCHScrollView> GeneralCHScrollView = new ArrayList<GeneralCHScrollView>();
+	private static ListView mListView;
+	private static JiaXiGaoAdapter JiaXiGaoApapter;
+	private String sbid;
+	private String sph;
+	private String zuoyeyuan;
+	private JSONObject savadateJson;
+
+	private EditText yimei_jiaxigao_sbid, yimei_jiaxigao_prtno,yimei_jiaxigao_user;
+
+	/**
+	 * 获取pda扫描（广播）
+	 */
+	private BroadcastReceiver barcodeReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (MyApplication.INTENT_ACTION_SCAN_RESULT.equals(intent
+					.getAction())) {
+				View rootview = getCurrentFocus();
+				Object tag = rootview.findFocus().getTag();
+				// 拿到pda扫描后的值
+				String barcodeData;
+				if (intent.getStringExtra("data") == null) {
+					barcodeData = intent.getStringExtra(
+							MyApplication.SCN_CUST_EX_SCODE)// 拿到销邦终端的值
+							.toString();
+				} else {
+					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
+				}
+				if(tag.equals("加锡膏作业员")){
+					yimei_jiaxigao_user.setText(barcodeData.toString().toUpperCase());
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return;
+					}
+					zuoyeyuan = yimei_jiaxigao_user.getText().toString().trim();
+					MyApplication.nextEditFocus((EditText) findViewById(R.id.yimei_jiaxigao_sbid));
+				}
+				if(tag.equals("加锡膏印刷机编号")){
+					yimei_jiaxigao_sbid.setText(barcodeData.toString().toUpperCase());
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return ;
+					}
+					if (yimei_jiaxigao_sbid.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_sbid.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "设备编号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+						return ;
+					}
+					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
+					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+							"MESEQUTM", "~id='" + sbid + "'");
+					OkHttpUtils.getInstance().getServerExecute(
+							MyApplication.MESURL, null, queryBatNo, null,
+							mHander, true, "QuerySbid");
+				}
+				if(tag.equals("加锡膏批号")){
+					yimei_jiaxigao_prtno.setText(barcodeData.toString().toUpperCase());
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return ;
+					}
+					if (yimei_jiaxigao_sbid.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_sbid.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "设备编号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+						return ;
+					}
+					if (yimei_jiaxigao_prtno.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_prtno.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "批次号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						return ;
+					}
+					sph = yimei_jiaxigao_prtno.getText().toString()
+							.toUpperCase().trim();
+					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+							"JXIAGAOPTRNO", "~sph='" + sph + "'");
+					OkHttpUtils.getInstance().getServerExecute(
+							MyApplication.MESURL, null, queryBatNo, null,
+							mHander, true, "Querysph");
+				}
+			}
+		}
+	};
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		setContentView(R.layout.activity_jiaxigao);
+		GeneralCHScrollView headerScroll = (GeneralCHScrollView) findViewById(R.id.jiaxigao_scroll_title);
+		// 添加头滑动事件
+		GeneralCHScrollView.add(headerScroll);
+		mListView = (ListView) findViewById(R.id.jixigao_scroll_list);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(barcodeReceiver, new IntentFilter(
+				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
+		yimei_jiaxigao_user = (EditText) findViewById(R.id.yimei_jiaxigao_user);
+		yimei_jiaxigao_sbid = (EditText) findViewById(R.id.yimei_jiaxigao_sbid);
+		yimei_jiaxigao_prtno = (EditText) findViewById(R.id.yimei_jiaxigao_prtno);
+		
+		yimei_jiaxigao_user.setOnEditorActionListener(editEnter);
+		yimei_jiaxigao_sbid.setOnEditorActionListener(editEnter);
+		yimei_jiaxigao_prtno.setOnEditorActionListener(editEnter);
+		
+		
+		yimei_jiaxigao_user.setOnFocusChangeListener(EditGetFocus);
+		yimei_jiaxigao_sbid.setOnFocusChangeListener(EditGetFocus);
+		yimei_jiaxigao_prtno.setOnFocusChangeListener(EditGetFocus);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(barcodeReceiver); // 取消广播注册
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		return super.onKeyUp(keyCode, event);
+	}
+
+	/**
+	 * 键盘回车事件
+	 */
+	OnEditorActionListener editEnter = new OnEditorActionListener() {
+
+		@SuppressLint("DefaultLocale")
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			boolean flag = false;
+			if (v.getId() == R.id.yimei_jiaxigao_user) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return false;
+					}
+					zuoyeyuan = yimei_jiaxigao_user.getText().toString().trim();
+					MyApplication.nextEditFocus((EditText) findViewById(R.id.yimei_jiaxigao_sbid));
+					flag = true;
+				}
+			}
+			if (v.getId() == R.id.yimei_jiaxigao_sbid) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return false;
+					}
+					if (yimei_jiaxigao_sbid.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_sbid.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "设备编号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+						return false;
+					}
+					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
+					yimei_jiaxigao_sbid.setText(sbid);
+					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+							"MESEQUTM", "~id='" + sbid + "'");
+					OkHttpUtils.getInstance().getServerExecute(
+							MyApplication.MESURL, null, queryBatNo, null,
+							mHander, true, "QuerySbid");
+				}
+			}
+			if (v.getId() == R.id.yimei_jiaxigao_prtno) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_user);
+						return false;
+					}
+					if (yimei_jiaxigao_sbid.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_sbid.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "设备编号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+						return false;
+					}
+					if (yimei_jiaxigao_prtno.getText().toString().trim().equals("")
+							|| yimei_jiaxigao_prtno.getText().toString().trim() == null) {
+						ToastUtil.showToast(JiaXiGaoActivity.this, "批次号不能为空",0);
+						MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						return false;
+					}
+					sph = yimei_jiaxigao_prtno.getText().toString()
+							.toUpperCase().trim();
+					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+							"JXIAGAOPTRNO", "~sph='" + sph + "'");
+					OkHttpUtils.getInstance().getServerExecute(
+							MyApplication.MESURL, null, queryBatNo, null,
+							mHander, true, "Querysph");
+				}
+			}
+			return flag;
+		}
+	};
+	
+	/**
+	 * 判断文本框失去|获取焦点
+	 */
+	OnFocusChangeListener EditGetFocus = new OnFocusChangeListener() {
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (v.getId() == R.id.yimei_jiaxigao_user) {
+				if (!hasFocus) {
+					zuoyeyuan = yimei_jiaxigao_user.getText().toString().trim().toUpperCase();
+				} else {
+					yimei_jiaxigao_user.setSelectAllOnFocus(true);
+				}
+			}
+			if (v.getId() == R.id.yimei_jiaxigao_sbid) {
+				if (hasFocus) {
+					yimei_jiaxigao_sbid.setSelectAllOnFocus(true);
+				} else {
+					sbid = yimei_jiaxigao_sbid.getText().toString()
+							.trim().toUpperCase();
+				}
+			}
+			if (v.getId() == R.id.yimei_jiaxigao_prtno) {
+				if (hasFocus) {
+					yimei_jiaxigao_prtno.setSelectAllOnFocus(true);
+				} else {
+					sph = yimei_jiaxigao_prtno.getText().toString().trim().toUpperCase();
+				}
+			}
+		}
+	};
+
+	/**
+	 * 逻辑判断
+	 */
+	@SuppressLint("HandlerLeak")
+	private final Handler mHander = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == 0) {
+				if (msg.arg1 == 0) {
+					Bundle b = msg.getData();
+					String string = b.getString("type");
+					try {
+						if (string.equals("QuerySbid")) { // 给下拉框赋值
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								ToastUtil.showToast(JiaXiGaoActivity.this,"没有该设备号~",0);
+								yimei_jiaxigao_sbid.selectAll();
+								return;
+							}
+							MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						}
+						if(string.equals("Querysph")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								ToastUtil.showToast(JiaXiGaoActivity.this,"该锡膏批号不存在",0);
+								yimei_jiaxigao_prtno.selectAll();
+								return;
+							}else{
+								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+								
+								if(Integer.parseInt(jsonValue.get("states").toString())!=1){
+									String error= Integer.parseInt(jsonValue.get("states").toString())==0?"该批次锡膏是入库状态":"该批次锡膏已过效期";
+									ToastUtil.showToast(JiaXiGaoActivity.this,error,0);
+									return;
+								}else{
+									boolean isUsed=jsonValue.containsKey("firstdate"); //是否开封
+									String latelydate = jsonValue.get("latelydate").toString();
+									if(latelydate.length()==16){
+										latelydate += ":00";
+									}
+									Date latelydateData = MyApplication.df.parse(latelydate); //最近出库时间
+									String vtime = jsonValue.get("vtime").toString().substring(0,jsonValue.get("vtime").toString().indexOf("."));
+									long vt = Integer.parseInt(vtime)*3600*1000;//拆盖需要校验，小时计算
+									long mintime = 0; 
+									if(jsonValue.containsKey("mintime")){
+										mintime =(Integer.parseInt(jsonValue.get("mintime").toString().substring(0,jsonValue.get("mintime").toString().indexOf("."))))*3600*1000;
+									}
+									long Lastmintime = mintime;//最小放置时间
+									if(isUsed){ //是否开封
+										String firstdate = jsonValue.get("firstdate").toString();
+										if(firstdate.length()==16){
+											firstdate += ":00";
+										}
+										Date tUse= MyApplication.df.parse(firstdate); //首次开封时间
+										long m1=MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-tUse.getTime();
+										if (m1>vt){
+											ToastUtil.showToast(JiaXiGaoActivity.this,"该批次已过有效期，不能再使用！",0);
+											return;
+										}
+										//当前时间减最近出库时间
+										m1 = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-latelydateData.getTime();
+										if(m1<Lastmintime){
+											long minute = (Lastmintime-m1) / 60000;  //回温时间
+											ToastUtil.showToast(JiaXiGaoActivity.this,"该批次回温时间还有【"+minute+"】分钟！",0);
+											return;
+										}
+										savadateJson = jsonValue;
+										jsonValue.put("dcid",GetAndroidMacUtil.getMac());
+										jsonValue.put("prtno",jsonValue.get("sph"));
+										jsonValue.put("sbuid","D6004");
+										jsonValue.put("smake",MyApplication.user);
+										jsonValue.put("sys_stated", "3");
+										jsonValue.put("sbid", sbid);
+										jsonValue.put("indate",MyApplication.GetServerNowTime());
+										
+										
+										//添加数据到清洗的表中
+										Map<String, String> addServerQingXiData = MyApplication
+												.httpMapKeyValueMethod(MyApplication.DBID,
+														"savedata", MyApplication.user,
+														jsonValue.toJSONString(), "D6004", "1");
+										OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,addServerQingXiData,
+													null, mHander,true,"addServerJiaXiGaoData");
+										return;
+									}else{
+										//当前时间减最近出库时间
+										long m1 = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-latelydateData.getTime();
+										if(Lastmintime!=0){
+											if(m1<Lastmintime&&m1>0){
+												long minute = (Lastmintime-m1) / 60000; //回温时间
+												ToastUtil.showToast(JiaXiGaoActivity.this,"该批次回温时间还有【"+minute+"】分钟！",0);
+												return;
+											}
+										}
+										savadateJson = jsonValue;
+										jsonValue.put("dcid",GetAndroidMacUtil.getMac());
+										jsonValue.put("prtno",jsonValue.get("sph"));
+										jsonValue.put("sbuid","D6004");
+										jsonValue.put("smake",MyApplication.user);
+										jsonValue.put("sys_stated", "3");
+										jsonValue.put("sbid", sbid);
+										jsonValue.put("indate",MyApplication.GetServerNowTime());
+										
+										//添加数据到清洗的表中
+										Map<String, String> addServerQingXiData = MyApplication
+												.httpMapKeyValueMethod(MyApplication.DBID,
+														"savedata", MyApplication.user,
+														jsonValue.toJSONString(), "D6004", "1");
+										OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,addServerQingXiData,
+													null, mHander,true,"addServerJiaXiGaoData");
+									}
+								}
+							}
+						}
+						if(string.equals("addServerJiaXiGaoData")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if(Integer.parseInt(jsonObject.get("id").toString()) == -1){
+								ToastUtil.showToast(JiaXiGaoActivity.this,"（savadate）失败",0);
+								return;
+							}
+							//420请求 
+							Map<String, String> updateServerMoJuZct = MyApplication
+									.updateServerJiaXiaoGao(MyApplication.DBID,
+											MyApplication.user,sbid,sph,
+											"410");
+							OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
+									null,updateServerMoJuZct,null,mHander,true,"updateServerMoJuZct");
+							
+						}
+						if(string.equals("updateServerMoJuZct")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if(Integer.parseInt(jsonObject.getString("id")) == -1){
+								ToastUtil.showToast(JiaXiGaoActivity.this,"410请求错误",0);
+								return;
+							}else{
+								if(savadateJson!=null){
+									// 给适配器添加数据
+									List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
+									Map<String, String> map = new HashMap<String, String>();
+									map.put("op", zuoyeyuan == null ? "": zuoyeyuan);
+									map.put("prtno",sph==null?"":sph);
+									map.put("sbid",sbid);
+									map.put("slkid",savadateJson.getString("mono")==null?"":savadateJson.getString("mono"));
+									map.put("prdno",savadateJson.getString("prdno")==null?"":savadateJson.getString("prdno"));
+									map.put("qty",savadateJson.getString("qty")==null?"":savadateJson.getString("qty"));
+									map.put("indate",savadateJson.getString("indate")==null?"":savadateJson.getString("indate"));
+									map.put("mkdate",savadateJson.getString("mkdate")==null?"":savadateJson.getString("mkdate"));
+									mList.add(map);
+									if (JiaXiGaoApapter == null) {
+										JiaXiGaoApapter = new JiaXiGaoAdapter(
+												JiaXiGaoActivity.this, mList);
+										mListView.setAdapter(JiaXiGaoApapter);
+									} else {
+										JiaXiGaoApapter.listData.add(map);
+										JiaXiGaoApapter.notifyDataSetChanged();
+									}
+									MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+									yimei_jiaxigao_prtno.selectAll();
+								}
+							}
+							System.out.println(jsonObject);
+						}
+					} catch (Exception e) {
+						ToastUtil.showToastLocation(getApplicationContext(),
+								e.toString(), 0);
+					}
+				}
+			}
+		}
+	};
+
+	public static void addHViews(final GeneralCHScrollView hScrollView) {
+		if (!GeneralCHScrollView.isEmpty()) {
+			int size = GeneralCHScrollView.size();
+			GeneralCHScrollView scrollView = GeneralCHScrollView.get(size - 1);
+			final int scrollX = scrollView.getScrollX();
+			if (scrollX != 0) {
+				mListView.post(new Runnable() {
+					@Override
+					public void run() {
+						hScrollView.scrollTo(scrollX, 0);
+					}
+				});
+			}
+		}
+		GeneralCHScrollView.add(hScrollView);
+	}
+
+	public void onScrollChanged(int l, int t, int oldl, int oldt) {
+		for (GeneralCHScrollView scrollView : GeneralCHScrollView) {
+			if (mTouchView != scrollView)
+				scrollView.smoothScrollTo(l, t);
+		}
+	}
+}

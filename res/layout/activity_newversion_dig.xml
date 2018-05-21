@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/dialog"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="horizontal">
+
+  <TextView
+    android:id="@+id/dig_tv"
+    android:layout_margin="8dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="请输入密码：" />
+　　
+
+  <EditText
+    android:id="@+id/dig_et"
+    android:layout_margin="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:inputType="textPassword"
+    android:labelFor="@+id/dig_et"
+    />
+</LinearLayout>

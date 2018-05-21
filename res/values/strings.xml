@@ -149,6 +149,39 @@
     <string name="zhijuqingxi_mkdate">清洗时间</string>
     <string name="zhijuruku_mkdate">入站时间</string>
     
+    <!-- 加锡膏 -->
+    <string name="jiaxigao_prtno">锡膏批号</string>
+    <string name="jiaxigao_op">作业员</string>
+    <string name="jiaxigao_sbid">设备编号</string>
+    <string name="jiaxigao_slkid">制令单号</string>
+    <string name="jiaxigao_prdno">机型名称</string>
+    <string name="jiaxigao_qty">数量</string>
+    <string name="jiaxigao_indate">上锡膏时间</string>
+    <string name="jiaxigao_mkdate">胶杯打印时间</string>
+    <string name="jiaxigao_edate">到期时间</string>
+    
+    <!-- 生产发料 -->
+    <string name="scfl_mo_no">制令单号</string>
+    <string name="scfl_prd_no">材料号</string>
+    <string name="scfl_bat_no">批次号</string>
+    <string name="scfl_bincode">BinCode</string>
+    <string name="scfl_qty">数量</string>
+    <string name="scfl_yinfa">应发</string>
+    <string name="scfl_yifa">已发</string>
+    
+    <string name="scfl_gdic">料号</string>
+    <string name="scfl_name">名称</string>
+    <string name="scfl_sph">批号</string>
+    <string name="scfl_prd_mark">BinCode</string>
+    <string name="scfl_spc">规格</string>
+    
+    <string name="scfl_materials_name">材料名称</string>
+    <string name="scfl_materials_bincode">货品特征</string>
+    <string name="scfl_materials_wh">仓库</string>
+    <string name="scfl_materials_unit">单位</string>
+    <string name="scfl_materials_qty_rsv">应发量</string>
+    <string name="scfl_materials_qty_lost">损耗量</string>
+    
     <!-- title -->
     <string name="shangliaoTitle">上料</string>
     <string name="jiajiaoTitle">加胶登记</string>
@@ -159,6 +192,9 @@
     <string name="zhijulingchuTitle">制具领出</string>
     <string name="zhijuQingXiTitle">制具清洗</string>
     <string name="zhijuRuKuTitle">制具入库</string>
+    <string name="jiaxigaoTitle">加锡膏登记</string>
+    <string name="scflTitle">生产发料</string>
+    
     <string name="action_settings">Settings</string>
 
 </resources>

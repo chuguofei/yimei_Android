@@ -5,6 +5,8 @@ import java.util.List;
 import com.yimei.activity.BianDaiActivity;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
+import com.yimei.activity.JiaXiGaoActivity;
+import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.HanXianActivity;
 import com.yimei.activity.JiaJiaoActivity;
@@ -152,6 +154,16 @@ public class MainMyAdapter extends BaseAdapter {
 				if (mainMap.getKey().equals("E5004")) { //制具清洗
 					Intent intent = new Intent(context,
 							ZhiJuRukKuActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("D6004")) { //加锡膏登记
+					Intent intent = new Intent(context,
+							JiaXiGaoActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("E0001")) { //生产发料
+					Intent intent = new Intent(context,
+							SCFLActivity.class);
 					v.getContext().startActivity(intent);
 				}
 			}

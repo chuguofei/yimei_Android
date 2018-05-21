@@ -1,23 +1,19 @@
 package com.yimei.activity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.adapter.MoZuAdapter;
+import com.yimei.entity.Pair;
 import com.yimei.entity.mesPrecord;
-import com.yimei.scrollview.CHScrollView;
 import com.yimei.scrollview.MoZuCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
@@ -37,6 +33,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -131,7 +128,7 @@ public class MoZuActivity extends Activity {
 					}
 					shebeihao = yimei_mozu_sbid_edt.getText().toString().trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao,"S%");
+							.IsSbidQuery_mozu(shebeihao,zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -164,7 +161,7 @@ public class MoZuActivity extends Activity {
 					}
 					picihao = yimei_mozu_proNum_edt.getText().toString().trim();
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao,"S");
+							.IsSbidQuery_mozu(shebeihao,zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					yimei_mozu_proNum_edt.selectAll();
@@ -187,8 +184,9 @@ public class MoZuActivity extends Activity {
 		mozuActivity = this;
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
 
+		httpRequestQueryRecord(MyApplication.MESURL,
+				MyApplication.QueryBatNo("M_PROCESS", ""),"SpinnerValue");
 		selectValue = (Spinner) findViewById(R.id.mozu_selectValue); // 下拉框id
-		selectValue.setOnItemSelectedListener(SelectValueListener); // 下拉框改变更新值
 
 		quanxuan = (CheckBox) findViewById(R.id.mozu_quanxuan); // 全选按钮
 		listenerQuanXuan();
@@ -524,9 +522,8 @@ public class MoZuActivity extends Activity {
 						MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						return false;
 					}
-					Log.i("sbid", "设备号回车");
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao,"S%");
+							.IsSbidQuery_mozu(shebeihao,zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -561,9 +558,8 @@ public class MoZuActivity extends Activity {
 						Log.i("foucus", "批次号回车");
 						return false;
 					}
-					Log.i("zcno", shebeihao);
 					Map<String, String> IsSbidQuery = MyApplication
-							.IsSbidQuery_mozu(shebeihao,"S");
+							.IsSbidQuery_mozu(shebeihao,zcno);
 					httpRequestQueryRecord(MyApplication.MESURL, IsSbidQuery,
 							"IsSbidQuery1");
 					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
@@ -589,6 +585,17 @@ public class MoZuActivity extends Activity {
 			super.handleMessage(msg);
 			Bundle b = msg.getData();
 			String string = b.getString("type");
+			if (string.equals("SpinnerValue")) { // 给下拉框赋值
+				JSONObject jsonObject = JSON.parseObject(b
+						.getString("jsonObj").toString());
+				if(Integer.parseInt(jsonObject.get("code").toString()) == 0){
+					ToastUtil.showToast(getApplicationContext(),"没有查到制程号~",0);
+					return;
+				}else{
+					SetSelectValue(jsonObject);
+					System.out.println(jsonObject);
+				}
+			}
 			if (string.equals("IsSbidQuery")) {
 				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
 						.toString());
@@ -928,6 +935,38 @@ public class MoZuActivity extends Activity {
 	};
 
 	/**
+	 * 给下拉框赋值
+	 * 
+	 * @param hScrollView
+	 */
+	private void SetSelectValue(JSONObject jsonObject) {
+		List<Pair> dicts = new ArrayList<Pair>();
+		for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
+			JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+					.get("values")).get(i));
+			dicts.add(new Pair(jsonValue.getString("name").toString(),
+					jsonValue.getString("id").toString()));
+		}
+		ArrayAdapter<Pair> adapter = new ArrayAdapter<Pair>(
+				MoZuActivity.this,
+				android.R.layout.simple_spinner_item, dicts);
+		selectValue.setAdapter(adapter);
+		selectValue.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				zcno = ((Pair) selectValue.getSelectedItem()).getValue();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+	}
+
+	
+	/**
 	 * 刷新列表（设备和批号）
 	 */
 	private List<Map<String, Object>> QueryList(JSONObject jsonobject) {
@@ -1038,69 +1077,7 @@ public class MoZuActivity extends Activity {
 	/**
 	 * 获取下框的值
 	 */
-	OnItemSelectedListener SelectValueListener = new OnItemSelectedListener() {
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view,
-				int position, long id) {
-			switch (position+1) {
-			case 1:
-				zcno = "S01";
-				break;
-			case 2:
-				zcno = "S02";
-				break;
-			case 3:
-				zcno = "S04";
-				break;
-			case 4:
-				zcno = "S05";
-				break;
-			case 5:
-				zcno = "S06";
-				break;
-			case 6:
-				zcno = "S07";
-				break;
-			case 7:
-				zcno = "S08";
-				break;
-			case 8:
-				zcno = "S09";
-				break;
-			case 9:
-				zcno = "S10";
-				break;
-			case 10:
-				zcno = "S11";
-				break;
-			case 11:
-				zcno = "S12";
-				break;
-			case 12:
-				zcno = "S13";
-				break;
-			case 13:
-				zcno = "S14";
-				break;
-			case 14:
-				zcno = "S15";
-				break;
-			case 15:
-				zcno = "S20";
-				break;
-			case 16:
-				zcno = "S21";
-				break;
-			}
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Auto-generated method stub
-
-		}
-	};
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

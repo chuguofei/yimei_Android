@@ -5,9 +5,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
+
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
+import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.RuKuActivity;
+import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.activity.ZhiJuQingXiActivity;
 import com.yimei.activity.ZhiJuRukKuActivity;
@@ -50,6 +53,12 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("制具入库")) {
 			activity = (ZhiJuRukKuActivity) context;
 		}
+		if (title.equals("加锡膏登记")) {
+			activity = (JiaXiGaoActivity) context;
+		}
+		if (title.equals("生产发料")) {
+			activity = (SCFLActivity) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -79,6 +88,12 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof ZhiJuRukKuActivity) {
 			((ZhiJuRukKuActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof JiaXiGaoActivity) {
+			((JiaXiGaoActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof SCFLActivity) {
+			((SCFLActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -134,5 +149,21 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
 		}
+		if (activity instanceof JiaXiGaoActivity) {
+			if (((JiaXiGaoActivity) activity).mTouchView == this) {
+				((JiaXiGaoActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof SCFLActivity) {
+			if (((SCFLActivity) activity).mTouchView == this) {
+				((SCFLActivity) activity).onScrollChanged(l, t, oldl, oldt);
+				((SCFLActivity) activity).onScrollChanged1(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		
 	}
 }

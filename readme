@@ -13,7 +13,11 @@
 		M_PROCESS //查询所有制程
 	制具：
 		MOZREGISTER //查询货物代号和模具id
-		
+	加锡膏:
+		JXIAGAOPTRNO//加锡膏批次查询
+	生产发料：
+		SCFLMM_NO //制令单号查询
+		SCFLCUS_PN //批次号查询
 视图:	view_moulda //查询制具登记的主子表
 	
 	
