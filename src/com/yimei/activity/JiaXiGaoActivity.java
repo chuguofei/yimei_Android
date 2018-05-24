@@ -18,8 +18,10 @@ import com.yimei.util.ToastUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -217,6 +219,7 @@ public class JiaXiGaoActivity extends Activity {
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "QuerySbid");
+					flag = true;
 				}
 			}
 			if (v.getId() == R.id.yimei_jiaxigao_prtno) {
@@ -246,6 +249,7 @@ public class JiaXiGaoActivity extends Activity {
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "Querysph");
+					flag = true;
 				}
 			}
 			return flag;
@@ -302,8 +306,26 @@ public class JiaXiGaoActivity extends Activity {
 								ToastUtil.showToast(JiaXiGaoActivity.this,"没有该设备号~",0);
 								yimei_jiaxigao_sbid.selectAll();
 								return;
+							}else{
+								//查询设备号的制令单号
+								Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+										"JIAXIGAOSBID", "~sbid='" + sbid + "'");
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null, queryBatNo, null,
+										mHander, true, "QuerySbidSlkid");
 							}
-							MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+//							MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						}
+						if(string.equals("QuerySbidSlkid")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								ToastUtil.showToast(JiaXiGaoActivity.this,"该设备没有入站数据，请检查~",0);
+								yimei_jiaxigao_sbid.selectAll();
+								return;
+							}else{
+								//选择指令号
+								showNormalDialog((JSONArray) jsonObject.get("values"));
+							}
 						}
 						if(string.equals("Querysph")){
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
@@ -329,7 +351,7 @@ public class JiaXiGaoActivity extends Activity {
 									long vt = Integer.parseInt(vtime)*3600*1000;//拆盖需要校验，小时计算
 									long mintime = 0; 
 									if(jsonValue.containsKey("mintime")){
-										mintime =(Integer.parseInt(jsonValue.get("mintime").toString().substring(0,jsonValue.get("mintime").toString().indexOf("."))))*3600*1000;
+										mintime = (Integer.parseInt(jsonValue.get("mintime").toString().substring(0,jsonValue.get("mintime").toString().indexOf("."))))*3600*1000;
 									}
 									long Lastmintime = mintime;//最小放置时间
 									if(isUsed){ //是否开封
@@ -357,8 +379,13 @@ public class JiaXiGaoActivity extends Activity {
 										jsonValue.put("smake",MyApplication.user);
 										jsonValue.put("sys_stated", "3");
 										jsonValue.put("sbid", sbid);
+										jsonValue.put("qty","1");
+										jsonValue.put("zcno","31");
+										jsonValue.put("op",zuoyeyuan);
+										jsonValue.put("state","0");
+										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
 										jsonValue.put("indate",MyApplication.GetServerNowTime());
-										
+										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 										
 										//添加数据到清洗的表中
 										Map<String, String> addServerQingXiData = MyApplication
@@ -385,7 +412,13 @@ public class JiaXiGaoActivity extends Activity {
 										jsonValue.put("smake",MyApplication.user);
 										jsonValue.put("sys_stated", "3");
 										jsonValue.put("sbid", sbid);
+										jsonValue.put("qty","1");
+										jsonValue.put("zcno","31");
+										jsonValue.put("op",zuoyeyuan);
+										jsonValue.put("state","0");
+										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
 										jsonValue.put("indate",MyApplication.GetServerNowTime());
+										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 										
 										//添加数据到清洗的表中
 										Map<String, String> addServerQingXiData = MyApplication
@@ -454,6 +487,48 @@ public class JiaXiGaoActivity extends Activity {
 			}
 		}
 	};
+	private int checkNum = 0; //取showdialog选中的下标
+	static Map<Integer,JSONObject> dig_map = new HashMap<Integer,JSONObject>(); //存放选择的机型 （ 判断选择的下标）
+	private JSONObject ChoseSlkid;
+	/**
+	 * 弹出提示框
+	 * 
+	 * @param mes
+	 */
+	private void showNormalDialog(JSONArray jsonarr) {
+		String [] str = new String[jsonarr.size()]; //显示的数据
+		for (int i = 0; i < jsonarr.size(); i++) {
+			JSONObject jsonobj = (JSONObject) jsonarr.get(i);
+			dig_map.put(i,jsonobj);
+			String sid1 = jsonobj.containsKey("sid1")?jsonobj.getString("sid1"):"";
+			String prd_no = jsonobj.containsKey("prd_no")?jsonobj.getString("prd_no"):"";
+			String slkid = jsonobj.containsKey("slkid")?jsonobj.getString("slkid"):"";
+			String strShow ="批次号："+sid1+"\n"
+					+"货品代号："+prd_no+"\n"
+					+"制令单号："+slkid;
+			str[i] = strShow;
+		}
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				JiaXiGaoActivity.this);
+		normalDialog.setTitle("选中批次号");
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setSingleChoiceItems(
+			    str, checkNum,
+			     new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			    	  checkNum = which;
+			      }});
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ChoseSlkid = dig_map.get(checkNum); //取选中的下标
+						MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
 		if (!GeneralCHScrollView.isEmpty()) {

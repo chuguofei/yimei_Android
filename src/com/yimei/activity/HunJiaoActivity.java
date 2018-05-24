@@ -324,6 +324,7 @@ public class HunJiaoActivity extends Activity {
 								jsonValue.put("dcid",GetAndroidMacUtil.getMac());
 								//加3小时
 								jsonValue.put("newly_time",MyApplication.GetHunJiaoAdd_3(Integer.parseInt(jsonValue.get("effective_time").toString()))); //加3小时后的时间
+								jsonValue.put("mixing_time",MyApplication.GetServerNowTime()); //加3小时后的时间
 								jsonValue.put("sbuid", "D2009");
 								jsonValue.put("zcno", "31");
 								jsonValue.put("sbid",sbid);

@@ -387,21 +387,42 @@ public class JiaJiaoActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
-
 						if(jsonValue.containsKey("newly_time")){
 							//混胶的新时间 
 							if (!jsonValue.get("newly_time").toString().equals("")) {
 	
 								SimpleDateFormat sdf = new SimpleDateFormat(
 										"yyyy-MM-dd HH:mm");
-								long vdate = sdf.parse(
-										jsonValue.get("newly_time").toString())
-										.getTime()
-										- System.currentTimeMillis();
+								String newly_time =  jsonValue.get("newly_time").toString();
+								if(newly_time.length() == 16){
+									newly_time += ":00";
+								}
+								long vdate = sdf.parse(newly_time).getTime()- MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime();
 								if (vdate < 0) {
 									ToastUtil.showToast(getApplicationContext(),
 											"胶杯已过有效期", 0);
+									return;
 								}
+							}
+							if(jsonValue.containsKey("mixing_time")){
+								if(!jsonValue.get("mixing_time").toString().equals("")){
+									String mixing_time = jsonValue.get("mixing_time").toString();
+									if(mixing_time.length() == 16){
+										mixing_time+=":00";
+									}
+									long Time = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()  - MyApplication.df.parse(mixing_time).getTime();
+									long Time1 = Time/1000/60;
+									if(!((Time/1000/60) < Integer.parseInt(jsonValue.get("fr_add_time").toString()))&&(Time/1000/60)>0){
+										ToastUtil.showToast(JiaJiaoActivity.this,"请联系工程人员！",0);
+										return;
+									}
+								}else{
+									ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
+									return;
+								}
+							}else{
+								ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
+								return;
 							}
 						}else{
 							ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);

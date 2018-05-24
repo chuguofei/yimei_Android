@@ -18,6 +18,7 @@
 	生产发料：
 		SCFLMM_NO //制令单号查询
 		SCFLCUS_PN //批次号查询
+		JIAXIGAOSBID //加锡膏设备号查询制令单号
 视图:	view_moulda //查询制具登记的主子表
 	
 	

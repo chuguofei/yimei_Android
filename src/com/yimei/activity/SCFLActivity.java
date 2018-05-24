@@ -200,7 +200,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (tag.equals("生产发料批次号")) {
-					yimei_scfl_bat_no.setText(barcodeData.toUpperCase());
+					yimei_scfl_bat_no.setText(barcodeData);
 					if (yimei_SCFL_user.getText().toString().equals("")
 							|| yimei_SCFL_user.getText().toString() == null) {
 						ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！", 0);
@@ -225,8 +225,7 @@ public class SCFLActivity extends TabActivity {
 						MyApplication.nextEditFocus(yimei_scfl_bat_no);
 						return;
 					}
-					cus_pn = yimei_scfl_bat_no.getText().toString().trim()
-							.toUpperCase();
+					cus_pn = yimei_scfl_bat_no.getText().toString().trim().toUpperCase();
 					if (scfl_scanAdapter != null) {
 						boolean flag1 = true;
 						for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
@@ -249,6 +248,8 @@ public class SCFLActivity extends TabActivity {
 									mHander, true, "Querybat_no");
 						}
 					} else {
+						String a = cus_pn;
+						System.out.println(a);
 						// 查询批号
 						OkHttpUtils.getInstance().getServerExecute(
 								MyApplication.MESURL,
@@ -286,139 +287,13 @@ public class SCFLActivity extends TabActivity {
 							return;
 						}
 					}
-					bincode = yimei_scfl_bincode.getText().toString().trim()
-							.toUpperCase();
+					bincode = yimei_scfl_bincode.getText().toString().trim().toUpperCase();
 					if (tf_moBinCodeMap.containsKey(bincode)) {
 						MyApplication.nextEditFocus(yimei_scfl_qty);
 					} else {
 						ToastUtil.showToast(SCFLActivity.this, "该bincode【"
 								+ bincode + "】不属于该工单！", 0);
 						return;
-					}
-				}
-				if (tag.equals("生产发料数量")) {
-					yimei_scfl_bincode.setText(barcodeData.toUpperCase());
-					if (yimei_SCFL_user.getText().toString().equals("")
-							|| yimei_SCFL_user.getText().toString() == null) {
-						ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！", 0);
-						MyApplication.nextEditFocus(yimei_SCFL_user);
-						return;
-					}
-					if (yimei_scfl_mo_no.getText().toString().equals("")
-							|| yimei_scfl_mo_no.getText().toString() == null) {
-						ToastUtil.showToast(SCFLActivity.this, "制令号不能为空！", 0);
-						MyApplication.nextEditFocus(yimei_scfl_mo_no);
-						return;
-					}
-					if (yimei_scfl_prd_no.getText().toString().equals("")
-							|| yimei_scfl_prd_no.getText().toString() == null) {
-						ToastUtil.showToast(SCFLActivity.this, "材料号不能为空！", 0);
-						MyApplication.nextEditFocus(yimei_scfl_prd_no);
-						return;
-					}
-					if (yimei_scfl_bat_no.getText().toString().equals("")
-							|| yimei_scfl_bat_no.getText().toString() == null) {
-						ToastUtil.showToast(SCFLActivity.this, "批次号不能为空！", 0);
-						MyApplication.nextEditFocus(yimei_scfl_bat_no);
-						return;
-					}
-					if(NoBinCode==true){
-						if (yimei_scfl_bincode.getText().toString().equals("")
-								|| yimei_scfl_bincode.getText().toString() == null) {
-							ToastUtil.showToast(SCFLActivity.this, "bincode不能为空！", 0);
-							MyApplication.nextEditFocus(yimei_scfl_bincode);
-							return;
-						}
-					}
-					if (yimei_scfl_qty.getText().toString().equals("")
-							|| yimei_scfl_qty.getText().toString() == null) {
-						ToastUtil.showToast(SCFLActivity.this, "数量不能为空！", 0);
-						MyApplication.nextEditFocus(yimei_scfl_qty);
-						return;
-					}
-					try {
-						int qty = Integer.parseInt(yimei_scfl_qty.getText()
-								.toString().trim().toUpperCase());
-					} catch (Exception e) {
-						showNormalDialog("请输入正确数字!");
-						yimei_scfl_qty.selectAll();
-						return;
-					}
-					qty = Integer.parseInt(yimei_scfl_qty.getText().toString()
-							.trim().toUpperCase());
-					if (yifa > yinfa) {
-						showNormalDialog("该binCode【" + bincode + "】数量够了！!");
-						return;
-					}
-					String sys_stated = "3"; // 新增还是修改
-					if (state == 0) {
-						sys_stated = "3";
-					} else if (state == 1) {
-						sys_stated = "2";
-					}
-					// ================主对象
-					JSONObject fatherJSON = new JSONObject();
-					fatherJSON.put("sbuid", "E0001");
-					fatherJSON.put("mono", mo_no);
-					fatherJSON.put("sopr", MyApplication.user);
-					fatherJSON.put("smake", zuoyeyuan);
-					fatherJSON.put("mkdate", MyApplication.GetServerNowTime());
-					fatherJSON.put("smoid", zuoyeyuan);
-					fatherJSON.put("sys_stated", sys_stated);
-					fatherJSON
-							.put("moditime", MyApplication.GetServerNowTime());
-					if (sys_stated.equals("2")) {
-						fatherJSON.put("sid", sid);
-					}
-					// ================子对象
-					JSONObject sonJson = new JSONObject();
-					if (MaxCid.size() == 0) {
-						sonJson.put("cid", 1);
-						MaxCid.add(1);
-					} else {
-						sonJson.put("cid", Collections.max(MaxCid) + 1);
-						MaxCid.add(Integer.parseInt(sonJson.get("cid")
-								.toString()));
-					}
-					sonJson.put("gdic", prd_no);
-					sonJson.put("mono", mo_no);
-					sonJson.put("name",
-							((JSONObject) tf_noMap.get(prd_no)).get("prd_name"));
-					sonJson.put("qty", qty);
-					sonJson.put("sph", cus_pn);
-					sonJson.put("sys_stated", "3");
-					sonJson.put("prd_mark", bincode == null ? "" : bincode);
-					fatherJSON.put("E0001AWEB", new Object[] { sonJson });
-					Map<String, String> httpMapKeyValueMethod = MyApplication
-							.httpMapKeyValueMethod(MyApplication.DBID,
-									"savedata", MyApplication.user,
-									fatherJSON.toString(),
-									"E0001WEB(E0001AWEB)", "1");
-					OkHttpUtils.getInstance().getServerExecute(
-							MyApplication.MESURL, null, httpMapKeyValueMethod,
-							null, mHander, true, "AddData");
-
-					List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("itm", sonJson.get("cid").toString());
-					map.put("gdic", prd_no);
-					map.put("name",
-							((JSONObject) tf_noMap.get(prd_no)).get("prd_name")
-									.toString() == null ? ""
-									: ((JSONObject) tf_noMap.get(prd_no)).get(
-											"prd_name").toString());
-					map.put("qty", String.valueOf(qty));
-					map.put("sph", cus_pn);
-					map.put("prd_mark", bincode);
-					mList.add(map);
-					if (scfl_scanAdapter == null) {
-						scfl_scanAdapter = new SCFL_ScanAdapter(
-								SCFLActivity.this, mList);
-						mListView.setAdapter(scfl_scanAdapter);
-					} else {
-						scfl_scanAdapter.listData.add(map);
-						mListView.setAdapter(scfl_scanAdapter);
-						scfl_scanAdapter.notifyDataSetChanged();
 					}
 				}
 			}
@@ -533,7 +408,7 @@ public class SCFLActivity extends TabActivity {
 				if (hasFocus) {
 					yimei_scfl_bincode.setSelectAllOnFocus(true);
 				} else {
-					cus_pn = yimei_scfl_bincode.getText().toString().trim()
+					bincode = yimei_scfl_bincode.getText().toString().trim()
 							.toUpperCase();
 				}
 			}
@@ -692,7 +567,7 @@ public class SCFLActivity extends TabActivity {
 						for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
 							Map<String, String> map = (Map<String, String>) scfl_scanAdapter
 									.getItem(i);
-							if (map.get("sph").equals(cus_pn)) {
+							if (map.get("sph").equals(cus_pn)&&map.get("gdic").equals(prd_no)) {
 								flag1 = false;
 							}
 						}
@@ -832,6 +707,8 @@ public class SCFLActivity extends TabActivity {
 					fatherJSON.put("smake", zuoyeyuan);
 					fatherJSON.put("mkdate", MyApplication.GetServerNowTime());
 					fatherJSON.put("smoid", zuoyeyuan);
+					fatherJSON.put("state", "0");
+					fatherJSON.put("sorg", "08030000");
 					fatherJSON.put("sys_stated", sys_stated);
 					fatherJSON
 							.put("moditime", MyApplication.GetServerNowTime());
@@ -876,6 +753,7 @@ public class SCFLActivity extends TabActivity {
 									: ((JSONObject) tf_noMap.get(prd_no)).get(
 											"prd_name").toString());
 					map.put("qty", String.valueOf(qty));
+					String a1 = cus_pn;
 					map.put("sph", cus_pn);
 					map.put("prd_mark", bincode);
 					mList.add(map);
@@ -1029,8 +907,7 @@ public class SCFLActivity extends TabActivity {
 									yimei_scfl_bat_no.selectAll();
 									return;
 								}
-								long pklistQty = Integer.parseInt(jsonObj.get(
-										"qty").toString());
+								long pklistQty = Integer.parseInt(jsonObj.get("qty").toString());
 								if (pklistQty > yinfa) {
 									showNormalDialog("该binCode数量够了！!");
 									yimei_scfl_bat_no.selectAll();
@@ -1100,8 +977,7 @@ public class SCFLActivity extends TabActivity {
 								Map<String, String> map = new HashMap<String, String>();
 								map.put("itm", sonJson.get("cid").toString());
 								map.put("gdic", pklistPrd_no);
-								map.put("name", jsonObj.get("prd_name")
-										.toString());
+								map.put("name", jsonObj.containsKey("prd_name")?jsonObj.getString("prd_name"):"");
 								map.put("qty", String.valueOf(pklistQty));
 								map.put("sph", cus_pn);
 								map.put("prd_mark", pklistBinCode);
