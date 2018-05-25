@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
@@ -117,7 +119,7 @@ public class ZhiJuQingXiActivity extends Activity {
 		setContentView(R.layout.activity_zhijuqingxi);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-				MyApplication.QueryBatNo("M_PROCESS", ""), null, mHander, true,
+				MyApplication.QueryBatNo("M_PROCESS","~sorg='"+MyApplication.sorg+"'"), null, mHander, true,
 				"SpinnerValue");
 
 		GeneralCHScrollView headerScroll = (GeneralCHScrollView) findViewById(R.id.zhijuqingxi_scroll_title);
@@ -331,4 +333,32 @@ public class ZhiJuQingXiActivity extends Activity {
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(1, MyApplication.LOGOUT, 1, MyApplication.LOGOUTText);
+		menu.add(1, MyApplication.ABOUTUS, 2, MyApplication.ABOUTUSText);
+		menu.add(1, MyApplication.VERSION, 3, MyApplication.VERSIONText);
+		return true;
+	}
+
+	/**
+	 * 切换用户
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case MyApplication.LOGOUT:
+			startActivity(new Intent(getApplicationContext(),
+					LoginActivity.class));
+			break;
+		case MyApplication.ABOUTUS:
+
+			break;
+		case MyApplication.VERSION:
+
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

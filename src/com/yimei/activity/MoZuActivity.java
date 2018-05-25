@@ -185,7 +185,7 @@ public class MoZuActivity extends Activity {
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
 
 		httpRequestQueryRecord(MyApplication.MESURL,
-				MyApplication.QueryBatNo("M_PROCESS", ""),"SpinnerValue");
+				MyApplication.QueryBatNo("M_PROCESS", "~sorg='"+MyApplication.sorg+"'"),"SpinnerValue");
 		selectValue = (Spinner) findViewById(R.id.mozu_selectValue); // 下拉框id
 
 		quanxuan = (CheckBox) findViewById(R.id.mozu_quanxuan); // 全选按钮

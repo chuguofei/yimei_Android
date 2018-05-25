@@ -61,6 +61,24 @@ public class mesPrecord implements Serializable {
 	private int iid;
 	private String remark;
 	private String bfirst;
+	private int cref3;
+	public String getCkdate() {
+		return ckdate;
+	}
+
+	public void setCkdate(String ckdate) {
+		this.ckdate = ckdate;
+	}
+
+	private String ckdate;
+	
+	public int getCref3() {
+		return cref3;
+	}
+
+	public void setCref3(int cref3) {
+		this.cref3 = cref3;
+	}
 
 	// 测试字段
 	private String totalqty;

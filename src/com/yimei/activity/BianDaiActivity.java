@@ -1029,6 +1029,7 @@ public class BianDaiActivity extends Activity {
 				BianDaiActivity.this);
 		normalDialog.setTitle("提示");
 		normalDialog.setMessage(mes);
+		normalDialog.setCancelable(false);
 		normalDialog.setPositiveButton("确定",
 				new DialogInterface.OnClickListener() {
 					@Override

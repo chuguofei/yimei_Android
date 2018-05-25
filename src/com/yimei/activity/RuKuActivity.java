@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
@@ -181,7 +183,7 @@ public class RuKuActivity extends Activity {
 					flag = true;
 				}
 			}
-			if (v.getId() == R.id.yimei_ruku_proNum_edt) { // 作业员
+			if (v.getId() == R.id.yimei_ruku_proNum_edt) { //批次号
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					if (yimei_ruku_user_edt.getText().toString().trim()
 							.equals("")) {
@@ -459,4 +461,32 @@ public class RuKuActivity extends Activity {
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(1, MyApplication.LOGOUT, 1, MyApplication.LOGOUTText);
+		menu.add(1, MyApplication.ABOUTUS, 2, MyApplication.ABOUTUSText);
+		menu.add(1, MyApplication.VERSION, 3, MyApplication.VERSIONText);
+		return true;
+	}
+
+	/**
+	 * 切换用户
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case MyApplication.LOGOUT:
+			startActivity(new Intent(getApplicationContext(),
+					LoginActivity.class));
+			break;
+		case MyApplication.ABOUTUS:
+
+			break;
+		case MyApplication.VERSION:
+
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

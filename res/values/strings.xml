@@ -182,6 +182,27 @@
     <string name="scfl_materials_qty_rsv">应发量</string>
     <string name="scfl_materials_qty_lost">损耗量</string>
     
+    <!-- 转出 -->
+    <string name="zhuanchu_zcno">制程代号</string>
+    <string name="yimei_zhuanchu_zcno">当前制程</string>
+    <string name="yimei_zhuanchu_zcno1">转入制程</string>
+    <string name="yimei_zhuanchu_slkid">制令单号</string>
+    <string name="yimei_zhuanchu_prd_name">机型名称</string>
+    <string name="yimei_zhuanchu_qty">批量</string>
+    
+    <!-- 接收 -->
+    <string name="jieshou">接收</string>
+    <string name="jieshou_tuihui">退回</string>
+    <string name="yimei_jieshou_op">接收人</string>
+    <string name="yimei_jieshou_state">接收状态</string>
+    <string name="yimei_jieshou_time">接收时间</string>
+    <string name="yimei_jieshou_sid1">生产批次</string>
+    <string name="yimei_jieshou_zcno1">转入制程</string>
+    <string name="yimei_jieshou_slkid">制令单号</string>
+    <string name="yimei_jieshou_prd_name">机型名称</string>
+    <string name="yimei_jieshou_qty">数量</string>
+    
+    
     <!-- title -->
     <string name="shangliaoTitle">上料</string>
     <string name="jiajiaoTitle">加胶登记</string>
@@ -194,7 +215,8 @@
     <string name="zhijuRuKuTitle">制具入库</string>
     <string name="jiaxigaoTitle">加锡膏登记</string>
     <string name="scflTitle">生产发料</string>
-    
+    <string name="zhuanchuTitle">转出登记</string>
+    <string name="JieShouTitle">接收登记</string>
     <string name="action_settings">Settings</string>
 
 </resources>

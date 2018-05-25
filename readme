@@ -3,12 +3,13 @@
 		MOZCLIST： //批次号查询
 	任务列表：
 		MESEQUTM //查询设备号是否存在
+	任务查询：
+		MSBMOLIST //查询任务
 	加胶登记：
 		JIAJAOSELECT //加胶列表查询
 		MESGLUEJOB //胶杯查询
 	编带：
 		TESTLOTQUERY //批次号查询 （lot_no）	
-	
 	制程查询：
 		M_PROCESS //查询所有制程
 	制具：

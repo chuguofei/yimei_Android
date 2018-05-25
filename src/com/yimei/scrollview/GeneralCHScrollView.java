@@ -9,11 +9,13 @@ import android.widget.HorizontalScrollView;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
+import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.RuKuActivity;
 import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.activity.ZhiJuQingXiActivity;
 import com.yimei.activity.ZhiJuRukKuActivity;
+import com.yimei.activity.ZhuanChuActivity;
 import com.yimei.activity.ZhuangXiangActivity;
 
 public class GeneralCHScrollView extends HorizontalScrollView {
@@ -59,6 +61,12 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("生产发料")) {
 			activity = (SCFLActivity) context;
 		}
+		if (title.equals("转出登记")) {
+			activity = (ZhuanChuActivity) context;
+		}
+		if (title.equals("接收登记")) {
+			activity = (JieShouActivity) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -94,6 +102,12 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof SCFLActivity) {
 			((SCFLActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof ZhuanChuActivity) {
+			((ZhuanChuActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof JieShouActivity) {
+			((JieShouActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -164,6 +178,19 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
 		}
-		
+		if (activity instanceof ZhuanChuActivity) {
+			if (((ZhuanChuActivity) activity).mTouchView == this) {
+				((ZhuanChuActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof JieShouActivity) {
+			if (((JieShouActivity) activity).mTouchView == this) {
+				((JieShouActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
 	}
 }

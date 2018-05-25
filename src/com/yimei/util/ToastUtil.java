@@ -3,7 +3,7 @@ package com.yimei.util;
 import android.content.Context;
 import android.widget.Toast;
 
-public class ToastUtil {
+public class ToastUtil{
 
 	 /** 之前显示的内容 */  
     private static String oldMsg ;  

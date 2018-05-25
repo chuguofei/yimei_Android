@@ -138,6 +138,16 @@
             android:name=".SCFLActivity"
             android:label="@string/scflTitle" >
         </activity>
+         <!-- 转出-->
+        <activity
+            android:name=".ZhuanChuActivity"
+            android:label="@string/zhuanchuTitle" >
+        </activity>
+         <!-- 接收 -->
+        <activity
+            android:name=".JieShouActivity"
+            android:label="@string/JieShouTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

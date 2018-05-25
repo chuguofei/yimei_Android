@@ -15,6 +15,7 @@ import com.yimei.entity.Main_map;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.OkHttpUtils;
+import com.yimei.util.ToastUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -183,7 +184,8 @@ public class LoadingActivity extends Activity {
 				Log.i("id", json.toString());
 
 				if (json.getInteger("id") == 0) {
-
+					JSONObject jsonsorg = (JSONObject) json.get("data");
+					MyApplication.sorg = ((JSONObject)((JSONObject)(JSONObject)jsonsorg.get("user")).get("deptInfo")).get("deptCode").toString();
 					MyApplication.user = user;
 					JSONObject json_data = JSON.parseObject(json.get("data")
 							.toString());
@@ -230,7 +232,7 @@ public class LoadingActivity extends Activity {
 									ZhuangXiangActivity.class);
 							startActivity(intent);
 						}
-						if (caidan.equals("D2009")) { // 装箱作业
+						if (caidan.equals("D2009")) { // 混胶
 							Intent intent = new Intent(LoadingActivity.this,
 									HunJiaoActivity.class);
 							startActivity(intent);
@@ -258,6 +260,16 @@ public class LoadingActivity extends Activity {
 						if (caidan.equals("E0001")) { // //加锡膏登记
 							Intent intent = new Intent(LoadingActivity.this,
 									SCFLActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("D0030")) { //转出
+							Intent intent = new Intent(LoadingActivity.this,
+									ZhuanChuActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("D0031")) { //接受
+							Intent intent = new Intent(LoadingActivity.this,
+									JieShouActivity.class);
 							startActivity(intent);
 						}
 						break;
