@@ -341,6 +341,7 @@ public class JiaXiGaoActivity extends Activity {
 								if(Integer.parseInt(jsonValue.get("states").toString())!=1){
 									String error= Integer.parseInt(jsonValue.get("states").toString())==0?"该批次锡膏是入库状态":"该批次锡膏已过效期";
 									ToastUtil.showToast(JiaXiGaoActivity.this,error,0);
+									yimei_jiaxigao_prtno.selectAll();
 									return;
 								}else{
 									boolean isUsed=jsonValue.containsKey("firstdate"); //是否开封
@@ -365,6 +366,7 @@ public class JiaXiGaoActivity extends Activity {
 										long m1=MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-tUse.getTime();
 										if (m1>vt){
 											ToastUtil.showToast(JiaXiGaoActivity.this,"该批次已过有效期，不能再使用！",0);
+											yimei_jiaxigao_prtno.selectAll();
 											return;
 										}
 										//当前时间减最近出库时间
@@ -372,6 +374,7 @@ public class JiaXiGaoActivity extends Activity {
 										if(m1<Lastmintime){
 											long minute = (Lastmintime-m1) / 60000;  //回温时间
 											ToastUtil.showToast(JiaXiGaoActivity.this,"该批次回温时间还有【"+minute+"】分钟！",0);
+											yimei_jiaxigao_prtno.selectAll();
 											return;
 										}
 										savadateJson = jsonValue;
@@ -404,6 +407,7 @@ public class JiaXiGaoActivity extends Activity {
 											if(m1<Lastmintime&&m1>0){
 												long minute = (Lastmintime-m1) / 60000; //回温时间
 												ToastUtil.showToast(JiaXiGaoActivity.this,"该批次回温时间还有【"+minute+"】分钟！",0);
+												yimei_jiaxigao_prtno.selectAll();
 												return;
 											}
 										}

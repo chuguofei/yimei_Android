@@ -210,60 +210,66 @@ public class RuKuActivity extends Activity {
 	 * 初始化数据
 	 */
 	private void InitDate(){
-		if (map1.size() == 0) { // 第一次扫描
-			InitMM0Data();
-		} else { // 第二次扫描
-			if (map2.containsKey(bat_no)) {
-				// 提示扫描的批次号已经检测
-				ToastUtil.showToast(rukuActivity, "《" + bat_no
-						+ "》批次号已扫描过~", 0);
-				MyApplication.nextEditFocus(yimei_ruku_proNum_edt);
-			} else {
-				if (map1.containsKey(bat_no)) {
-					// 修改为检测
-					// 修改服务器状态
-					JSONObject jsonValue = (JSONObject) JSONObject
-							.toJSON(map1.get(bat_no));
-					jsonValue.put("sys_stated", "2");
-					jsonValue.put("checkid", "1");
-					Map<String, String> httpMapKeyValueMethod = MyApplication
-							.httpMapKeyValueMethod(
-									MyApplication.DBID, "savedata",
-									MyApplication.user,
-									jsonValue.toString(),
-									"E0004AWEB", "1");
-					OkHttpUtils.getInstance().getServerExecute(
-							MyApplication.MESURL, null,
-							httpMapKeyValueMethod, null, mHander,
-							true, "UpdateCheckid");
-
-					List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
-					for (int i = 0; i < RuKuAdapter.getCount(); i++) {
-						Map<String, String> map = (Map<String, String>) RuKuAdapter
-								.getItem(i);
-						if (map.get("ruku_bat_no").equals(bat_no)) {
-							map.put("ruku_checkid", "√");
-							map2.put(bat_no, bat_no);
-						}
-						mapList.add(map);
-					}
-					RuKuAdapter = new RuKuAdapter(rukuActivity,
-							mapList);
-					mListView.setAdapter(RuKuAdapter);
-					RuKuAdapter.notifyDataSetChanged();
-
+		try {
+			if (map1.size() == 0) { // 第一次扫描
+				InitMM0Data();
+			} else { // 第二次扫描
+				if (map2.containsKey(bat_no)) {
+					// 提示扫描的批次号已经检测
+					ToastUtil.showToast(rukuActivity, "《" + bat_no
+							+ "》批次号已扫描过~", 0);
+					yimei_ruku_proNum_edt.selectAll();
 				} else {
-					if (map1.size() == map2.size()) {
-						// 提示换缴库单号
-						showNormalDialog("该缴库单号已扫完，是否切换新的单号~");
+					if (map1.containsKey(bat_no)) {
+						// 修改为检测
+						// 修改服务器状态
+						JSONObject jsonValue = (JSONObject) JSONObject
+								.toJSON(map1.get(bat_no));
+						jsonValue.put("sys_stated", "2");
+						jsonValue.put("checkid", "1");
+						jsonValue.put("sc_dd",MyApplication.GetServerNowTime());
+						Map<String, String> httpMapKeyValueMethod = MyApplication
+								.httpMapKeyValueMethod(
+										MyApplication.DBID, "savedata",
+										MyApplication.user,
+										jsonValue.toString(),
+										"E0004AWEB", "1");
+						OkHttpUtils.getInstance().getServerExecute(
+								MyApplication.MESURL, null,
+								httpMapKeyValueMethod, null, mHander,
+								true, "UpdateCheckid");
+
+						List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
+						for (int i = 0; i < RuKuAdapter.getCount(); i++) {
+							Map<String, String> map = (Map<String, String>) RuKuAdapter
+									.getItem(i);
+							if (map.get("ruku_bat_no").equals(bat_no)) {
+								map.put("ruku_checkid", "√");
+								map2.put(bat_no, bat_no);
+							}
+							mapList.add(map);
+						}
+						RuKuAdapter = new RuKuAdapter(rukuActivity,
+								mapList);
+						mListView.setAdapter(RuKuAdapter);
+						RuKuAdapter.notifyDataSetChanged();
+						yimei_ruku_proNum_edt.selectAll();
+						
 					} else {
-						// 混批
-						ToastUtil.showToast(rukuActivity,
-								"请将当前的缴库单号扫完~", 0);
-						MyApplication.nextEditFocus(yimei_ruku_proNum_edt);
+						if (map1.size() == map2.size()) {
+							// 提示换缴库单号
+							showNormalDialog("该缴库单号已扫完，是否切换新的单号~");
+						} else {
+							// 混批
+							ToastUtil.showToast(rukuActivity,
+									"请将当前的缴库单号扫完~", 0);
+							yimei_ruku_proNum_edt.selectAll();
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			ToastUtil.showToast(RuKuActivity.this,e.toString(),0);
 		}
 	}
 	
@@ -333,56 +339,65 @@ public class RuKuActivity extends Activity {
 	private final Handler mHander = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == 0) {
-				if (msg.arg1 == 0) {
-					Bundle b = msg.getData();
-					String string = b.getString("type");
-					if (string.equals("QueryBatNo")) {
-						map1.clear();
-						map2.clear();
-						JSONObject jsonObject = JSON.parseObject(b.getString(
-								"jsonObj").toString());
-						if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-							ToastUtil.showToast(rukuActivity, "没有该批次号!", 0);
-							yimei_ruku_proNum_edt.selectAll();
-						} else {
-							mesTmm0 mesTmm0 = new mesTmm0();
+			try {
+				if (msg.what == 0) {
+					if (msg.arg1 == 0) {
+						Bundle b = msg.getData();
+						String string = b.getString("type");
+						if (string.equals("QueryBatNo")) {
+							map1.clear();
+							map2.clear();
+							JSONObject jsonObject = JSON.parseObject(b.getString(
+									"jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								ToastUtil.showToast(rukuActivity, "没有该批次号!", 0);
+								yimei_ruku_proNum_edt.selectAll();
+							} else {
+								mesTmm0 mesTmm0 = new mesTmm0();
 
-							for (int i = 0; i < ((JSONArray) jsonObject
-									.get("values")).size(); i++) {
-								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
-										.get("values")).get(i));
-								mesTmm0 = jsonValue.toJavaObject(mesTmm0.class);
+								for (int i = 0; i < ((JSONArray) jsonObject
+										.get("values")).size(); i++) {
+									JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+											.get("values")).get(i));
+									mesTmm0 = jsonValue.toJavaObject(mesTmm0.class);
+								}
+
+								Map<String, String> map = MyApplication.QueryBatNo(
+										"MESTMM0", "~mm_no='" + mesTmm0.getMm_no()
+												+ "'");
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null, map, null,
+										mHander, true, "QueryMmNo"); // 查询缴库单号
+
 							}
-
-							Map<String, String> map = MyApplication.QueryBatNo(
-									"MESTMM0", "~mm_no='" + mesTmm0.getMm_no()
-											+ "'");
-							OkHttpUtils.getInstance().getServerExecute(
-									MyApplication.MESURL, null, map, null,
-									mHander, true, "QueryMmNo"); // 查询缴库单号
-
+						}
+						if (string.equals("QueryMmNo")) {
+							JSONObject jsonObject = JSON.parseObject(b.getString(
+									"jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								ToastUtil.showToast(rukuActivity, "该缴库单号没有数据!", 0);
+								yimei_ruku_proNum_edt.selectAll();
+							} else {
+								List<Map<String, String>> displatTmm = DisplatTmm(jsonObject);
+								RuKuAdapter = new RuKuAdapter(rukuActivity,
+										displatTmm);
+								mListView.setAdapter(RuKuAdapter);
+								yimei_ruku_proNum_edt.selectAll();
+								/*ToastUtil.showToast(getApplicationContext(),
+										"数据已加载~", 0);*/
+							}
+						}
+						if(string.equals("UpdateCheckid")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							System.out.println(jsonObject);
 						}
 					}
-					if (string.equals("QueryMmNo")) {
-						JSONObject jsonObject = JSON.parseObject(b.getString(
-								"jsonObj").toString());
-						if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-							ToastUtil.showToast(rukuActivity, "该缴库单号没有数据!", 0);
-						} else {
-							List<Map<String, String>> displatTmm = DisplatTmm(jsonObject);
-							RuKuAdapter = new RuKuAdapter(rukuActivity,
-									displatTmm);
-							mListView.setAdapter(RuKuAdapter);
-							/*ToastUtil.showToast(getApplicationContext(),
-									"数据已加载~", 0);*/
-						}
-					}
+				} else {
+					Log.i("err", msg.obj.toString());
 				}
-			} else {
-				Log.i("err", msg.obj.toString());
+			} catch (Exception e) {
+				ToastUtil.showToast(RuKuActivity.this,e.toString(),0);
 			}
-
 		}
 	};
 
@@ -412,6 +427,8 @@ public class RuKuActivity extends Activity {
 				mesTmm0.setCheckid("1");
 				// 修改服务器状态
 				jsonValue.put("sys_stated", "2");
+				jsonValue.put("checkid", "1");
+				jsonValue.put("sc_dd",MyApplication.GetServerNowTime());
 				Map<String, String> httpMapKeyValueMethod = MyApplication
 						.httpMapKeyValueMethod(MyApplication.DBID, "savedata",
 								MyApplication.user, jsonValue.toString(),
