@@ -485,6 +485,17 @@ public class JiaXiGaoActivity extends Activity {
 							}
 							System.out.println(jsonObject);
 						}
+						if(string.equals("IsJiaJiao")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							String message = jsonObject.get("message").toString();
+							if(message.indexOf(",") != -1){
+								int msg1 = Integer.parseInt(String.valueOf(message.substring(0,message.indexOf(","))));
+								showNormalDialog1(msg1,message);
+							}else{
+								MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+							}							
+							System.out.println(jsonObject);
+						}
 					} catch (Exception e) {
 						ToastUtil.showToastLocation(getApplicationContext(),
 								e.toString(), 0);
@@ -493,6 +504,42 @@ public class JiaXiGaoActivity extends Activity {
 			}
 		}
 	};
+	
+	/**
+	 * 弹出提示框
+	 * 
+	 * @param mes
+	 */
+	private void showNormalDialog1(int num,String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				JiaXiGaoActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		if(num==1){
+			normalDialog.setMessage(msg.substring(msg.indexOf(",")+1,msg.length()));
+			normalDialog.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						}
+				});
+			normalDialog.setNegativeButton("取消", null);
+		}
+		if(num==-1){
+			normalDialog.setMessage(msg.substring(msg.indexOf(",")+1,msg.length()));
+			normalDialog.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							yimei_jiaxigao_sbid.selectAll();
+						}
+				});
+		}
+		// 显示
+		normalDialog.show();
+	}
+	
 	private int checkNum = 0; //取showdialog选中的下标
 	static Map<Integer,JSONObject> dig_map = new HashMap<Integer,JSONObject>(); //存放选择的机型 （ 判断选择的下标）
 	private JSONObject ChoseSlkid;
@@ -529,7 +576,16 @@ public class JiaXiGaoActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						ChoseSlkid = dig_map.get(checkNum); //取选中的下标
-						MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
+						
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("apiId","mesudp");
+						map.put("dbid",MyApplication.DBID);
+						map.put("usercode",MyApplication.user);
+						map.put("sbid",sbid);
+						map.put("id","450");
+						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,map
+								, null, mHander,true,"IsJiaJiao");
+//						MyApplication.nextEditFocus(yimei_jiaxigao_prtno);
 					}
 				});
 		// 显示

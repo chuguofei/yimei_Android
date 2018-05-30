@@ -1,14 +1,17 @@
 package com.yimei.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -55,7 +58,8 @@ public class ZhiJuLingChuActivity extends Activity {
 	private String mojuId;
 	private String zuoyeyuan;
 	private JSONObject piciJsonObject;
-
+	private int shiyongNum=0; //使用次数 
+	
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -349,7 +353,7 @@ public class ZhiJuLingChuActivity extends Activity {
 	 */
 	@SuppressLint("HandlerLeak")
 	private final Handler mHander = new Handler() {
-		@Override
+		@SuppressLint("DefaultLocale") @Override
 		public void handleMessage(Message msg) {
 			if (msg.what == 0) {
 				if (msg.arg1 == 0) {
@@ -374,17 +378,37 @@ public class ZhiJuLingChuActivity extends Activity {
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code")
 									.toString()) == 0) {
-								MyApplication
-										.nextEditFocus(yimei_zhijulingchu_mojuId);
-								return;
+								/*MyApplication
+										.nextEditFocus(yimei_zhijulingchu_mojuId);*/
+								ToastUtil.showToast(ZhiJuLingChuActivity.this,"没有【"+yimei_zhijulingchu_proNum_edt.getText().toString()+"】批次号，请检查！",0);
+								yimei_zhijulingchu_proNum_edt.selectAll();
 							} else {
 								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 										.get("values")).get(0));
-								prd_no = jsonValue.get("prd_no").toString();
+								
+								//查询治具使用次数
+								 Map<String, String> CPNUm = MyApplication.QueryBatNo("CPLOTNUM","~sid='"+yimei_zhijulingchu_proNum_edt.getText().toString().toUpperCase()+"'");
+								 OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
+										 CPNUm, null, mHander,true,"Query_shiyongNun");
+								 
+							    prd_no = jsonValue.get("prd_no").toString();
 								piciJsonObject = jsonValue;
-								MyApplication
-										.nextEditFocus(yimei_zhijulingchu_mojuId);
+								MyApplication.nextEditFocus(yimei_zhijulingchu_mojuId);
 							}
+						}
+						if(string.equals("Query_shiyongNun")){ //查询治具使用次数
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							JSONObject json =  (JSONObject) ((JSONArray)jsonObject.get("values")).get(0);
+							int totalqty = 0;
+							int unprtnum = Integer.parseInt(json.get("unprtnum").toString());
+							if(!json.containsKey("totalqty")){
+								totalqty = 160;
+							}else{
+								totalqty = Integer.parseInt(json.get("totalqty").toString());
+							}
+							shiyongNum = totalqty/unprtnum;
+							ToastUtil.showToast(ZhiJuLingChuActivity.this,String.valueOf(shiyongNum),0);
 						}
 						if (string.equals("MOZRegisterQuery")) { // 模具登记查询（prd_no+id）
 							JSONObject jsonObject = JSON.parseObject(b
@@ -423,6 +447,69 @@ public class ZhiJuLingChuActivity extends Activity {
 								yimei_zhijulingchu_mojuId.selectAll();
 								return;
 							} else {
+								//回写使用次数
+								if(!jsonValue.containsKey("type")){
+									showNormalDialog("该治具没有填写使用类型，请先填写!");
+									yimei_zhijulingchu_mojuId.selectAll();
+									return;
+								}
+								if(!jsonValue.containsKey("shouming")){
+									showNormalDialog("该治具没有填写使用寿命，请先填写!");
+									yimei_zhijulingchu_mojuId.selectAll();
+									return;
+								}
+								int shouming = Integer.parseInt(jsonValue.get("shouming").toString());
+								System.out.println(shouming);
+								int yishiyong = Integer.parseInt(jsonValue.get("yishiyong").toString());
+								int type = Integer.parseInt(jsonValue.get("type").toString());
+								if(type==0){ //次数
+									if(yishiyong>shouming){
+										showNormalDialog("该治具寿命为:"+shouming+"次,已使用:"+yishiyong+"次，不能继续使用。");
+										yimei_zhijulingchu_mojuId.selectAll();
+										return;
+									}
+									ToastUtil.showToast(ZhiJuLingChuActivity.this,"该治具可使用次数为："+String.valueOf(shouming-yishiyong),0);
+								}else{ //天数
+									if(!jsonValue.containsKey("pur_date")){
+										showNormalDialog("该治具没有填写购买时间!");
+										yimei_zhijulingchu_mojuId.selectAll();
+										return;
+									}
+									String pur_date = jsonValue.get("pur_date").toString();
+									if(pur_date.length()==16){
+										pur_date += ":00";
+									}
+									if(pur_date.length()==10){
+										pur_date += " 00:00:00";
+									}
+									Date pur_DATE = MyApplication.df.parse(pur_date);
+
+									Date NowTime = MyApplication.df.parse(MyApplication.GetServerNowTime());
+									long days = (NowTime.getTime() - pur_DATE.getTime())/ (1000 * 3600 * 24);
+									if(days>shouming){
+										showNormalDialog("该治具使用期限已到达不能在使用！");
+										return;
+									}else{
+										ToastUtil.showToast(ZhiJuLingChuActivity.this,"该治具已使用"+days+"天",1);
+									}
+								}
+								//**************修改次数************************
+								Map<String, String> CiShumap = new HashMap<String, String>();
+								CiShumap.put("apiId","mesudp");
+								CiShumap.put("dbid",MyApplication.DBID);
+								CiShumap.put("usercode",MyApplication.user);
+								CiShumap.put("sbid",mojuId);
+								CiShumap.put("sid1",yimei_zhijulingchu_proNum_edt.getText().toString().toUpperCase());
+								CiShumap.put("id","500");
+								OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,CiShumap
+										, null, mHander,true,"UpdateCiShu");
+								//**************修改次数************************
+								Map<String, String> mesIdMap = MyApplication
+										.httpMapKeyValueMethod(MyApplication.DBID,
+												"savedata", MyApplication.user,
+												jsonValue.toJSONString(),
+												"D0001WEB", "1");
+								//**************修改次数************************
 								// 400请求 （修改zct）
 								Map<String, String> updateServerMoJu = MyApplication
 										.updateServerMoJu(MyApplication.DBID,
@@ -486,10 +573,14 @@ public class ZhiJuLingChuActivity extends Activity {
 										ZhiJuLingChuAdapter
 												.notifyDataSetChanged();
 									}
-									yimei_zhijulingchu_mojuId
-											.setSelectAllOnFocus(true);
+									yimei_zhijulingchu_mojuId.selectAll();
 								}
 							}
+						}
+						if(string.equals("UpdateCiShu")){ //修改次数
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							System.out.println(jsonObject);
 						}
 						if (string.equals("UpdateServerZct")) {
 							JSONObject jsonObject = JSON.parseObject(b
@@ -517,6 +608,22 @@ public class ZhiJuLingChuActivity extends Activity {
 			}
 		}
 	};
+	
+	private void showNormalDialog(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhiJuLingChuActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(msg);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}
 
 	/**
 	 * 给下拉框赋值

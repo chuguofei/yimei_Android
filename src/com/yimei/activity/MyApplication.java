@@ -18,7 +18,7 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
+//	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
 	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk";
 	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
 
@@ -28,13 +28,14 @@ public class MyApplication extends Application {
 //	public static final String MESURL = "http://192.168.8.107:8080/mes/api";
 //	 public static final String MESURL = "http://192.168.8.104:8080/mes/api";
 	// 李老师公司
-//	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
 //	 public static final String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
 //	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
 //	 public static final String MESURL = "http://192.168.8.106:9999/jd/api";
+//	public static final String MESURL = "http://192.168.8.107:9999/jd/api";
 	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";
 	public static String user = "";
 	public static String sorg = "";

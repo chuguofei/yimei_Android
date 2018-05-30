@@ -1,6 +1,8 @@
 package com.yimei.activity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -10,12 +12,24 @@ import android.util.Log;
 import com.yimei.entity.mesPrecord;
 import com.yimei.sqlliteUtil.DBHelper;
 import com.yimei.sqlliteUtil.mesAllMethod;
+import com.yimei.util.OkHttpUtils;
 public class Test extends AndroidTestCase{
 	
 	public void add(){
 		mesAllMethod mes = new mesAllMethod(this.getContext());
 		mesPrecord m = new mesPrecord("1","1","1","1111", "2","2", "2","1", "1", "1", "1", "1", "1", "1", "1", 1, "1", "1", "1", "1", "1", "1", "1", "1", "1", 1, "1", "1");
 		mes.addData(m);
+	}
+	
+	public void abc(){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("apiId","mesudp");
+		map.put("dbid","mes");
+		map.put("usercode","admin");
+		map.put("sbid","S1-02");
+		map.put("id","450");
+		OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null, map,
+				null, null, true, "");
 	}
 	
 	/**
