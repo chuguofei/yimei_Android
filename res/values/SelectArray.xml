@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- 品质班别 -->
+    <string-array name="ErrNotice_bbid">
+        <item>====请选择====</item>
+        <item>A</item>
+        <item>B</item>
+    </string-array>
+    <!-- 品质异常类别 -->
+    <string-array name="ErrNotice_PTYPE">
+        <item>====请选择====</item>
+        <item>设备</item>
+        <item>材料</item>
+        <item>工艺</item>
+        <item>质量事件</item>
+    </string-array>
+    <!-- 品质临时措施-->
+    <string-array name="ErrNotice_clid"> 
+        <item>====请选择====</item>
+        <item>异常申报</item>
+        <item>暂停生产</item>
+        <item>中止生产</item>
+        <item>HOLD</item>
+        <item>批退返工</item>
+        <item>库存返工</item>
+        <item>发货追回</item>
+    </string-array>
+     <!-- 品质判定-->
+    <string-array name="ErrNotice_determine"> 
+        <item>====请选择====</item>
+        <item>正常放行</item>
+        <item>让步放行</item>
+        <item>返工</item>
+        <item>次料入库</item>
+        <item>报废</item>
+    </string-array>
     <string-array name="spingarr">
         <item>固晶</item>
         <item>焊接</item>
@@ -11,7 +45,7 @@
         <item>测试SMD</item>
 		<item>编带SMD</item>
 		<item>看带SMD</item>
-		<item>包装SMD</item>
+		<item>包装SMD</item>
         -->
     </string-array>
     <string-array name="mozuType">

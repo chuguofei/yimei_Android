@@ -200,11 +200,14 @@ public class SCFLActivity extends TabActivity {
 								for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
 									Map<String, String> map = (Map<String, String>) scfl_scanAdapter
 											.getItem(i);
-									if (map.get("gdic").equals(prd_no)
-											&& map.get("prd_mark").equals(
-													prd_mark)) {
-										yifa += Integer.parseInt(map.get("qty")
-												.toString());
+									//如果有bin和批次数量就加，不然如果没有bin会报null
+									if(map.containsKey("prd_mark")&&map.containsKey("gdic")){
+										if (map.get("gdic").equals(prd_no)
+												&& map.get("prd_mark").equals(
+														prd_mark)) {
+											yifa += Integer.parseInt(map.get("qty")
+													.toString());
+										}
 									}
 								}
 								yimei_scfl_yifa.setText(String.valueOf(yifa));
@@ -266,8 +269,14 @@ public class SCFLActivity extends TabActivity {
 							for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
 								Map<String, String> map = (Map<String, String>) scfl_scanAdapter
 										.getItem(i);
-								if (map.get("sph").equals(cus_pn)) {
-									flag1 = false;
+								try {
+									if ((map.get("sph").equals(cus_pn) && map.get(
+											"gdic").equals(prd_no))
+											|| map.get("sph").equals(cus_pn)) {
+										flag1 = false;
+									}
+								} catch (Exception e) {
+									continue;
 								}
 							}
 							if (flag1 == false) {
@@ -338,6 +347,7 @@ public class SCFLActivity extends TabActivity {
 						}
 					}
 					if (tag.equals("生产发料数量")) {
+						yimei_scfl_qty.setText(barcodeData);
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -827,10 +837,16 @@ public class SCFLActivity extends TabActivity {
 							for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
 								Map<String, String> map = (Map<String, String>) scfl_scanAdapter
 										.getItem(i);
-								if ((map.get("sph").equals(cus_pn) && map.get(
-										"gdic").equals(prd_no))
-										|| map.get("sph").equals(cus_pn)) {
-									flag1 = false;
+								try {
+									//判断批次和bincode是否绑定
+									if ((map.get("sph").equals(cus_pn) && map.get(
+											"gdic").equals(prd_no))
+											|| map.get("sph").equals(cus_pn)) {
+										flag1 = false;
+									}
+								} catch (Exception e) {
+									//没有bin会
+									continue;
 								}
 							}
 							if (flag1 == false) {
@@ -1306,11 +1322,14 @@ public class SCFLActivity extends TabActivity {
 											.getCount(); i++) {
 										Map<String, String> item = (Map<String, String>) scfl_scanAdapter
 												.getItem(i);
-										if (item.get("gdic").equals(prd_no)
-												&& item.get("prd_mark").equals(
-														prd_mark)) {
-											yifa += Long.parseLong(item.get(
-													"qty").toString());
+										//如果有bin和批次数量就加，不然如果没有bin会报null
+										if(item.containsKey("prd_mark")&&item.containsKey("gdic")){
+											if (item.get("gdic").equals(prd_no)
+													&& item.get("gdic").equals(
+															prd_mark)) {
+												yifa += Long.parseLong(item.get(
+														"qty").toString());
+											}
 										}
 									}
 								} else {

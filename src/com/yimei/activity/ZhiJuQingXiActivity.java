@@ -356,7 +356,7 @@ public class ZhiJuQingXiActivity extends Activity {
 
 			break;
 		case MyApplication.VERSION:
-
+			
 			break;
 		}
 		return super.onOptionsItemSelected(item);

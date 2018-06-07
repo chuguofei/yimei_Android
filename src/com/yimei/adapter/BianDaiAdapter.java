@@ -88,8 +88,6 @@ public class BianDaiAdapter extends BaseAdapter {
 					.findViewById(R.id.biandai_prd_name);
 			viewHolder.biandai_qty = (TextView) convertView
 					.findViewById(R.id.biandai_qty);
-			viewHolder.biandai_bincode = (TextView) convertView
-					.findViewById(R.id.biandai_bincode);
 			viewHolder.biandai_item_title = (CheckBox) convertView
 					.findViewById(R.id.biandai_item_title);
 			viewHolder.biandai_state1 = (TextView) convertView
@@ -105,7 +103,6 @@ public class BianDaiAdapter extends BaseAdapter {
 		viewHolder.biandai_sid1.setText((String) map.get("sid1"));
 		viewHolder.biandai_prd_name.setText((String) map.get("prd_name"));
 		viewHolder.biandai_qty.setText((String) map.get("qty"));
-		viewHolder.biandai_bincode.setText((String) map.get("bincode"));
 		viewHolder.biandai_state1.setText((String) map.get("state"));
 		viewHolder.biandai_item_title
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -128,7 +125,6 @@ public class BianDaiAdapter extends BaseAdapter {
 		public TextView biandai_sid1;
 		public TextView biandai_prd_name;
 		public TextView biandai_qty;
-		public TextView biandai_bincode;
 		public TextView biandai_state1;
 	}
 }

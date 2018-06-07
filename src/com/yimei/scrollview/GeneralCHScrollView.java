@@ -17,6 +17,14 @@ import com.yimei.activity.ZhiJuQingXiActivity;
 import com.yimei.activity.ZhiJuRukKuActivity;
 import com.yimei.activity.ZhuanChuActivity;
 import com.yimei.activity.ZhuangXiangActivity;
+import com.yimei.activity.ipqc.IPQC_shoujian;
+import com.yimei.activity.ipqc.IPQC_xunjian;
+import com.yimei.activity.ipqc.ORT_quyang;
+import com.yimei.activity.kuaiguozhan.DiDianLiuActivity;
+import com.yimei.activity.kuaiguozhan.GaoWenDianLiangActivity;
+import com.yimei.activity.kuaiguozhan.KanDaiActivity;
+import com.yimei.activity.kuaiguozhan.TieBeiJiaoActivity;
+import com.yimei.activity.kuaiguozhan.WaiGuanActivity;
 
 public class GeneralCHScrollView extends HorizontalScrollView {
 
@@ -67,6 +75,30 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("接收登记")) {
 			activity = (JieShouActivity) context;
 		}
+		if (title.equals("高温点亮过站")) {
+			activity = (GaoWenDianLiangActivity) context;
+		}
+		if (title.equals("外观过站")) {
+			activity = (WaiGuanActivity) context;
+		}
+		if (title.equals("贴背胶过站")) {
+			activity = (TieBeiJiaoActivity) context;
+		}
+		if (title.equals("低电流过站")) {
+			activity = (DiDianLiuActivity) context;
+		}
+		if (title.equals("看带过站")) {
+			activity = (KanDaiActivity) context;
+		}
+		if (title.equals("首件检验记录")) {
+			activity = (IPQC_shoujian) context;
+		}
+		if (title.equals("巡检记录")) {
+			activity = (IPQC_xunjian) context;
+		}
+		if (title.equals("ORT取样")) {
+			activity = (ORT_quyang) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -108,6 +140,30 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof JieShouActivity) {
 			((JieShouActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof GaoWenDianLiangActivity) {
+			((GaoWenDianLiangActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof WaiGuanActivity) {
+			((WaiGuanActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof TieBeiJiaoActivity) {
+			((TieBeiJiaoActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof DiDianLiuActivity) {
+			((DiDianLiuActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof KanDaiActivity) {
+			((KanDaiActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof IPQC_shoujian) {
+			((IPQC_shoujian) activity).mTouchView = this;
+		}
+		if (activity instanceof IPQC_xunjian) {
+			((IPQC_xunjian) activity).mTouchView = this;
+		}
+		if (activity instanceof ORT_quyang) {
+			((ORT_quyang) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -188,6 +244,62 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof JieShouActivity) {
 			if (((JieShouActivity) activity).mTouchView == this) {
 				((JieShouActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof GaoWenDianLiangActivity) {
+			if (((GaoWenDianLiangActivity) activity).mTouchView == this) {
+				((GaoWenDianLiangActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof WaiGuanActivity) {
+			if (((WaiGuanActivity) activity).mTouchView == this) {
+				((WaiGuanActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof TieBeiJiaoActivity) {
+			if (((TieBeiJiaoActivity) activity).mTouchView == this) {
+				((TieBeiJiaoActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof DiDianLiuActivity) {
+			if (((DiDianLiuActivity) activity).mTouchView == this) {
+				((DiDianLiuActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof KanDaiActivity) {
+			if (((KanDaiActivity) activity).mTouchView == this) {
+				((KanDaiActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof IPQC_shoujian) {
+			if (((IPQC_shoujian) activity).mTouchView == this) {
+				((IPQC_shoujian) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof IPQC_xunjian) {
+			if (((IPQC_xunjian) activity).mTouchView == this) {
+				((IPQC_xunjian) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof ORT_quyang) {
+			if (((ORT_quyang) activity).mTouchView == this) {
+				((ORT_quyang) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}

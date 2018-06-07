@@ -18,25 +18,31 @@ import android.widget.EditText;
 
 public class MyApplication extends Application {
 
-//	public static final String MESURL = "http://192.168.7.15:8088/mes/api";
-	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk";
-	// public static final String MESURL = "http://59.53.182.251:8088/mes/api";
-
-	public static final String DBID = "01";
-//	 public static final String DBID = "mes";
+	public static String MESURL = "http://192.168.7.15:8088/mes/api";
+	/*public static final String MESURL = "http://115.28.191.203:89/mes/api";
+	public static final String MESDOWNLOADAPKURL = "http://115.28.191.203:89/mes/yimei.apk";
+	public static final String MESServerTime = "http://115.28.191.203:89/mes/mservlet";*/
+	
+	public static String DBID = "01";
+//	 public static String DBID = "mes";
 	// 李老师宿舍
-//	public static final String MESURL = "http://192.168.8.107:8080/mes/api";
-//	 public static final String MESURL = "http://192.168.8.104:8080/mes/api";
+//	public static  String MESURL = "http://192.168.8.107:8080/mes/api";
+//	 public static String MESURL = "http://192.168.8.102:9050/jd/api";
+//	 public static String MESURL = "http://192.168.8.103:8080/mes/api";
 	// 李老师公司
-	 public static final String MESURL = "http://192.168.5.88:8080/mes/api";
+//	 public static String MESURL = "http://192.168.5.88:8080/mes/api";
 	// 李老师调试
-//	 public static final String MESURL = "http://192.168.5.84:9050/jd/api";
+//	 public static String MESURL = "http://192.168.5.84:9050/jd/api";
 	// 冯哥公司
-//	 public static final String MESURL = "http://192.168.5.86:9999/jd/api";
+//	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
-//	 public static final String MESURL = "http://192.168.8.106:9999/jd/api";
+//  public static final String MESURL = "http://192.168.8.106:9999/jd/api";
 //	public static final String MESURL = "http://192.168.8.107:9999/jd/api";
-	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";
+//	 public static String MESURL = "http://192.168.8.104:9999/jd/api";
+	
+	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";  //服务器时间
+//	 public static final String MESServerTime = "http://192.168.8.102:9050/jd/mservlet";  //服务器时间
+	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk"; //下载apk
 	public static String user = "";
 	public static String sorg = "";
 
@@ -46,10 +52,15 @@ public class MyApplication extends Application {
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息
+	public static final int ERRORNOTICE = 4; // 异常通知单
 	public static final String LOGOUTText = "切换用户"; // 切换用户
 	public static final String ABOUTUSText = "关于我们"; // 关于我们
 	public static final String VERSIONText = "版本信息"; // 版本信息
-
+	public static final String ERRORNOTICETEXT = "异常通知单"; // 异常通知单
+	public static final String QIJIANSORG="05010000"; //器件部门
+	public static final String MOZUSORG="05040000"; //模组部门
+	public static final String SHOUJIAN_BUID = "Q00201"; //首检业务号
+	
 	public static String Base64pwd(String pwd) {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
 	}
@@ -119,12 +130,17 @@ public class MyApplication extends Application {
 			"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 	public static long ServerTimeCha = 0;
 
-	public static final String GUJING_ZCNO = "11";
-	public static final String HANJIE_ZCNO = "21";
-	public static final String DIANJIAO_ZCNO = "31";
-	public static final String KAOXIANG_ZCNO = "41";
-	public static final String BIANDAI_ZCNO = "71";
-
+	public static final String GUJING_ZCNO = "11"; //固晶
+	public static final String HANJIE_ZCNO = "21"; //焊接
+	public static final String DIANJIAO_ZCNO = "31"; //点胶
+	public static final String KAOXIANG_ZCNO = "41"; //烤箱
+	public static final String BIANDAI_ZCNO = "71"; //编带
+	public static final String KANDAI_ZCNO = "81"; //看带
+	//快速过站
+	public static final String GAOWENDIANLIANG_ZCNO = "S06"; //高温点->外观
+	public static final String WaiGuan_ZCNO = "S07"; //外观->贴背胶
+	public static final String TieBieJiao_ZCNO = "S08"; //贴背胶->低电流点亮
+	public static final String DiDianLiu_ZCNO = "S09"; //低电流->内装
 	/**
 	 * 通用
 	 * 

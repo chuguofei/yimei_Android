@@ -202,6 +202,74 @@
     <string name="yimei_jieshou_prd_name">机型名称</string>
     <string name="yimei_jieshou_qty">数量</string>
     
+    <!-- 快速过站 -->
+    <string name="gaowendianliang">高温点亮</string>
+    <string name="waiguan">外观</string>
+    <string name="tiebeijiao">贴背胶</string>
+    <string name="didianliu">低电流</string>
+    <string name="kandai">看带`</string>
+    
+    <!-- 品质管理 -->
+    <string name="pinzhi_shoujian">首检检验记录</string>
+    <string name="pinzhi_xunjian">巡检记录</string>
+    <!-- 高温点亮 -->
+    <string name="gaowendianliang_sid1">生产批次</string>
+    <string name="gaowendianliang_slkid">制令单号</string>
+    <string name="gaowendianliang_prd_no">机型名称</string>
+    <string name="gaowendianliang_qty">数量</string>
+    <string name="gaowendianliang_zcno">当前制程</string>
+    <string name="gaowendianliang_zcno1">下一制程</string>
+    
+    <!-- 首检 -->
+    <string name="yimei_shoujian_cid">项次</string>
+    <string name="yimei_shoujian_xmbm">编码</string>
+    <string name="yimei_shoujian_xmmc">名称</string>
+    <string name="yimei_shoujian_standard">标准值</string>
+    <string name="yimei_shoujian_value1">实际值1</string>
+	<string name="yimei_shoujian_value2">实际值2</string>    
+    <string name="yimei_shoujian_value3">实际值3</string>
+    <string name="yimei_shoujian_value4">实际值4</string>
+    <string name="yimei_shoujian_value5">实际值5</string>
+    <string name="yimei_shoujian_value6">实际值6</string>
+    <string name="yimei_shoujian_bok">结果判定</string>
+    <string name="yimei_shoujian_remark">说明</string>
+	<string name="shoujian_bok">OK</string>
+	<string name="yimei_shoujian_prd_no">货品名称</string>
+    <string name="yimei_shoujian_caused">发起原因</string>
+    <string name="yimei_shoujian_ps">结果判定</string>
+    <string name="yimei_shoujian_caozuo">操作</string>
+    <string name="yimei_shoujian_chakan">更多</string>
+    
+    <!-- 异常通知单 -->
+    <string name="yimei_shoujian_err_sidf">检验单号</string>
+    <string name="yimei_shoujian_err_hpdate">日期</string>
+    <string name="yimei_shoujian_err_zcno">制程代号</string>
+    <string name="yimei_shoujian_err_sbid">设备号</string>
+    <string name="yimei_shoujian_err_sid1">生产批次</string>
+    <string name="yimei_shoujian_err_slkid">工单号</string>
+    <string name="yimei_shoujian_err_prd_no">机型名称</string>
+    <string name="yimei_shoujian_err_qty">批次数量</string>
+    <string name="yimei_shoujian_err_op_c">检验人员</string>
+    <string name="yimei_shoujian_err_bbid">班别</string>
+    <string name="yimei_shoujian_err_ptype">异常类别</string>
+    <string name="yimei_shoujian_err_risklvl">印象级别</string>
+    <string name="yimei_shoujian_err_clid">临时措施</string>
+    <string name="yimei_shoujian_err_capaid">是否发起</string>
+    <string name="yimei_shoujian_err_determine">品质判定</string>
+    <string name="yimei_shoujian_err_remark">问题描述</string>
+    <string name="yimei_shoujian_err_whys">分析原因</string>
+    <!-- ORT取样 -->
+    <string name="ort_quyang_op">作业员</string>
+    <string name="ort_quyang_sbid">设备号</string>
+    <string name="ort_quyang_sid1">批次号</string>
+    <string name="ort_quyang_zcno">制程</string>
+    <string name="ort_quyang_slkid">指令单</string>
+    <string name="ort_quyang_prd_no">机型代码</string>
+    <string name="ort_quyang_prd_name">机型名称</string>
+    <string name="ort_quyang_qty">数量</string>
+    <string name="ort_quyang_sid">单号</string>
+    <string name="ort_quyang_mkdate">取样时间</string>
+    
     
     <!-- title -->
     <string name="shangliaoTitle">上料</string>
@@ -217,6 +285,19 @@
     <string name="scflTitle">生产发料</string>
     <string name="zhuanchuTitle">转出登记</string>
     <string name="JieShouTitle">接收登记</string>
+    <string name="kuaisuTitle">快速过站</string>
+    <string name="gaowenTitle">高温点亮过站</string>
+    <string name="waiguanTitle">外观过站</string>
+    <string name="tiebeidiaoTitle">贴背胶过站</string>
+    <string name="didianliuTitle">低电流过站</string>
+    <string name="kandaiTitle">看带过站</string>
+    <string name="shoujianTitle">首件检验记录</string>
+    <string name="xunjianTitle">巡检记录</string>
+    <string name="pinzhiTitle">品质管理</string>
+    <string name="xunjian_error_Title">异常通知单</string>
+    <string name="ort_quyang_Title">ORT取样</string>
+    
+    
     <string name="action_settings">Settings</string>
 
 </resources>

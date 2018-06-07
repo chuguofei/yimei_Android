@@ -11,6 +11,8 @@ import java.util.Map;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.IPQC_shoujian;
+import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.HttpUtil;
@@ -52,6 +54,7 @@ public class LoadingActivity extends Activity {
 				// user = "admin";
 				String pwd = intent.getStringExtra("pwd");
 
+//				ToastUtil.showToast(LoadingActivity.this,"url:"+MyApplication.MESURL+"dbid:"+MyApplication.DBID, 0);
 				Map<String, String> map = new HashMap<String, String>();
 				map.put("dbid", MyApplication.DBID);
 				map.put("usercode", user);
@@ -267,9 +270,23 @@ public class LoadingActivity extends Activity {
 									ZhuanChuActivity.class);
 							startActivity(intent);
 						}
-						if (caidan.equals("D0031")) { //接受
+						if (caidan.equals("D0031")) { //接收
 							Intent intent = new Intent(LoadingActivity.this,
 									JieShouActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("D5030")) { //快速过站
+							Intent intent = new Intent(LoadingActivity.this,
+									KuaiSuGuoZhanActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("Q00101")) { //首检
+							Intent intent = new Intent(LoadingActivity.this,
+									IPQC_shoujian.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("Q0")) { //首检
+							Intent intent = new Intent(LoadingActivity.this,PinZhiGuanLi_Activity.class);
 							startActivity(intent);
 						}
 						break;

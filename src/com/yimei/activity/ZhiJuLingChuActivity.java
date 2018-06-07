@@ -521,7 +521,8 @@ public class ZhiJuLingChuActivity extends Activity {
 										"UpdateServerZct");
 
 								if (piciJsonObject != null) {
-
+									piciJsonObject.put("sbid",mojuId);
+									piciJsonObject.put("slkid",piciJsonObject.containsKey("sid")?piciJsonObject.get("sid"):"");
 									piciJsonObject.put("op",
 											zuoyeyuan.toUpperCase());
 									piciJsonObject.put("mkdate",
@@ -552,9 +553,7 @@ public class ZhiJuLingChuActivity extends Activity {
 									map.put("sid1", piciJsonObject.get("sid1")
 											.toString());
 									map.put("sbid", mojuId);
-									map.put("slkid", piciJsonObject
-											.getString("slkid") == null ? ""
-											: jsonValue.getString("slkid"));
+									map.put("slkid", piciJsonObject.get("sid").toString());
 									map.put("prd_no",
 											piciJsonObject.getString("prd_no"));
 									map.put("mkdate",
@@ -703,7 +702,8 @@ public class ZhiJuLingChuActivity extends Activity {
 
 			break;
 		case MyApplication.VERSION:
-
+			showNormalDialog("1.新增治具使用次数、使用寿命"
+					+ "\n2.修改报表没有模具编码,指令号");
 			break;
 		}
 		return super.onOptionsItemSelected(item);

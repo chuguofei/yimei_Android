@@ -47,6 +47,12 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView.OnEditorActionListener;
 
+/**
+ * @author Administrator
+ * 辅助:TESTLOTQUERY //查询lot号
+ * 对象: D0001WEB //savedata添加
+ * 服务器方法: 200 //修改状态  201//上料准备
+ */
 public class BianDaiActivity extends Activity {
 
 	static MyApplication myapp;
@@ -597,7 +603,9 @@ public class BianDaiActivity extends Activity {
 
 						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
 						if (biandaiPrdNocomparison != null) {
-							biandaiPrdNocomparison.clear();
+							if(biandaiPrdNocomparison.size()!=0){								
+								biandaiPrdNocomparison.clear();
+							}
 						}
 						if (mesList != null) {
 							biandaiPrdNocomparison = mesList;
@@ -822,7 +830,14 @@ public class BianDaiActivity extends Activity {
 										if (mListView != null) {
 											if (!mespre.getPrd_no().equals(
 													jsonValue.get("prd_no"))) {
-												showNormalDialog("扫入的测试批次机型与设备当前批次的机型不符！\n不能入站，请先将当前批次出站后再入站生产!");
+												showNormalDialog("（机型不符）\n当前机型：【"+mespre.getPrd_no()+"】\n扫描机型:【"+jsonValue.get("prd_no")+"】\n不能入站，请先将当前批次出站后再入站生产!");
+												yimei_biandai_proNum_edt
+														.selectAll();
+												return;
+											}
+											if (!mespre.getBincode().equals(
+													jsonValue.get("bincode"))) {
+												showNormalDialog("（bincode不符）\n当前bincode【"+mespre.getBincode()+"】\n扫描bincode【"+jsonValue.get("bincode")+"】\n不能入站，请先将当前批次出站后再入站生产!");
 												yimei_biandai_proNum_edt
 														.selectAll();
 												return;
@@ -846,8 +861,8 @@ public class BianDaiActivity extends Activity {
 							jsonValue.put("sid", "");
 							jsonValue.put("state1", "01");
 							jsonValue.put("state", "0");
-							jsonValue
-									.put("prd_name", jsonValue.get("prd_name"));
+							jsonValue.put("prd_name", jsonValue.containsKey("prd_name")?jsonValue.get("prd_name"):"");
+							jsonValue.put("prd_no", jsonValue.containsKey("prd_no")?jsonValue.get("prd_no"):"");
 							jsonValue.put("dcid", GetAndroidMacUtil.getMac());
 							jsonValue.put("op", zuoyeyuan);
 							jsonValue.put("sys_stated", "3");
@@ -1065,9 +1080,8 @@ public class BianDaiActivity extends Activity {
 				mesMap.put("state", stateName.get(new_mes.getState1()));
 				mesMap.put("sid", new_mes.getSlkid());
 				mesMap.put("sid1", new_mes.getSid1());
-				mesMap.put("prd_name", new_mes.getPrd_name());
+				mesMap.put("prd_name", new_mes.getPrd_no());
 				mesMap.put("qty", new_mes.getQty());
-				mesMap.put("bincode", new_mes.getBincode());
 				mesList.add(mesMap);
 			}
 		}
@@ -1144,9 +1158,25 @@ public class BianDaiActivity extends Activity {
 
 			break;
 		case MyApplication.VERSION:
-
+			showNormalDialog1("1.新增不同bincode不能入站");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void showNormalDialog1(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(BianDaiActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(msg);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				});
+		// 显示
+		normalDialog.show();
 	}
 }

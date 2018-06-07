@@ -1,0 +1,90 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shoujian_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/shoujian_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_edittext"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:textColor="#f00"
+        android:gravity="center"
+        android:labelFor="@+id/shoujian_name" />
+    
+     <EditText
+        android:id="@+id/standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:hint="@string/yimei_shoujian_standard"
+        android:labelFor="@+id/standard" />
+    
+    <EditText
+        android:id="@+id/value1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:hint="@string/yimei_shoujian_value1"
+        android:labelFor="@+id/value1" />
+
+    <EditText
+        android:id="@+id/value2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/yimei_shoujian_value2"
+        android:inputType="text"
+        android:labelFor="@+id/value2" />
+    
+     <EditText
+        android:id="@+id/value3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/yimei_shoujian_value3"
+        android:inputType="text"
+        android:labelFor="@+id/value3" />
+
+    <EditText
+        android:id="@+id/value4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/yimei_shoujian_value4"
+        android:inputType="text"
+        android:labelFor="@+id/value4" />
+
+    <EditText
+        android:id="@+id/value5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/yimei_shoujian_value5"
+        android:inputType="text"
+        android:labelFor="@+id/value5" />
+    
+     <EditText
+        android:id="@+id/value6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/yimei_shoujian_value6"
+        android:inputType="text"
+        android:labelFor="@+id/value6" />
+    
+    <EditText
+        android:id="@+id/remark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:hint="@string/yimei_shoujian_remark"
+        android:labelFor="@+id/remark" />
+
+</LinearLayout>

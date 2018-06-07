@@ -1,0 +1,149 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    tools:context="com.example.yimei_v01.ZhuanChuActivity" >
+
+
+        <TableLayout
+            android:id="@+id/zhuanchu_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:shrinkColumns="0,1,2" >
+
+            <TableRow android:layout_marginTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_gujing_user" />
+
+                <EditText
+                    android:id="@+id/yimei_zhuanchu_user"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_zhuanchu_edt"
+                    android:maxLength="12"
+                    android:paddingLeft="10dp"
+                    android:tag="转出作业员" />
+            </TableRow>
+
+            <TableRow android:paddingTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/zhuanchu_zcno" />
+
+                 <Spinner
+                     android:id="@+id/zhuanchu_selectValue"
+                     android:layout_width="250dp"
+                     android:layout_height="40dp"
+                     android:background="@drawable/shape_edittext"
+                     android:tag="转出制程号" />
+
+            </TableRow>
+
+            <TableRow android:paddingTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_gujing_proNum" />
+
+                <EditText
+                    android:id="@+id/yimei_zhuanchu_sid"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_zhuanchu_sid"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:tag="转出批次号" />
+            </TableRow>
+        </TableLayout>
+    
+    <LinearLayout
+        android:id="@+id/zhuanchu_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/zhuanchu_tab"
+        android:layout_marginTop="10dp"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/zhuanchu_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/yimei_zhuanchu_zcno"
+                    android:textColor="#850" />
+                
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/yimei_biandai_proNum"
+                    android:textColor="#850" />
+                
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/yimei_zhuanchu_zcno1"
+                    android:textColor="#850" />
+                
+                 <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/yimei_zhuanchu_prd_name"
+                    android:textColor="#850" />
+
+                  <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/yimei_zhuanchu_qty"
+                    android:textColor="#850" />
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/zhuanchu_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/zhuanchu_data_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>

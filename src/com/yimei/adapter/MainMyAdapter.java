@@ -7,6 +7,7 @@ import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.JieShouActivity;
+import com.yimei.activity.KuaiSuGuoZhanActivity;
 import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.HanXianActivity;
@@ -24,6 +25,9 @@ import com.yimei.activity.ZhuangXiangActivity;
 import com.yimei.activity.R.id;
 import com.yimei.activity.R.layout;
 import com.yimei.activity.RuKuActivity;
+import com.yimei.activity.ipqc.IPQC_shoujian;
+import com.yimei.activity.ipqc.ORT_quyang;
+import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
 
 import android.annotation.SuppressLint;
@@ -178,6 +182,20 @@ public class MainMyAdapter extends BaseAdapter {
 							JieShouActivity.class);
 					v.getContext().startActivity(intent);
 				}
+				if (mainMap.getKey().equals("D5030")) { //快速过站
+					Intent intent = new Intent(context,
+							KuaiSuGuoZhanActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("Q0")) { //品质管理
+					Intent intent = new Intent(context,PinZhiGuanLi_Activity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("K0")) { //取样
+					Intent intent = new Intent(context,ORT_quyang.class);
+					v.getContext().startActivity(intent);
+				}
+				
 			}
 		});
         return view;
@@ -226,9 +244,16 @@ public class MainMyAdapter extends BaseAdapter {
 		if (mainMap.getKey().equals("D0030")) { //转出
 			img.setImageResource(R.drawable.zhuanchu);
 		}
-		if (mainMap.getKey().equals("D0031")) { //接受
+		if (mainMap.getKey().equals("D0031")) { //接收
 			img.setImageResource(R.drawable.jieshou);
 		}
+		if (mainMap.getKey().equals("D5030")) { //接收
+			img.setImageResource(R.drawable.guozhan);
+		}
+		if (mainMap.getKey().equals("Q0")) { //品质管理
+			img.setImageResource(R.drawable.pinzhiguanli);
+		}
+		
     }
   
 }

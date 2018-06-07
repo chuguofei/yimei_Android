@@ -1,0 +1,224 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView_xunjian"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TableLayout
+            android:id="@+id/xunjian_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:shrinkColumns="0,1,2" >
+
+            <TableRow android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_zhijulingchu_zcno" />
+
+                <Spinner
+                    android:id="@+id/ipqc_xunjian_selectValue"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:tag="巡检制程号" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_gujing_user" />
+
+                <EditText
+                    android:id="@+id/yimei_xunjian_user"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_xunjian_user"
+                    android:maxLength="12"
+                    android:paddingLeft="10dp"
+                    android:tag="巡检作业员" />
+            </TableRow>
+
+            <TableRow android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_gujing_equipment" />
+
+                <EditText
+                    android:id="@+id/yimei_xunjian_sbid"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_xunjian_sbid"
+                    android:paddingLeft="10dp"
+                    android:tag="巡检设备号" />
+            </TableRow>
+
+            <TableRow android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_gujing_proNum" />
+
+                <EditText
+                    android:id="@+id/yimei_xunjian_sid1"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_xunjian_sid1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:tag="巡检批次号" />
+            </TableRow>
+
+            <TableRow android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_shoujian_prd_no"
+                    android:textColor="#808080" />
+
+                <EditText
+                    android:id="@+id/yimei_xunjian_prd_no"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_edittext"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:labelFor="@+id/yimei_xunjian_prd_no"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:tag="巡检货品名称"
+                    android:textColor="#808080" />
+            </TableRow>
+
+            <TableRow android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yimei_shoujian_ps"
+                    android:textColor="#f00" />
+
+                <Button
+                    android:id="@+id/yimei_xunjian_ps"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:textColor="#f00" />
+            </TableRow>
+
+            <TableRow android:paddingTop="7dp" >
+
+                <Button
+                    android:id="@+id/yimei_xunjian_save"
+                    android:layout_width="0dip"
+                    android:layout_height="40dp"
+                    android:layout_margin="5dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_shape_check_border"
+                    android:text="保存" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/xunjian_data_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/xunjian_tab"
+            android:layout_marginTop="10dp"
+            android:background="#ccc"
+            android:minHeight="40dip"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="60dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="@string/yimei_shoujian_bok"
+                android:textColor="#850" />
+
+            <TextView
+                android:layout_width="40dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="@string/yimei_shoujian_xmbm"
+                android:textColor="#850" />
+
+            <com.yimei.scrollview.GeneralCHScrollView
+                android:id="@+id/xunjian_scroll_title"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="40dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/yimei_shoujian_cid"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/yimei_shoujian_xmmc"
+                        android:textColor="#850" />
+
+                    <TextView
+                        android:layout_width="100dip"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:text="@string/yimei_shoujian_remark"
+                        android:textColor="#850" />
+                </LinearLayout>
+            </com.yimei.scrollview.GeneralCHScrollView>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/xunjian_scroll_list"
+            android:layout_width="fill_parent"
+            android:layout_height="400dp"
+            android:layout_below="@id/xunjian_data_title"
+            android:cacheColorHint="@android:color/transparent" >
+        </ListView>
+    </LinearLayout>
+
+</ScrollView>

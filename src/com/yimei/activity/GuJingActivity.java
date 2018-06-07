@@ -471,7 +471,8 @@ public class GuJingActivity extends Activity {
 							jsonValue.put("sid", "");
 							jsonValue.put("state1", "01");
 							jsonValue.put("state", "0");
-							jsonValue.put("prd_no", jsonValue.get("prd_name"));
+							jsonValue.put("prd_name", jsonValue.containsKey("prd_name")?jsonValue.get("prd_name"):"");
+							jsonValue.put("prd_no", jsonValue.containsKey("prd_no")?jsonValue.get("prd_no"):"");
 							jsonValue.put("dcid", GetAndroidMacUtil.getMac());
 							jsonValue.put("op", zuoyeyuan);
 							jsonValue.put("sys_stated", "3");

@@ -31,9 +31,7 @@
                 android:maxLength="12"
                 android:enabled="true"
                 android:imeOptions="actionDone"
-                android:tag="固晶作业员"
                 android:inputType="text"
-                android:labelFor="@+id/yimei_gujinguser_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
         <TableRow android:paddingTop="20dp" >

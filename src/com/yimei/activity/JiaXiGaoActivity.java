@@ -385,9 +385,16 @@ public class JiaXiGaoActivity extends Activity {
 										jsonValue.put("sys_stated", "3");
 										jsonValue.put("sbid", sbid);
 										jsonValue.put("qty","1");
-										jsonValue.put("zcno","31");
+										jsonValue.put("zcno","S03");
+										jsonValue.put("zcno1","S04");
 										jsonValue.put("op",zuoyeyuan);
 										jsonValue.put("state","0");
+										if(ChoseSlkid==null){
+											showNormalDialog("请将工站入站后再操作。");
+											MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+											yimei_jiaxigao_sbid.selectAll();
+											return;
+										}
 										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
 										jsonValue.put("indate",MyApplication.GetServerNowTime());
 										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
@@ -422,6 +429,12 @@ public class JiaXiGaoActivity extends Activity {
 										jsonValue.put("zcno","31");
 										jsonValue.put("op",zuoyeyuan);
 										jsonValue.put("state","0");
+										if(ChoseSlkid==null){
+											showNormalDialog("请将工站入站后再操作。");
+											MyApplication.nextEditFocus(yimei_jiaxigao_sbid);
+											yimei_jiaxigao_sbid.selectAll();
+											return;
+										}
 										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
 										jsonValue.put("indate",MyApplication.GetServerNowTime());
 										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
@@ -639,9 +652,25 @@ public class JiaXiGaoActivity extends Activity {
 
 			break;
 		case MyApplication.VERSION:
-
+			showNormalDialog("1.修改制程为S03");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void showNormalDialog(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(JiaXiGaoActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(msg);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				});
+		// 显示
+		normalDialog.show();
 	}
 }

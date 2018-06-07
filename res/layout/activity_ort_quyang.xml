@@ -1,0 +1,194 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin" >
+
+    <TableLayout
+        android:id="@+id/ort_quyang_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+        <TableRow android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_zhijulingchu_zcno" />
+
+            <Spinner
+                android:id="@+id/ort_quyang_selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:tag="ort取样制程号" />
+        </TableRow>
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_user" />
+
+            <EditText
+                android:id="@+id/yimei_ort_quyang_user_edt"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_zhijuqingxi_user_edt"
+                android:paddingLeft="10dp"
+                android:tag="ort取样作业员" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_equipment" />
+
+            <EditText
+                android:id="@+id/yimei_ort_quyang_sbid"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_ort_quyang_sbid"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:tag="ort取样设备号" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_proNum" />
+
+            <EditText
+                android:id="@+id/yimei_ort_quyang_sid1"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_ort_quyang_sid1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:tag="ort取样批次号" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/ort_quyang_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ort_quyang_tab"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/ort_quyang_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_op"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_sbid"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_sid1"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_zcno"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_slkid"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_prd_no"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_prd_name"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_qty"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/ort_quyang_mkdate"
+                    android:textColor="#850" />
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/ort_quyang_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/ort_quyang_data_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>
