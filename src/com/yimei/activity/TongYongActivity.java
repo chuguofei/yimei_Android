@@ -1104,6 +1104,17 @@ public class TongYongActivity extends Activity {
 												MyApplication.MESURL,
 												updateTimeMethod, publicState);
 									}
+								}else{
+									Map<String, String> updateTimeMethod = MyApplication
+											.updateServerTimeMethod(
+													MyApplication.DBID,
+													MyApplication.user,
+													"02", "03",
+													mes_precord.getSid(),
+													zuoyeyuan, zcno, "202");
+									httpRequestQueryRecord(
+											MyApplication.MESURL,
+											updateTimeMethod, publicState);
 								}
 							} else if (json.get("state1").toString()
 									.equals("03")) {
@@ -1180,7 +1191,8 @@ public class TongYongActivity extends Activity {
 		case MyApplication.VERSION:
 			showNormalDialog("1.点胶站:增加程序控制，同一台点胶机可允许有同一工单的多个批次入站，但只能有一个生产批次状态处于生产中，该批次未出站前，不允许再选择其他批次开工。\n"
 					+ "2.机型名称对应字段应该是prd_no\n"
-					+ "3.【固晶站】修改了上料操作");
+					+ "3.【固晶站】修改了上料操作"
+					+ "4.修复上料后不能开工问题");
 			break;
 		}
 		return super.onOptionsItemSelected(item);

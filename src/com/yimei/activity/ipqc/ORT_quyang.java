@@ -20,7 +20,10 @@ import com.yimei.util.ToastUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,6 +54,99 @@ public class ORT_quyang extends Activity {
 			yimei_ort_quyang_sid1;
 	private String op, sbid, sid1,zcno,ORTSid;
 
+	/**
+	 * 获取pda扫描（广播）
+	 */
+	private BroadcastReceiver barcodeReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (MyApplication.INTENT_ACTION_SCAN_RESULT.equals(intent
+					.getAction())) {
+				View rootview = getCurrentFocus();
+				Object tag = rootview.findFocus().getTag();
+				if (tag == null) {
+					return;
+				}
+				// 拿到pda扫描后的值
+				String barcodeData;
+				if (intent.getStringExtra("data") == null) {
+					barcodeData = intent.getStringExtra(
+							MyApplication.SCN_CUST_EX_SCODE)// 拿到销邦终端的值
+							.toString();
+				} else {
+					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
+				}
+				if (tag.equals("ort取样作业员")) { // 作业员
+					yimei_ort_quyang_user_edt.setText(barcodeData);
+					if(yimei_ort_quyang_user_edt.getText().toString().equals("")
+						||yimei_ort_quyang_user_edt.getText()==null){
+						ToastUtil.showToast(ORT_quyang.this,"作业员不能为空！",0);
+						yimei_ort_quyang_user_edt.selectAll();
+						return;
+					}
+					op = yimei_ort_quyang_user_edt.getText().toString().toUpperCase();
+					MyApplication.nextEditFocus(yimei_ort_quyang_sbid);
+				}
+				if (tag.equals("ort取样设备号")) { // 设备号
+					yimei_ort_quyang_sbid.setText(barcodeData);
+					if(yimei_ort_quyang_user_edt.getText().toString().equals("")
+							||yimei_ort_quyang_user_edt.getText()==null){
+							ToastUtil.showToast(ORT_quyang.this,"作业员不能为空！",0);
+							yimei_ort_quyang_user_edt.selectAll();
+							return;
+						}
+					if(yimei_ort_quyang_sbid.getText().toString().equals("")
+							||yimei_ort_quyang_sbid.getText()==null){
+							ToastUtil.showToast(ORT_quyang.this,"设备号不能为空！",0);
+							yimei_ort_quyang_sbid.selectAll();
+							return;
+					}
+					sbid = yimei_ort_quyang_sbid.getText().toString().trim().toUpperCase();
+					// 查询设备号
+					AccessServer("MESEQUTM", "~id='" + sbid + "' and zc_id='"
+							+ zcno + "' ", "QuerySbid");
+				}
+				if (tag.equals("ort取样批次号")) { // 批次号
+					yimei_ort_quyang_sid1.setText(barcodeData);
+					if(yimei_ort_quyang_user_edt.getText().toString().equals("")
+							||yimei_ort_quyang_user_edt.getText()==null){
+							ToastUtil.showToast(ORT_quyang.this,"作业员不能为空！",0);
+							yimei_ort_quyang_user_edt.selectAll();
+							return;
+						}
+					if(yimei_ort_quyang_sbid.getText().toString().equals("")
+							||yimei_ort_quyang_sbid.getText()==null){
+							ToastUtil.showToast(ORT_quyang.this,"设备号不能为空！",0);
+							yimei_ort_quyang_sbid.selectAll();
+							return;
+					}
+					if(yimei_ort_quyang_sid1.getText().toString().equals("")
+							||yimei_ort_quyang_sid1.getText()==null){
+							ToastUtil.showToast(ORT_quyang.this,"批次号不能为空",0);
+							yimei_ort_quyang_sid1.selectAll();
+							return;
+					}
+					sid1 = yimei_ort_quyang_sid1.getText().toString().toUpperCase();
+					int count = 0;
+					if(ortquyangAdapter!=null){
+						for (int i = 0; i < ortquyangAdapter.getCount(); i++) {
+ 							Map<String,String> map = (Map<String, String>) ortquyangAdapter.getItem(i);
+ 							if(map.get("sid1").equals(sid1)){
+ 								count++;
+ 							}
+						}
+					}
+					if(count>0){
+						ToastUtil.showToast(ORT_quyang.this,"【"+sid1+"】批次号已经扫描过！",0);
+						return ;
+					}
+					AccessServer("MOZCLISTWEB", "~zcno='" + zcno
+							+ "' and sid1='" + sid1 + "'", "QuerySid1");
+				}
+			}
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,7 +170,8 @@ public class ORT_quyang extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		registerReceiver(barcodeReceiver, new IntentFilter(
+				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
 		yimei_ort_quyang_user_edt = (EditText) findViewById(R.id.yimei_ort_quyang_user_edt);
 		yimei_ort_quyang_sbid = (EditText) findViewById(R.id.yimei_ort_quyang_sbid);
 		yimei_ort_quyang_sid1 = (EditText) findViewById(R.id.yimei_ort_quyang_sid1);
@@ -85,6 +182,12 @@ public class ORT_quyang extends Activity {
 		yimei_ort_quyang_sid1.setOnEditorActionListener(EnterLister);
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(barcodeReceiver); // 取消广播注册
+	}
+	
 	/**
 	 * 键盘回车
 	 */

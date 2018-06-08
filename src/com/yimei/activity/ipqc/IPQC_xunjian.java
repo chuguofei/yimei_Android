@@ -58,7 +58,7 @@ import android.widget.TextView.OnEditorActionListener;
  * M_PROCESS //根据部门查看部门 
  *  MESEQUTM //查询设备号
  */
-@SuppressLint("ClickableViewAccessibility") public class IPQC_xunjian extends Activity {
+public class IPQC_xunjian extends Activity {
 
 	public HorizontalScrollView mTouchView;
 	private static List<GeneralCHScrollView> GeneralCHScrollView = new ArrayList<GeneralCHScrollView>();
