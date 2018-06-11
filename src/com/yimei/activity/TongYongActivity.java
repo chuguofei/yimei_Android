@@ -45,6 +45,8 @@ import android.widget.Toast;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.ErrorNotice_shoujian;
+import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.ScrollAdapter;
 import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.CHScrollView;
@@ -513,7 +515,12 @@ public class TongYongActivity extends Activity {
 							yimei_proNum_edt.selectAll();
 							return;
 						} else {
-							// if(updateTableSlikids==null)
+							//如果有首检标示
+							if(jsonValue.get("fircheck").toString().equals("1")){
+								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
+								}
+							}
+							JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
 							currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
 							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 							jsonValue.put("slkid", jsonValue.get("sid"));
@@ -558,7 +565,7 @@ public class TongYongActivity extends Activity {
 								|| !shebeihao.equals("")) {
 
 							// ----------------------------------------入站
-							// 修改服务器俩张表
+							// 修改本表
 							Map<String, String> updateServerTable = MyApplication
 									.UpdateServerTableMethod(
 											MyApplication.DBID,
@@ -568,7 +575,7 @@ public class TongYongActivity extends Activity {
 							httpRequestQueryRecord(MyApplication.MESURL,
 									updateServerTable, "updateServerTable");
 							// ----------------------------------------入站
-							// 修改服务器俩张表
+							// 修改本表
 
 							// ----------------------------------------上料准备
 							Map<String, String> ShangLiaoReadyMethod = MyApplication
@@ -792,7 +799,7 @@ public class TongYongActivity extends Activity {
 					} else {
 						/* Log.i("kaigongUpdata", "服务器修改开工状态失败"); */
 						ToastUtil.showToast(gujingActivity,
-								String.valueOf(jsonObject.get("message")), 0);
+								String.valueOf("（通用）服务器修改开工状态失败--err:"+jsonObject.get("message")), 0);
 					}
 				}
 				if (string.equals("chuzhanUpdata")) {
@@ -849,8 +856,8 @@ public class TongYongActivity extends Activity {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-				ToastUtil.showToast(gujingActivity, e.toString(), 0);
+				Log.i("err","（通用）"+e.toString());
+				ToastUtil.showToast(gujingActivity,"（通用）请求服务器:"+e.toString(), 0);
 			}
 		}
 	};
@@ -1156,13 +1163,14 @@ public class TongYongActivity extends Activity {
 							}
 
 						}
+						 Thread.sleep(400);
 					}
 					break;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			ToastUtil.showToast(TongYongActivity.this, e.toString(), 0);
+			ToastUtil.showToast(TongYongActivity.this,"（通用）请求服务器:"+e.toString(), 0);
 		}
 	}
 
@@ -1197,7 +1205,35 @@ public class TongYongActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	/**
+	 * 跳转首检界面
+	 * @param msg
+	 */
+	private void JumShouJianlDialog(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				TongYongActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+				+ "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						intent.setClass(TongYongActivity.this,IPQC_shoujian.class);// 跳转到首检
+						// 利用bundle来存取数据
+						Bundle bundle = new Bundle();
+						bundle.putString("json",newJson.toString());
+						// 再把bundle中的数据传给intent，以传输过去
+						intent.putExtras(bundle);
+						startActivity(intent);
+					}
+				});
+		normalDialog.setNegativeButton("取消", null);		// 显示
+		normalDialog.show();
+	}
+	
 	private void showNormalDialog(String msg) {
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
 				TongYongActivity.this);

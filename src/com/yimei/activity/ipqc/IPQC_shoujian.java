@@ -74,6 +74,7 @@ public class IPQC_shoujian extends Activity {
 	private EditText yimei_shoujian_user, yimei_shoujian_sbid,
 			yimei_shoujian_sid1, yimei_shoujian_prd_no;
 	private String chtype = "01"; // 查询制程检验列表
+	private TextView ipqc_zcno_text;
 	private String op, sbid, sid1, caused;
 	private Button yimei_shoujian_save, yimei_shoujian_ps,
 			yimei_shoujian_chakan; // 保存按钮|结果判定
@@ -191,10 +192,9 @@ public class IPQC_shoujian extends Activity {
 		setContentView(R.layout.activity_ipqc_shoujian);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// 静止进入页面弹出键盘
-		getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		String cont; // 参数
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		ip = IPQC_shoujian.this;
+		String cont; // 参数
 		if (MyApplication.user.equals("admin")) {
 			cont = "";
 		} else {
@@ -225,6 +225,7 @@ public class IPQC_shoujian extends Activity {
 		super.onResume();
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
+		
 		selectValue = (Spinner) findViewById(R.id.ipqc_shoujian_selectValue);
 		ipqc_shoujian_caused_selectValue = (Spinner) findViewById(R.id.ipqc_shoujian_caused_selectValue);
 		yimei_shoujian_user = (EditText) findViewById(R.id.yimei_shoujian_user);
@@ -234,7 +235,49 @@ public class IPQC_shoujian extends Activity {
 		yimei_shoujian_save = (Button) findViewById(R.id.yimei_shoujian_save);
 		yimei_shoujian_ps = (Button) findViewById(R.id.yimei_shoujian_ps);
 		yimei_shoujian_chakan = (Button) findViewById(R.id.yimei_shoujian_chakan);
-
+		ipqc_zcno_text =(TextView)findViewById(R.id.ipqc_zcno_text);
+		//========================================线上换工单的巡检===============================================
+		Intent intent = getIntent();
+		String json = intent.getStringExtra("json");
+		if(json!=null){	
+			selectValue.setVisibility(View.GONE);
+			JSONObject jsonSlkid = JSONObject.parseObject(json);
+			yimei_shoujian_sbid.setText(jsonSlkid.get("sbid").toString());
+			yimei_shoujian_sid1.setText(jsonSlkid.get("sid1").toString());
+			yimei_shoujian_prd_no.setText(jsonSlkid.get("prd_no").toString());
+			yimei_shoujian_user.setText(jsonSlkid.get("op").toString());
+			
+			yimei_shoujian_sbid.setKeyListener(null);
+			yimei_shoujian_user.setKeyListener(null);
+			yimei_shoujian_sid1.setKeyListener(null);
+			yimei_shoujian_prd_no.setKeyListener(null);
+		    //显示制程
+			ipqc_zcno_text.setText(jsonSlkid.get("zcname").toString());
+			sbid = jsonSlkid.get("sbid").toString();
+			sid1 = jsonSlkid.get("sid1").toString();
+			zcno = jsonSlkid.get("zcno").toString();
+			op = jsonSlkid.get("op").toString();
+			//查询原因
+			AccessServer("CAUSEDQ", "~id='" + zcno + "'", "QueryCaused");
+			Sid1Json = jsonSlkid;
+			errorJSON = Sid1Json; // 审批流的json
+			/*errorJSON.put("slkid", Sid1Json.get("sid")
+					.toString());*/
+			errorJSON.put("sbid", sbid);
+			errorJSON.put("op", op);
+			errorJSON.put("chtype",chtype);
+			// 查询制程检验列表
+			OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,MyApplication.QueryBatNo(
+							"PROCESSAQ", "~id='" + zcno
+									+ "' and chtype='"
+									+ chtype + "'"),
+					null, mHander, true,
+					"PROCESSA_QUERY");
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			// 如果软键盘已经显示，则隐藏，反之则显示
+			imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+		}
+		//========================================线上换工单的巡检===============================================
 		IsSorg.put("61", "61");
 		IsSorg.put("71", "71");
 		IsSorg.put("81", "81");
@@ -558,6 +601,7 @@ public class IPQC_shoujian extends Activity {
 								errJumpOK = true;
 								errorJSON.put("sid", ((JSONObject) jsonObject
 										.get("data")).get("sid"));
+								errorJSON.put("checkType",chtype);
 								ToastUtil.showToast(IPQC_shoujian.this,"保存成功",0);
 							}
 						}

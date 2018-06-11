@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.MoZuAdapter;
 import com.yimei.entity.Pair;
 import com.yimei.entity.mesPrecord;
@@ -14,16 +16,20 @@ import com.yimei.scrollview.MoZuCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -406,20 +412,40 @@ public class MoZuActivity extends Activity {
 						if (json.get("state1").toString().equals("01")) {
 							Map<String, String> updateTimeMethod = MyApplication
 									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "01", "03",
+											MyApplication.user,json.get("state1").toString(), "03",
 											mes_precord.getSid(), zuoyeyuan,
 											zcno, "202");
 
 							httpRequestQueryRecord(MyApplication.MESURL,
 									updateTimeMethod, publicState);
+							
+							// 修改本表
+							Map<String, String> updateServerTable = MyApplication
+									.UpdateServerTableMethod(
+											MyApplication.DBID,
+											MyApplication.user,json.get("state1").toString(), "03",
+											mes_precord.getSid1(), currSlkid, zcno,
+											"200");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									updateServerTable, "updateServerTable");
 						} else if (json.get("state1").toString().equals("02")) {
 							Map<String, String> updateTimeMethod = MyApplication
 									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "02", "03",
+											MyApplication.user, json.get("state1").toString(), "03",
 											mes_precord.getSid(), zuoyeyuan,
 											zcno, "202");
 							httpRequestQueryRecord(MyApplication.MESURL,
 									updateTimeMethod, publicState);
+							
+							// 修改本表
+							Map<String, String> updateServerTable = MyApplication
+									.UpdateServerTableMethod(
+											MyApplication.DBID,
+											MyApplication.user,json.get("state1").toString(), "03",
+											mes_precord.getSid1(),json.get("slkid").toString(), zcno,
+											"200");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									updateServerTable, "updateServerTable");
 						} else if (json.get("state1").toString().equals("03")) {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次已是开工状态！", 0);
@@ -428,11 +454,21 @@ public class MoZuActivity extends Activity {
 						if (json.get("state1").toString().equals("03")) {
 							Map<String, String> updateTimeMethod = MyApplication
 									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "03", "04",
+											MyApplication.user,json.get("state1").toString(), "04",
 											mes_precord.getSid(), zuoyeyuan,
 											zcno, "202");
 							httpRequestQueryRecord(MyApplication.MESURL,
 									updateTimeMethod, publicState);
+							
+							// 修改本表
+							Map<String, String> updateServerTable = MyApplication
+									.UpdateServerTableMethod(
+											MyApplication.DBID,
+											MyApplication.user,json.get("state1").toString(), "04",
+											mes_precord.getSid1(),json.get("slkid").toString(), zcno,
+											"200");
+							httpRequestQueryRecord(MyApplication.MESURL,
+									updateServerTable, "updateServerTable");
 						} else if (json.get("state1").toString().equals("02")) {
 							ToastUtil.showToast(getApplicationContext(),
 									"选中的批次不能出站！", 0);
@@ -585,97 +621,111 @@ public class MoZuActivity extends Activity {
 			super.handleMessage(msg);
 			Bundle b = msg.getData();
 			String string = b.getString("type");
-			if (string.equals("SpinnerValue")) { // 给下拉框赋值
-				JSONObject jsonObject = JSON.parseObject(b
-						.getString("jsonObj").toString());
-				if(Integer.parseInt(jsonObject.get("code").toString()) == 0){
-					ToastUtil.showToast(getApplicationContext(),"没有查到制程号~",0);
-					return;
-				}else{
-					SetSelectValue(jsonObject);
-					System.out.println(jsonObject);
-				}
-			}
-			if (string.equals("IsSbidQuery")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
-					Log.i("code", jsonObject.get("code").toString());
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						ToastUtil.showToast(getApplicationContext(),
-								"请检查设备号和制程是否正确!", 0);
-						MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
-					} else {
-						ToastUtil.showToast(getApplicationContext(),
-								"请检查设备号和制程是否正确!", 0);
-
-						MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
+			try {
+				if (string.equals("SpinnerValue")) { // 给下拉框赋值
+					JSONObject jsonObject = JSON.parseObject(b
+							.getString("jsonObj").toString());
+					if(Integer.parseInt(jsonObject.get("code").toString()) == 0){
+						ToastUtil.showToast(getApplicationContext(),"没有查到制程号~",0);
+						return;
+					}else{
+						SetSelectValue(jsonObject);
+						System.out.println(jsonObject);
 					}
-				} else {
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}");
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ zcno + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"shebeiQuery");
 				}
-			}
-			if (string.equals("IsSbidQuery1")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
+				if (string.equals("IsSbidQuery")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
+						Log.i("code", jsonObject.get("code").toString());
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							ToastUtil.showToast(getApplicationContext(),
+									"请检查设备号和制程是否正确!", 0);
+							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
+						} else {
+							ToastUtil.showToast(getApplicationContext(),
+									"请检查设备号和制程是否正确!", 0);
 
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
-					Log.i("code", jsonObject.get("code").toString());
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
-					} else {
-						ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-								0);
-						MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
-					}
-					return;
-				} else {
-					// 查询批次号表是否存在批次
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{SMDZCLIST}"); // 查模组辅助
-					map.put("cont", "~sid1='" + picihao + "' and zcno='" + zcno
-							+ "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"ListViewIsLotNo");
-				}
-			}
-			if ("ListViewIsLotNo".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					// 如果有批号
-					if (mListView != null) {
-						// 循环列表
-						int count = 0;
-						List<Map<String, Object>> ListMesPitch = MoZuAdapter.listData;
-						for (int i = 0; i < ListMesPitch.size(); i++) {
-							Map<String, Object> map = ListMesPitch.get(i);
-							if (map.get("sid1").equals(picihao)) {
-								count++;
-								MoZuAdapter.state.put(i, true);
-							}
+							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						}
-						HashMap<Integer, Boolean> a = MoZuAdapter.Getstate();
-						if (count > 0) {
-							MoZuAdapter.notifyDataSetChanged();
-							ToastUtil.showToast(getApplicationContext(), "《"
-									+ picihao + "》测试号存在,已经帮你选中", 0);
+					} else {
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}");
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ zcno + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"shebeiQuery");
+					}
+				}
+				if (string.equals("IsSbidQuery1")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有该设备号
+						Log.i("code", jsonObject.get("code").toString());
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
+						} else {
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
+									0);
+							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
+						}
+						return;
+					} else {
+						// 查询批次号表是否存在批次
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MOZCLISTWEB}"); // 查模组辅助 
+						map.put("cont", "~sid1='" + picihao + "' and zcno='" + zcno
+								+ "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"ListViewIsLotNo");
+					}
+				}
+				if ("ListViewIsLotNo".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						// 如果有批号
+						if (MoZuAdapter != null) {
+							// 循环列表
+							int count = 0;
+							List<Map<String, Object>> ListMesPitch = MoZuAdapter.listData;
+							for (int i = 0; i < ListMesPitch.size(); i++) {
+								Map<String, Object> map = ListMesPitch.get(i);
+								if (map.get("sid1").equals(picihao)) {
+									count++;
+									MoZuAdapter.state.put(i, true);
+								}
+							}
+							HashMap<Integer, Boolean> a = MoZuAdapter.Getstate();
+							if (count > 0) {
+								MoZuAdapter.notifyDataSetChanged();
+								ToastUtil.showToast(getApplicationContext(), "《"
+										+ picihao + "》测试号存在,已经帮你选中", 0);
+							} else {
+								// 去服务器拿
+								// 查询制程和批次是否存在
+								Map<String, String> map = new HashMap<String, String>();
+								map.put("dbid", MyApplication.DBID);
+								map.put("usercode", MyApplication.user);
+								map.put("apiId", "assist");
+								map.put("assistid", "{MSBMOLIST}"); // 模组辅助
+								map.put("cont", "~sid1='" + picihao
+										+ "' and zcno='" + zcno + "'");
+								httpRequestQueryRecord(MyApplication.MESURL, map,
+										"ServerIsZcnoAndLotNo");
+							}
 						} else {
 							// 去服务器拿
 							// 查询制程和批次是否存在
@@ -683,256 +733,301 @@ public class MoZuActivity extends Activity {
 							map.put("dbid", MyApplication.DBID);
 							map.put("usercode", MyApplication.user);
 							map.put("apiId", "assist");
-							map.put("assistid", "{MSBMOLIST}"); // 模组辅助
-							map.put("cont", "~sid1='" + picihao
-									+ "' and zcno='" + zcno + "'");
+							map.put("assistid", "{MSBMOLIST}"); // 查任务
+							map.put("cont", "~sid1='" + picihao + "' and zcno='"
+									+ zcno + "'");
+							String a = picihao;
+							String b2 = zcno;
 							httpRequestQueryRecord(MyApplication.MESURL, map,
 									"ServerIsZcnoAndLotNo");
 						}
 					} else {
-						// 去服务器拿
-						// 查询制程和批次是否存在
+						// 提示没有该批号
+						ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
+						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
+					}
+				}
+				if ("ServerIsZcnoAndLotNo".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 如果有设备号 就绑定过 （提示：已经绑定过设备）
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						ToastUtil.showToast(getApplication(), "《" + picihao
+								+ "》测试号已绑定过设备号！", 0);
+					} else {
+						// （json） 拿数据
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("dbid", MyApplication.DBID);
 						map.put("usercode", MyApplication.user);
 						map.put("apiId", "assist");
-						map.put("assistid", "{MSBMOLIST}"); // 查任务
-						map.put("cont", "~sid1='" + picihao + "' and zcno='"
+						map.put("assistid", "{MOZCLISTWEB}"); 
+						map.put("cont", "~sid1='" + picihao + "' and zcno='" + zcno
+								+ "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map, "json");
+					}
+				}
+				if ("json".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(0));
+						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
+							ToastUtil.showToast(MoZuActivity.this, "该批号不具备入站条件!",
+									0);
+							yimei_mozu_proNum_edt.selectAll();
+							return;
+						} else if (jsonValue.get("state").toString()
+								.equals("02")
+								|| jsonValue.get("state").toString()
+										.equals("03")) {
+							ToastUtil.showToast(MoZuActivity.this, "该批号已经入站!", 0);
+							yimei_mozu_proNum_edt.selectAll();
+							return;
+						} else if (jsonValue.get("state").toString()
+								.equals("04")) {
+							ToastUtil.showToast(MoZuActivity.this, "该批号已经出站!", 0);
+							yimei_mozu_proNum_edt.selectAll();
+							return;
+						} else {
+							//如果有首检标示
+							if(jsonValue.get("fircheck").toString().equals("1")){
+								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
+									JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
+								}
+							}
+						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
+						
+						sid1 = jsonValue.get("sid1").toString(); // 修改服务器表的sid1
+						jsonValue.put("slkid", jsonValue.get("sid"));
+						jsonValue.put("sid", "");
+						jsonValue.put("state1", "01");
+						jsonValue.put("state", "0");
+						jsonValue.put("prd_name", jsonValue.containsKey("prd_name")?jsonValue.get("prd_name"):"");
+						jsonValue.put("dcid", GetAndroidMacUtil.getMac());
+						jsonValue.put("op", zuoyeyuan);
+						jsonValue.put("sys_stated", "3");
+						jsonValue.put("sbid", shebeihao);
+						jsonValue.put("zcno", zcno);
+						jsonValue.put("zcno1",jsonValue.get("zcno1"));
+						jsonValue.put("smake", MyApplication.user);
+						jsonValue.put("mkdate",MyApplication.GetServerNowTime());
+						jsonValue.put("sbuid", "D0001");
+						newJson = jsonValue;
+						Map<String, String> mesIdMap = MyApplication
+								.httpMapKeyValueMethod(MyApplication.DBID,
+										"savedata", MyApplication.user,
+										jsonValue.toJSONString(), "D0001WEB", "1");
+						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap, "id");
+						}
+					}
+				}
+				if (string.equals("id")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					JSONObject jsondata = (JSONObject) jsonObject.get("data");
+					String newsid = jsondata.get("sid").toString(); // 拿到返回的sib1
+					if (newsid != "") {
+						
+						// ----------------------------------------入站
+						Map<String, String> updateServerTable = MyApplication
+								.UpdateServerTableMethod(MyApplication.DBID,
+										MyApplication.user, "00", "01", sid1,
+										currSlkid, zcno, "200");
+						httpRequestQueryRecord(MyApplication.MESURL,
+								updateServerTable, "updateServerTable");
+						// ----------------------------------------入站
+
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
 								+ zcno + "'");
-						String a = picihao;
-						String b2 = zcno;
 						httpRequestQueryRecord(MyApplication.MESURL, map,
-								"ServerIsZcnoAndLotNo");
-					}
-				} else {
-					// 提示没有该批号
-					ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
-					MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
-				}
-			}
-			if ("ServerIsZcnoAndLotNo".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 如果有设备号 就绑定过 （提示：已经绑定过设备）
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					ToastUtil.showToast(getApplication(), "《" + picihao
-							+ "》测试号已绑定过设备号！", 0);
-				} else {
-					// （json） 拿数据
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{SMDZCLIST}");
-					map.put("cont", "~sid1='" + picihao + "' and zcno='" + zcno
-							+ "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map, "json");
-				}
-			}
-			if ("json".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-					JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
-							.get("values")).get(0));
-
-					currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
-					sid1 = jsonValue.get("sid1").toString(); // 修改服务器表的sid1
-					jsonValue.put("slkid", jsonValue.get("sid"));
-					jsonValue.put("sid", "");
-					jsonValue.put("state1", "01");
-					jsonValue.put("state", "0");
-					jsonValue.put("prd_name", jsonValue.get("prd_name"));
-					jsonValue.put("dcid", GetAndroidMacUtil.getMac());
-					jsonValue.put("op", zuoyeyuan);
-					jsonValue.put("sys_stated", "3");
-					jsonValue.put("sbid", shebeihao);
-					jsonValue.put("zcno", zcno);
-					jsonValue.put("smake", MyApplication.user);
-					jsonValue.put("mkdate",MyApplication.GetServerNowTime());
-					jsonValue.put("sbuid", "D0001");
-					newJson = jsonValue;
-					Map<String, String> mesIdMap = MyApplication
-							.httpMapKeyValueMethod(MyApplication.DBID,
-									"savedata", MyApplication.user,
-									jsonValue.toJSONString(), "D0001WEB", "1");
-					httpRequestQueryRecord(MyApplication.MESURL, mesIdMap, "id");
-				}
-			}
-			if (string.equals("id")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				JSONObject jsondata = (JSONObject) jsonObject.get("data");
-				String newsid = jsondata.get("sid").toString(); // 拿到返回的sib1
-				if (newsid != "") {
-
-					// ----------------------------------------入站
-					Map<String, String> updateServerTable = MyApplication
-							.UpdateServerTableMethod(MyApplication.DBID,
-									MyApplication.user, "00", "01", sid1,
-									currSlkid, zcno, "200");
-					httpRequestQueryRecord(MyApplication.MESURL,
-							updateServerTable, "updateServerTable");
-					// ----------------------------------------入站
-
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ zcno + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"shebeiQuery1");
-
-				}
-			}
-
-			if ("updateServerTable".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				String j = jsonObject.toString();
-			}
-			if ("shebeiQuery1".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
-
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					MoZuAdapter = new MoZuAdapter(MoZuActivity.this, mesList);
-					mListView.setAdapter(MoZuAdapter);
-					ToastUtil.showToast(getApplicationContext(), "《" + picihao
-							+ "》测试号加载到列表中~", 0);
-					if (mListView == null) {
-						mozu_shangliao.setEnabled(false);
-						mozu_kaigong.setEnabled(false);
-						mozu_chuzhan.setEnabled(false);
-					} else {
-						mozu_shangliao.setEnabled(true);
-						mozu_kaigong.setEnabled(true);
-						mozu_chuzhan.setEnabled(true);
-					}
-				} else {
-					if (mListView != null) {
-						mListView.setAdapter(null);
-						mListView = null;
-						MoZuAdapter.notifyDataSetChanged();
-						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
-					}
-					if (mListView == null) {
-						mozu_shangliao.setEnabled(false);
-						mozu_kaigong.setEnabled(false);
-						mozu_chuzhan.setEnabled(false);
-					} else {
-						mozu_shangliao.setEnabled(true);
-						mozu_kaigong.setEnabled(true);
-						mozu_chuzhan.setEnabled(true);
+								"shebeiQuery1");
 					}
 				}
-			}
-			if ("shebeiQuery".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					MoZuAdapter = new MoZuAdapter(MoZuActivity.this, mesList);
-					mListView.setAdapter(MoZuAdapter);
-					ToastUtil.showToast(getApplicationContext(), "《"
-							+ shebeihao + "》设备号已加载到列表中", 0);
-					if (mListView == null) {
-						mozu_shangliao.setEnabled(false);
-						mozu_kaigong.setEnabled(false);
-						mozu_chuzhan.setEnabled(false);
-					} else {
-						mozu_shangliao.setEnabled(true);
-						mozu_kaigong.setEnabled(true);
-						mozu_chuzhan.setEnabled(true);
-					}
-				} else {
-					// 清空列表
-					// ToastUtil.showToast(getApplicationContext(), "该设备没有记录",
-					// 0);
-					if (mListView != null) {
-						mozu_shangliao.setEnabled(true);
-						mozu_kaigong.setEnabled(true);
-						mozu_chuzhan.setEnabled(true);
-						mListView.setAdapter(null);
-						mListView = null;
+				if ("updateServerTable".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					String j = jsonObject.toString();
+				}
+				if ("shebeiQuery1".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 
-						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
-					} else {
-						mozu_shangliao.setEnabled(false);
-						mozu_kaigong.setEnabled(false);
-						mozu_chuzhan.setEnabled(false);
-					}
-				}
-			}
-			if ("kaigongUpdata".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 0
-						|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
-					updateListState.clear();
-					// 刷新列表
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ zcno + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"updateRefresh");
-				} else {
-					ToastUtil.showToast(mozuActivity,
-							String.valueOf(jsonObject.get("message")), 0);
-				}
-			}
-			if (string.equals("chuzhanUpdata")) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				if (Integer.parseInt(jsonObject.get("id").toString()) == 0
-						|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
-					updateListState.clear();
-					// 刷新列表
-					// 去服务器中拿设备号
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("dbid", MyApplication.DBID);
-					map.put("usercode", MyApplication.user);
-					map.put("apiId", "assist");
-					map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
-					map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
-							+ zcno + "'");
-					httpRequestQueryRecord(MyApplication.MESURL, map,
-							"updateRefresh");
-				}
-			}
-			if ("updateRefresh".equals(string)) {
-				JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
-						.toString());
-				// 判断设备号+制程在服务器中是否有数据
-				if (Integer.parseInt(jsonObject.get("code").toString()) == 1
-						|| Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-
-					List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
-					if (mesList != null) {
-						MoZuAdapter = new MoZuAdapter(mozuActivity, mesList);
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+						MoZuAdapter = new MoZuAdapter(MoZuActivity.this, mesList);
 						mListView.setAdapter(MoZuAdapter);
+						ToastUtil.showToast(getApplicationContext(), "《" + picihao
+								+ "》测试号加载到列表中~", 0);
+						if (mListView == null) {
+							mozu_shangliao.setEnabled(false);
+							mozu_kaigong.setEnabled(false);
+							mozu_chuzhan.setEnabled(false);
+						} else {
+							mozu_shangliao.setEnabled(true);
+							mozu_kaigong.setEnabled(true);
+							mozu_chuzhan.setEnabled(true);
+						}
+					} else {
+						if (mListView != null) {
+							mListView.setAdapter(null);
+							mListView = null;
+							MoZuAdapter.notifyDataSetChanged();
+							MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
+						}
+						if (mListView == null) {
+							mozu_shangliao.setEnabled(false);
+							mozu_kaigong.setEnabled(false);
+							mozu_chuzhan.setEnabled(false);
+						} else {
+							mozu_shangliao.setEnabled(true);
+							mozu_kaigong.setEnabled(true);
+							mozu_chuzhan.setEnabled(true);
+						}
+					}
+				}
+				if ("shebeiQuery".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+						MoZuAdapter = new MoZuAdapter(MoZuActivity.this, mesList);
+						mListView.setAdapter(MoZuAdapter);
+						ToastUtil.showToast(getApplicationContext(), "《"
+								+ shebeihao + "》设备号已加载到列表中", 0);
+						if (mListView == null) {
+							mozu_shangliao.setEnabled(false);
+							mozu_kaigong.setEnabled(false);
+							mozu_chuzhan.setEnabled(false);
+						} else {
+							mozu_shangliao.setEnabled(true);
+							mozu_kaigong.setEnabled(true);
+							mozu_chuzhan.setEnabled(true);
+						}
+					} else {
+						// 清空列表
+						// ToastUtil.showToast(getApplicationContext(), "该设备没有记录",
+						// 0);
+						if (mListView != null) {
+							mozu_shangliao.setEnabled(true);
+							mozu_kaigong.setEnabled(true);
+							mozu_chuzhan.setEnabled(true);
+							mListView.setAdapter(null);
+							mListView = null;
+
+							MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
+						} else {
+							mozu_shangliao.setEnabled(false);
+							mozu_kaigong.setEnabled(false);
+							mozu_chuzhan.setEnabled(false);
+						}
+					}
+				}
+				if ("kaigongUpdata".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
+							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+						updateListState.clear();
+						// 刷新列表
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ zcno + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"updateRefresh");
+					} else {
+						ToastUtil.showToast(mozuActivity,
+								String.valueOf(jsonObject.get("message")), 0);
+					}
+				}
+				if (string.equals("chuzhanUpdata")) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
+							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+						updateListState.clear();
+						// 刷新列表
+						// 去服务器中拿设备号
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "assist");
+						map.put("assistid", "{MSBMOLIST}"); // 设备任务列表
+						map.put("cont", "~sbid='" + shebeihao + "' and zcno='"
+								+ zcno + "'");
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"updateRefresh");
+					}
+				}
+				if ("updateRefresh".equals(string)) {
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
+							.toString());
+					// 判断设备号+制程在服务器中是否有数据
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1
+							|| Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+
+						List<Map<String, Object>> mesList = QueryList(jsonObject); // 刷新列表
+					if (mesList != null) {
+							MoZuAdapter = new MoZuAdapter(mozuActivity, mesList);
+							mListView.setAdapter(MoZuAdapter);
 						return;
 					} else {
+						MoZuAdapter = null;
 						mListView.setAdapter(null);
-						MoZuAdapter.notifyDataSetChanged();
+//						MoZuAdapter.notifyDataSetChanged();
+					}
 					}
 				}
+			} catch (Exception e) {
+				ToastUtil.showToast(MoZuActivity.this,e.toString(),0);
 			}
 		}
 	};
+	
+	/**
+	 * 跳转首检界面
+	 * @param msg
+	 */
+	private void JumShouJianlDialog(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				MoZuActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+				+ "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						intent.setClass(MoZuActivity.this,IPQC_shoujian.class);// 跳转到首检
+						// 利用bundle来存取数据
+						Bundle bundle = new Bundle();
+						bundle.putString("json",newJson.toString());
+						// 再把bundle中的数据传给intent，以传输过去
+						intent.putExtras(bundle);
+						startActivity(intent);
+					}
+				});
+		normalDialog.setNegativeButton("取消", null);		// 显示
+		normalDialog.show();
+	}
 
 	/**
 	 * 给下拉框赋值
@@ -989,7 +1084,7 @@ public class MoZuActivity extends Activity {
 				Log.i("newmes", new_mes.toString());
 				mesMap.put("mozu_item_title", new_mes);
 				mesMap.put("sid1", new_mes.getSid1());
-				mesMap.put("sid", new_mes.getSid());
+				mesMap.put("sid", new_mes.getSlkid());
 				mesMap.put("prd_name", new_mes.getPrd_name());
 				mesMap.put("qty", new_mes.getQty());
 				mesMap.put("state", stateName.get(new_mes.getState1()));

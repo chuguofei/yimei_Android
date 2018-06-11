@@ -454,7 +454,7 @@ public class JiaJiaoActivity extends Activity {
 								+ jiaobeipihao + "胶杯批号！", 0);
 					}
 				}
-				if (string.equals("AddMESgluejob")) { // 300请求
+				if (string.equals("AddMESgluejob")) { // 300请求修改状态（state）
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {

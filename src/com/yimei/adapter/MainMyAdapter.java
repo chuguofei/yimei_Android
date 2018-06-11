@@ -8,6 +8,7 @@ import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.KuaiSuGuoZhanActivity;
+import com.yimei.activity.MainActivity;
 import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.HanXianActivity;
@@ -77,12 +78,11 @@ public class MainMyAdapter extends BaseAdapter {
         //加载布局为一个视图
         View view=inflater.inflate(R.layout.main_griditem,null);
         final Main_map mainMap=getItem(position);
-        
         TextView tv = (TextView) view.findViewById(R.id.main_text);
         ImageView img = (ImageView) view.findViewById(R.id.main_image);
         img.setImageResource(R.drawable.mozu);
         setImg(mainMap,img);
-        if(mainMap.getKey().equals("D0050")){        	
+         if(mainMap.getKey().equals("D0050")){        	
         	tv.setText("烤箱管理");
         }else{
         	tv.setText(mainMap.getValue());
@@ -93,9 +93,9 @@ public class MainMyAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				//包装作业
 				if(mainMap.getKey().equals("F0001")){
-					/*Intent intent = new Intent(context,
+					Intent intent = new Intent(context,
 							BianDaiActivity.class);
-					v.getContext().startActivity(intent);*/
+					v.getContext().startActivity(intent);
 				}else if(mainMap.getKey().equals("D0002")){
 					//固晶管理
 					Intent intent = new Intent(context,

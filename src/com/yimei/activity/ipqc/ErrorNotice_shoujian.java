@@ -334,22 +334,26 @@ public class ErrorNotice_shoujian extends Activity {
 								ToastUtil.showToast(ErrorNotice_shoujian.this,
 										"（异常通知单save）错误", 0);
 							} else {
-								errnoticeSid = ((JSONObject) jsonObject
-										.get("data")).get("sbuid").toString();
-								Map<String, String> map = new HashMap<>();
-								map.put("dbid", MyApplication.DBID);
-								map.put("usercode", MyApplication.user);
-								map.put("apiId", "chkup");
-								map.put("chkid", "33");
-								JSONObject ceaJson = new JSONObject();
-								ceaJson.put("sid", errnoticeSid);
-								ceaJson.put("sbuid", "Q00201");
-								ceaJson.put("statefr", "0");
-								ceaJson.put("stateto", "0");
-								map.put("cea", ceaJson.toString());
-								OkHttpUtils.getInstance().getServerExecute(
-										MyApplication.MESURL, null, map, null,
-										mHander, true, "Approval_33");
+								if(Errjson.get("checkType").equals("01")){ //首检提交审核
+									errnoticeSid = ((JSONObject) jsonObject
+											.get("data")).get("sbuid").toString();
+									Map<String, String> map = new HashMap<>();
+									map.put("dbid", MyApplication.DBID);
+									map.put("usercode", MyApplication.user);
+									map.put("apiId", "chkup");
+									map.put("chkid", "33");
+									JSONObject ceaJson = new JSONObject();
+									ceaJson.put("sid", errnoticeSid);
+									ceaJson.put("sbuid", "Q00201");
+									ceaJson.put("statefr", "0");
+									ceaJson.put("stateto", "0");
+									map.put("cea", ceaJson.toString());
+									OkHttpUtils.getInstance().getServerExecute(
+											MyApplication.MESURL, null, map, null,
+											mHander, true, "Approval_33");
+								}else{
+									ToastUtil.showToast(ErrorNotice_shoujian.this,"提交成功",0);
+								}
 							}
 						}
 						if (string.equals("Approval_33")) {  //调用提交
@@ -358,7 +362,7 @@ public class ErrorNotice_shoujian extends Activity {
 							if (Integer.parseInt(jsonObject.get("id")
 									.toString()) == 0) {
 								JSONObject data = (JSONObject) jsonObject
-										.get("data");
+									 	.get("data");
 								final JSONObject info = (JSONObject) data.get("info");
 								JSONArray list = (JSONArray)info.get("list");
 								final JSONObject listJson = (JSONObject) list.get(0);

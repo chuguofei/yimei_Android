@@ -99,7 +99,7 @@ public class JiaXiGaoActivity extends Activity {
 					}
 					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
 					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-							"MESEQUTM", "~id='" + sbid + "'");
+							"MESEQUTM", "~id='" + sbid + "' zc_id='S03'");
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "QuerySbid");
@@ -164,6 +164,7 @@ public class JiaXiGaoActivity extends Activity {
 		yimei_jiaxigao_user.setOnFocusChangeListener(EditGetFocus);
 		yimei_jiaxigao_sbid.setOnFocusChangeListener(EditGetFocus);
 		yimei_jiaxigao_prtno.setOnFocusChangeListener(EditGetFocus);
+		
 	}
 	
 	@Override
@@ -217,7 +218,7 @@ public class JiaXiGaoActivity extends Activity {
 					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
 					yimei_jiaxigao_sbid.setText(sbid);
 					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-							"MESEQUTM", "~id='" + sbid + "'");
+							"MESEQUTM", "~id='" + sbid + "' ");//and zc_id='S03'
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "QuerySbid");
@@ -370,6 +371,29 @@ public class JiaXiGaoActivity extends Activity {
 											return;
 										}
 										//当前时间减最近出库时间
+										//当前时间减去领出后首次加胶时间的差加上已使用时间是否大于有效期 如果大于，就过期
+										long shengyuTime = Double.valueOf(jsonValue.get("sysj").toString()).longValue();//有效期剩余时间
+										boolean Islcfrdate = jsonValue.containsKey("lcfrdate");
+										Date lcfrdate = null;
+										if(Islcfrdate){
+											if(jsonValue.get("lcfrdate").toString().length()==16){
+												jsonValue.put("lcfrdate", jsonValue.get("lcfrdate").toString()+":00");
+											}
+											lcfrdate = MyApplication.df.parse(jsonValue.get("lcfrdate").toString()); //最近领出后首次加膏时间
+										}
+										long IsGuoQiLong = 0;
+										//判断最后领出首次加锡膏时间是否为空（第一次首次领出加锡膏一定为空，第二次不为空）
+										if(lcfrdate!=null){
+											//获取当前日期减去最后领出首次加锡膏时间
+											IsGuoQiLong = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-lcfrdate.getTime();
+										}
+										//时间转毫秒
+										long shengyumilliseconds = shengyuTime*3600*1000;
+										//判断是否过有效期
+										if(IsGuoQiLong>=shengyumilliseconds){
+											showNormalDialog("该【"+sph+"】批次锡膏已过有效期");
+											return;
+										}
 										m1 = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-latelydateData.getTime();
 										if(m1<Lastmintime){
 											long minute = (Lastmintime-m1) / 60000;  //回温时间
@@ -396,8 +420,8 @@ public class JiaXiGaoActivity extends Activity {
 											return;
 										}
 										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
-										jsonValue.put("indate",MyApplication.GetServerNowTime());
-										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
+										jsonValue.put("indate",jsonValue.containsKey("latelydate")?jsonValue.get("latelydate"):""); //领出时间
+										jsonValue.put("mkdate",MyApplication.GetServerNowTime()); //加锡膏时间
 										
 										//添加数据到清洗的表中
 										Map<String, String> addServerQingXiData = MyApplication
@@ -407,7 +431,29 @@ public class JiaXiGaoActivity extends Activity {
 										OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,addServerQingXiData,
 													null, mHander,true,"addServerJiaXiGaoData");
 										return;
-									}else{
+									}else{  //开封后判断是否过期
+										long shengyuTime = Double.valueOf(jsonValue.get("sysj").toString()).longValue();//有效期剩余时间
+										boolean Islcfrdate = jsonValue.containsKey("lcfrdate");
+										Date lcfrdate = null;
+										if(Islcfrdate){
+											if(jsonValue.get("lcfrdate").toString().length()==16){
+												jsonValue.put("lcfrdate", jsonValue.get("lcfrdate").toString()+":00");
+											}
+											lcfrdate = MyApplication.df.parse(jsonValue.get("lcfrdate").toString()); //最近领出后首次加膏时间
+										}
+										long IsGuoQiLong = 0;
+										//判断最后领出首次加锡膏时间是否为空（第一次首次领出加锡膏一定为空，第二次不为空）
+										if(lcfrdate!=null){
+											//获取当前日期减去最后领出首次加锡膏时间
+											IsGuoQiLong = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-lcfrdate.getTime();
+										}
+										//时间转毫秒
+										long shengyumilliseconds = shengyuTime*3600*1000;
+										//判断是否过有效期
+										if(IsGuoQiLong>=shengyumilliseconds){
+											showNormalDialog("该【"+sph+"】批次锡膏已过有效期");
+											return;
+										}
 										//当前时间减最近出库时间
 										long m1 = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()-latelydateData.getTime();
 										if(Lastmintime!=0){
@@ -436,8 +482,8 @@ public class JiaXiGaoActivity extends Activity {
 											return;
 										}
 										jsonValue.put("slkid",ChoseSlkid.containsKey("slkid")?ChoseSlkid.get("slkid"):"");
-										jsonValue.put("indate",MyApplication.GetServerNowTime());
-										jsonValue.put("mkdate",MyApplication.GetServerNowTime());
+										jsonValue.put("indate",jsonValue.containsKey("latelydate")?jsonValue.get("latelydate"):""); //领出时间
+										jsonValue.put("mkdate",MyApplication.GetServerNowTime()); //加锡膏时间
 										
 										//添加数据到清洗的表中
 										Map<String, String> addServerQingXiData = MyApplication
@@ -456,9 +502,9 @@ public class JiaXiGaoActivity extends Activity {
 								ToastUtil.showToast(JiaXiGaoActivity.this,"（savadate）失败",0);
 								return;
 							}
-							//420请求 
+							//410
 							Map<String, String> updateServerMoJuZct = MyApplication
-									.updateServerJiaXiaoGao(MyApplication.DBID,
+									.updateServerJiaXiaoGao1(MyApplication.DBID,
 											MyApplication.user,sbid,sph,
 											"410");
 							OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,

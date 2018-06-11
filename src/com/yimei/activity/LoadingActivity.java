@@ -183,7 +183,7 @@ public class LoadingActivity extends Activity {
 			@SuppressWarnings("null")
 			@Override
 			public void run() {
-				JSONObject json = JSON.parseObject(response.toString());
+ 				JSONObject json = JSON.parseObject(response.toString());
 				Log.i("id", json.toString());
 
 				if (json.getInteger("id") == 0) {

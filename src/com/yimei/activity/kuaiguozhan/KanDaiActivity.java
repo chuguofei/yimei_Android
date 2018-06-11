@@ -76,9 +76,9 @@ public class KanDaiActivity extends Activity {
 					barcodeData = intent.getStringExtra("data").toString(); // 拿到HoneyWell终端的值
 				}
 				if (tag.equals("高温点亮作业员")) { // 作业员
-					gaowen_user.setText(barcodeData.toString().toUpperCase().trim());
-					if(gaowen_user.toString().toUpperCase().trim().equals("")
-							||gaowen_user.toString().toUpperCase().trim()==null){
+					gaowen_user.setText(barcodeData);
+					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
+							||gaowen_user.getText().toString().toUpperCase().trim()==null){
 						ToastUtil.showToast(KanDaiActivity.this,"作业员不能为空",0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
@@ -87,15 +87,15 @@ public class KanDaiActivity extends Activity {
 					MyApplication.nextEditFocus(gaowen_sid1);
 				}
 				if (tag.equals("高温点亮批次号")) { // 作业员
-					gaowen_sid1.setText(barcodeData.toString().trim());
-					if(gaowen_user.toString().toUpperCase().trim().equals("")
-							||gaowen_user.toString().toUpperCase().trim()==null){
+					gaowen_sid1.setText(barcodeData);
+					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
+							||gaowen_user.getText().toString().toUpperCase().trim()==null){
 						ToastUtil.showToast(KanDaiActivity.this,"作业员不能为空",0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
 					}
-					if(gaowen_sid1.toString().toUpperCase().trim().equals("")
-							||gaowen_sid1.toString().toUpperCase().trim()==null){
+					if(gaowen_sid1.getText().toString().toUpperCase().equals("")
+							||gaowen_sid1.getText().toString().toUpperCase()==null){
 						ToastUtil.showToast(KanDaiActivity.this,"批次号不能为空",0);
 						MyApplication.nextEditFocus(gaowen_sid1);
 						return;
@@ -246,11 +246,15 @@ public class KanDaiActivity extends Activity {
 							} else {
 								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
 										.get("values")).get(0);
-								if (Integer.parseInt(jsonValue.get("bok")
-										.toString()) == 0) {
-									ToastUtil.showToast(
-											KanDaiActivity.this,
-											"该批号不具备入站条件,上个工序未出站!", 0);
+								// 0.测试站  1.编带站 2.看带站
+								if (Integer.parseInt(jsonValue.get("lotstate").toString()) == 0) {
+									ToastUtil.showToast(KanDaiActivity.this,"该批号不具备入站条件,上个工序未出站!", 0);
+									MyApplication.nextEditFocus(gaowen_sid1);
+									gaowen_sid1.selectAll();
+									return;
+								}else if(Integer.parseInt(jsonValue.get("lotstate").toString()) == 2){
+									ToastUtil.showToast(KanDaiActivity.this,"该批号已经出站!", 0);
+									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
 								}else {
@@ -267,11 +271,14 @@ public class KanDaiActivity extends Activity {
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
 								ToastUtil.showToast(KanDaiActivity.this,"没有查到批次（mes_lot_plana）",0);
+								MyApplication.nextEditFocus(gaowen_sid1);
+								gaowen_sid1.selectAll();
 								return;
 							}else{
 								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject.get("values")).get(0);
-								if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
+								/*if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 									ToastUtil.showToast(KanDaiActivity.this, "该lot号所对的批次号不具备开工条件!",0);
+									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
 								} else if (jsonValue.get("state").toString().equals("02")
@@ -281,9 +288,10 @@ public class KanDaiActivity extends Activity {
 									return;
 								} else if (jsonValue.get("state").toString().equals("04")) {
 									ToastUtil.showToast(KanDaiActivity.this, "该lot号所对的批次号经出站!", 0);
+									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
-								} else {
+								} else {*/
 									jsonValue.put("sbuid", "D0071");
 									jsonValue.put("dcid",GetAndroidMacUtil.getMac());
 									jsonValue.put("hpdate",MyApplication.GetServerNowTime());
@@ -308,13 +316,13 @@ public class KanDaiActivity extends Activity {
 											"savedata");
 									// savedate--------------------------------------------
 									// 200请求--------------------------------------------------
+									String sidAndlotno = jsonValue.get("sid1") + ";" +gaowen_sid1.getText();
 									Map<String, String> updateServerTable = MyApplication
 											.UpdateServerTableMethod(
 													MyApplication.DBID,
 													MyApplication.user,
 													jsonValue.get("state").toString(),"04",
-													jsonValue.get("sid1").toString(),
-													jsonValue.get("slkid").toString(),
+													sidAndlotno,jsonValue.get("slkid").toString(),
 													MyApplication.KANDAI_ZCNO,
 													"200");
 									OkHttpUtils.getInstance().getServerExecute(
@@ -346,7 +354,7 @@ public class KanDaiActivity extends Activity {
 												.notifyDataSetChanged();
 									}
 									gaowen_sid1.selectAll();
-								}
+//								}
 							}
 							System.out.println(jsonObject);
 						}

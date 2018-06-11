@@ -274,7 +274,7 @@ public class ZhuanChuActivity extends Activity {
 										for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
 											JSONObject json = (JSONObject) ((JSONArray) jsonObject.get("values")).get(i);
 											if(json.get("sid1").equals(sid)){
-												ToastUtil.showToast(ZhuanChuActivity.this, "改批次已转序!",0);
+												ToastUtil.showToast(ZhuanChuActivity.this, "该批次已转序!",0);
 												yimei_zhuanchu_sid.selectAll();
 												return;
 											}
@@ -355,13 +355,14 @@ public class ZhuanChuActivity extends Activity {
 						showJson.put("op",zuoyeyuan);
 						showJson.put("slkid",showJson.get("sid"));
 						showJson.put("sbuid","D0030");
-						showJson.put("state1", "01");
+//						showJson.put("state1", "01");
 						showJson.put("sorg",MyApplication.sorg);
 						showJson.put("dcid",GetAndroidMacUtil.getMac());
 						showJson.put("smake",MyApplication.user);
 						showJson.put("sid",showJson.get("sid1"));
 						showJson.put("mkdate",MyApplication.GetServerNowTime());
 						showJson.put("hpdate",MyApplication.GetServerNowTime());
+						showJson.put("outdate",MyApplication.GetServerNowTime());
 						showJson.put("cref3","1");
 						Map<String, String> mesIdMap = MyApplication
 								.httpMapKeyValueMethod(MyApplication.DBID,

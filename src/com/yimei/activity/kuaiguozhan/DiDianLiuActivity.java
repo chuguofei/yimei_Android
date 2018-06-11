@@ -75,8 +75,8 @@ public class DiDianLiuActivity extends Activity {
 				}
 				if (tag.equals("高温点亮作业员")) { // 作业员
 					gaowen_user.setText(barcodeData.toString().toUpperCase().trim());
-					if(gaowen_user.toString().toUpperCase().trim().equals("")
-							||gaowen_user.toString().toUpperCase().trim()==null){
+					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
+							||gaowen_user.getText().toString().toUpperCase().trim()==null){
 						ToastUtil.showToast(DiDianLiuActivity.this,"作业员不能为空",0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
@@ -86,14 +86,14 @@ public class DiDianLiuActivity extends Activity {
 				}
 				if (tag.equals("高温点亮批次号")) { // 作业员
 					gaowen_sid1.setText(barcodeData.toString().trim());
-					if(gaowen_user.toString().toUpperCase().trim().equals("")
-							||gaowen_user.toString().toUpperCase().trim()==null){
+					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
+							||gaowen_user.getText().toString().toUpperCase().trim()==null){
 						ToastUtil.showToast(DiDianLiuActivity.this,"作业员不能为空",0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
 					}
-					if(gaowen_sid1.toString().toUpperCase().trim().equals("")
-							||gaowen_sid1.toString().toUpperCase().trim()==null){
+					if(gaowen_sid1.getText().toString().toUpperCase().trim().equals("")
+							||gaowen_sid1.getText().toString().toUpperCase().trim()==null){
 						ToastUtil.showToast(DiDianLiuActivity.this,"批次号不能为空",0);
 						MyApplication.nextEditFocus(gaowen_sid1);
 						return;

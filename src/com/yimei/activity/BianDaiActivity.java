@@ -10,6 +10,7 @@ import java.util.Map;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.BianDaiAdapter;
 import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.BianDaiCHScrollView;
@@ -29,6 +30,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -92,7 +94,11 @@ public class BianDaiActivity extends Activity {
 		Application app = getApplication();
 		myapp = (MyApplication) app;
 		myapp.addActivity_(this);
-		biandaiActivity = this;
+		
+		BianDaiCHScrollView headerScroll = (BianDaiCHScrollView) findViewById(R.id.biandai_scroll_title);
+		BianDaiScrollViews.add(headerScroll);
+		mListView = (ListView) findViewById(R.id.biandai_scroll_list);
+		
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
 		quanxuan = (CheckBox) findViewById(R.id.biandai_quanxuan); // 全选按钮
 		listenerQuanXuan();
@@ -313,86 +319,90 @@ public class BianDaiActivity extends Activity {
 	 * @param publicState
 	 */
 	public void UpdateServerData(String publicState) {
-		HashMap<Integer, Boolean> state = BianDaiAdapter.Getstate();
+		try {
+			HashMap<Integer, Boolean> state = BianDaiAdapter.Getstate();
 
-		if (state == null || state.equals(null)) {
-			ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
-		} else {
-			int count = 0;
-			for (int j = 0; j < BianDaiAdapter.getCount(); j++) {
-				if (state.get(j)) {
-					if (state.get(j) != null) {
-						@SuppressWarnings("unchecked")
-						HashMap<String, Object> map = (HashMap<String, Object>) BianDaiAdapter.getItem(j);
+			if (state == null || state.equals(null)) {
+				ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+			} else {
+				int count = 0;
+				for (int j = 0; j < BianDaiAdapter.getCount(); j++) {
+					if (state.get(j)) {
+						if (state.get(j) != null) {
+							@SuppressWarnings("unchecked")
+							HashMap<String, Object> map = (HashMap<String, Object>) BianDaiAdapter.getItem(j);
 
-						if (updateListState == null) {
-							updateListState = new ArrayList<mesPrecord>();
+							if (updateListState == null) {
+								updateListState = new ArrayList<mesPrecord>();
+							}
+							mesPrecord m = (mesPrecord) map.get("biandai_item_title");
+							updateListState.add(m);
+							count++;
 						}
-						mesPrecord m = (mesPrecord) map.get("biandai_item_title");
-						updateListState.add(m);
-						count++;
 					}
 				}
-			}
-			switch (count) {
-			case 0:
-				ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
-				break;
-			default:
-				for (int i = 0; i < updateListState.size(); i++) {
-					mesPrecord mes_precord = updateListState.get(i);
-					JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
-					// 如果是入站状态改变
-					if (publicState.equals("kaigongUpdata")) {
-						mes_precord.setHpdate(MyApplication.GetServerNowTime());
-						// 如果状态是入站和上料都可以开工
-						if (json.get("state1").toString().equals("01")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, "01", "03",
-											mes_precord.getSid(), zuoyeyuan,
-											MyApplication.BIANDAI_ZCNO, "202");
-
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
-						} else if (json.get("state1").toString().equals("03")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次已是开工状态！", 0);
-						}
-					} else if (publicState.equals("chuzhanUpdata")) {
-						if (json.get("state1").toString().equals("03")) {
-							int chooseTime = MyApplication
-									.ChooseTime(mes_precord.getHpdate());
-							int a = Integer.parseInt(ptime
-									.get(MyApplication.BIANDAI_ZCNO));
-							if (chooseTime > Integer.parseInt(ptime
-									.get(MyApplication.BIANDAI_ZCNO))
-									|| ptime == null) {
+				switch (count) {
+				case 0:
+					ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
+					break;
+				default:
+					for (int i = 0; i < updateListState.size(); i++) {
+						mesPrecord mes_precord = updateListState.get(i);
+						JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
+						// 如果是入站状态改变
+						if (publicState.equals("kaigongUpdata")) {
+							mes_precord.setHpdate(MyApplication.GetServerNowTime());
+							// 如果状态是入站和上料都可以开工
+							if (json.get("state1").toString().equals("01")) {
 								Map<String, String> updateTimeMethod = MyApplication
-										.updateServerTimeMethod(
-												MyApplication.DBID,
-												MyApplication.user, "03", "04",
-												mes_precord.getSid(),
-												zuoyeyuan,
-												MyApplication.BIANDAI_ZCNO,
-												"202");
+										.updateServerTimeMethod(MyApplication.DBID,
+												MyApplication.user, "01", "03",
+												mes_precord.getSid(), zuoyeyuan,
+												MyApplication.BIANDAI_ZCNO, "202");
+
 								httpRequestQueryRecord(MyApplication.MESURL,
 										updateTimeMethod, publicState);
-							} else {
-								ToastUtil.showToast(biandaiActivity,"选中的批次不能出站,已开工"+chooseTime+"分！", 0);
+							} else if (json.get("state1").toString().equals("03")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次已是开工状态！", 0);
 							}
-						} else if (json.get("state1").toString().equals("02")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次不能出站！", 0);
-						} else if (json.get("state1").toString().equals("01")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次不能出站！", 0);
+						} else if (publicState.equals("chuzhanUpdata")) {
+							if (json.get("state1").toString().equals("03")) {
+								int chooseTime = MyApplication
+										.ChooseTime(mes_precord.getHpdate());
+								int a = Integer.parseInt(ptime
+										.get(MyApplication.BIANDAI_ZCNO));
+								if (chooseTime > Integer.parseInt(ptime
+										.get(MyApplication.BIANDAI_ZCNO))
+										|| ptime == null) {
+									Map<String, String> updateTimeMethod = MyApplication
+											.updateServerTimeMethod(
+													MyApplication.DBID,
+													MyApplication.user, "03", "04",
+													mes_precord.getSid(),
+													zuoyeyuan,
+													MyApplication.BIANDAI_ZCNO,
+													"202");
+									httpRequestQueryRecord(MyApplication.MESURL,
+											updateTimeMethod, publicState);
+								} else {
+									ToastUtil.showToast(BianDaiActivity.this,"选中的批次不能出站,已开工"+chooseTime+"分！", 0);
+								}
+							} else if (json.get("state1").toString().equals("02")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次不能出站！", 0);
+							} else if (json.get("state1").toString().equals("01")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次不能出站！", 0);
+							}
 						}
+						Thread.sleep(400); //可能会出现连接池不够睡眠半秒
 					}
-
+					break;
 				}
-				break;
 			}
+		} catch (Exception e) {
+			
 		}
 	}
 
@@ -410,14 +420,18 @@ public class BianDaiActivity extends Activity {
 				}
 				if (isChecked) {
 					int initCheck = BianDaiAdapter.initCheck(true);
-					BianDaiAdapter.notifyDataSetChanged();
+					if(BianDaiAdapter!=null){						
+						BianDaiAdapter.notifyDataSetChanged();
+					}
 					if (initCheck == -1) {
 						ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
 						return;
 					}
 				} else {
 					int initCheck = BianDaiAdapter.initCheck(false);
-					BianDaiAdapter.notifyDataSetChanged();
+					if(BianDaiAdapter!=null){
+						BianDaiAdapter.notifyDataSetChanged();
+					}
 					if (initCheck == -1) {
 						ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
 						return;
@@ -442,7 +456,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_user_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "作业员不能为空", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "作业员不能为空", 0);
 						return false;
 					}
 					zuoyeyuan = yimei_biandai_user_edt.getText().toString()
@@ -460,7 +474,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_user_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "作业员不能为空", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "作业员不能为空", 0);
 						MyApplication.nextEditFocus(yimei_biandai_user_edt);
 						return false;
 					}
@@ -468,7 +482,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_sbid_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "设备号不能为空", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "设备号不能为空", 0);
 						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						return false;
 					}
@@ -491,7 +505,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_user_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "作业员不能为空", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "作业员不能为空", 0);
 						MyApplication.nextEditFocus(yimei_biandai_user_edt);
 						return false;
 					}
@@ -499,7 +513,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_sbid_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "设备号不能为空", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "设备号不能为空", 0);
 						MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						return false;
 					}
@@ -507,7 +521,7 @@ public class BianDaiActivity extends Activity {
 							.equals("")
 							|| yimei_biandai_proNum_edt.getText().toString()
 									.trim() == null) {
-						ToastUtil.showToast(biandaiActivity, "批次号为空~", 0);
+						ToastUtil.showToast(BianDaiActivity.this, "批次号为空~", 0);
 						MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 						Log.i("foucus", "批次号回车");
 						return false;
@@ -543,7 +557,9 @@ public class BianDaiActivity extends Activity {
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
-							BianDaiAdapter.notifyDataSetChanged();
+							if(BianDaiAdapter!=null){								
+								BianDaiAdapter.notifyDataSetChanged();
+							}
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备号!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
@@ -573,7 +589,9 @@ public class BianDaiActivity extends Activity {
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
-							BianDaiAdapter.notifyDataSetChanged();
+							if(BianDaiAdapter!=null){
+								BianDaiAdapter.notifyDataSetChanged();
+							}
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该设备号!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
@@ -629,7 +647,9 @@ public class BianDaiActivity extends Activity {
 							biandai_chuzhan.setEnabled(true);
 							mListView.setAdapter(null);
 							mListView = null;
-							BianDaiAdapter.notifyDataSetChanged();
+							if(BianDaiAdapter!=null){								
+								BianDaiAdapter.notifyDataSetChanged();
+							}
 							MyApplication
 									.nextEditFocus(yimei_biandai_proNum_edt);
 						} else {
@@ -663,7 +683,9 @@ public class BianDaiActivity extends Activity {
 						if (mListView != null) {
 							mListView.setAdapter(null);
 							mListView = null;
-							BianDaiAdapter.notifyDataSetChanged();
+							if(BianDaiAdapter!=null){								
+								BianDaiAdapter.notifyDataSetChanged();
+							}
 							MyApplication
 									.nextEditFocus(yimei_biandai_proNum_edt);
 						}
@@ -689,11 +711,16 @@ public class BianDaiActivity extends Activity {
 							BianDaiAdapter = new BianDaiAdapter(
 									BianDaiActivity.this, mesList);
 							mListView.setAdapter(BianDaiAdapter);
-							BianDaiAdapter.notifyDataSetChanged();
+							if(BianDaiAdapter!=null){								
+								BianDaiAdapter.notifyDataSetChanged();
+							}
 							return;
 						} else {
+							BianDaiAdapter = null;
 							mListView.setAdapter(null);
-							BianDaiAdapter.notifyDataSetChanged();
+							
+							/*mListView.setAdapter(null);
+							BianDaiAdapter.notifyDataSetChanged();*/
 							// 如果等于空可以扫新的批号
 							biandaiPrdNocomparison.clear();
 						}
@@ -705,7 +732,7 @@ public class BianDaiActivity extends Activity {
 							"jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						// 如果有批号
-						if (mListView != null) {
+						if (BianDaiAdapter != null) {
 							// 循环列表
 							int count = 0;
 							for (int i = 0; i < BianDaiAdapter.getCount(); i++) {
@@ -753,22 +780,30 @@ public class BianDaiActivity extends Activity {
 						}
 					} else {
 						// 循环列表
-						int count = 0;
-						for (int i = 0; i < BianDaiAdapter.getCount(); i++) {
-							Map<String, Object> map = (Map<String, Object>) BianDaiAdapter
-									.getItem(i);
-							if (map.get("lotno").equals(lot_no)) {
-								count++;
-								BianDaiAdapter.state.put(i, true);
+						if (BianDaiAdapter != null) {
+							int count = 0;
+							for (int i = 0; i < BianDaiAdapter.getCount(); i++) {
+								Map<String, Object> map = (Map<String, Object>) BianDaiAdapter
+										.getItem(i);
+								if (map.get("lotno").equals(lot_no)) {
+									count++;
+									BianDaiAdapter.state.put(i, true);
+								}
 							}
-						}
-						HashMap<Integer, Boolean> a = BianDaiAdapter.Getstate();
-						if (count > 0) {
-							BianDaiAdapter.notifyDataSetChanged();
-							ToastUtil.showToast(getApplicationContext(), "《"
-									+ lot_no + "》测试号存在,已经帮你选中", 0);
-							yimei_biandai_proNum_edt.selectAll();
-						} else {
+							HashMap<Integer, Boolean> a = BianDaiAdapter.Getstate();
+							if (count > 0) {
+								BianDaiAdapter.notifyDataSetChanged();
+								ToastUtil.showToast(getApplicationContext(), "《"
+										+ lot_no + "》测试号存在,已经帮你选中", 0);
+								yimei_biandai_proNum_edt.selectAll();
+							} else {
+								// 提示没有该批号
+								ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
+								MyApplication
+										.nextEditFocus(yimei_biandai_proNum_edt);
+								yimei_biandai_proNum_edt.selectAll();
+							}
+						}else {
 							// 提示没有该批号
 							ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
 							MyApplication
@@ -804,20 +839,23 @@ public class BianDaiActivity extends Activity {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
-							ToastUtil.showToast(biandaiActivity, "该批号不具备入站条件!",0);
+							ToastUtil.showToast(BianDaiActivity.this, "该批号不具备入站条件!",0);
+							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 							yimei_biandai_proNum_edt.selectAll();
 							return;
-						} else if (jsonValue.get("state1").toString().equals("02")
-								|| jsonValue.get("state1").toString().equals("03")) {
-							ToastUtil.showToast(biandaiActivity, "该批号已经入站!", 0);
+						} else if (jsonValue.get("lotstate").toString().equals("1")) {
+							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
 							yimei_biandai_proNum_edt.selectAll();
-							return;
-						} else if (jsonValue.get("state1").toString().equals("04")) {
-							ToastUtil.showToast(biandaiActivity, "该批号已经出站!", 0);
-							yimei_biandai_proNum_edt.selectAll();
+							ToastUtil.showToast(BianDaiActivity.this, "该批号已经出站!", 0);
 							return;
 						} else {
-
+							//如果有首检标示
+							if(jsonValue.get("fircheck").toString().equals("1")){
+								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
+									JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
+									return;
+								}
+							}
 							if (biandaiPrdNocomparison != null) {
 
 								if (biandaiPrdNocomparison.size() != 0) {
@@ -828,19 +866,23 @@ public class BianDaiActivity extends Activity {
 										mesPrecord mespre = (mesPrecord) map
 												.get("biandai_item_title");
 										if (mListView != null) {
-											if (!mespre.getPrd_no().equals(
-													jsonValue.get("prd_no"))) {
-												showNormalDialog("（机型不符）\n当前机型：【"+mespre.getPrd_no()+"】\n扫描机型:【"+jsonValue.get("prd_no")+"】\n不能入站，请先将当前批次出站后再入站生产!");
-												yimei_biandai_proNum_edt
-														.selectAll();
-												return;
+											if(mespre.getPrd_no()!=null){
+												if (!mespre.getPrd_no().equals(
+														jsonValue.get("prd_no"))) {
+													showNormalDialog("（机型不符）\n当前机型：【"+mespre.getPrd_no()+"】\n扫描机型:【"+jsonValue.get("prd_no")+"】\n不能入站，请先将当前批次出站后再入站生产!");
+													yimei_biandai_proNum_edt
+															.selectAll();
+													return;
+												}
 											}
-											if (!mespre.getBincode().equals(
-													jsonValue.get("bincode"))) {
-												showNormalDialog("（bincode不符）\n当前bincode【"+mespre.getBincode()+"】\n扫描bincode【"+jsonValue.get("bincode")+"】\n不能入站，请先将当前批次出站后再入站生产!");
-												yimei_biandai_proNum_edt
-														.selectAll();
-												return;
+											if(mespre.getBincode()!=null){												
+												if (!mespre.getBincode().equals(
+														jsonValue.get("bincode"))) {
+													showNormalDialog("（bincode不符）\n当前bincode【"+mespre.getBincode()+"】\n扫描bincode【"+jsonValue.get("bincode")+"】\n不能入站，请先将当前批次出站后再入站生产!");
+													yimei_biandai_proNum_edt
+													.selectAll();
+													return;
+												}
 											}
 										}
 									}
@@ -907,7 +949,7 @@ public class BianDaiActivity extends Activity {
 										sidAndlotno, currSlkid,
 										MyApplication.BIANDAI_ZCNO, "200");
 						httpRequestQueryRecord(MyApplication.MESURL,
-								updateServerTable, "updateServerTable");
+								updateServerTable, "updateServerTable_200");
 						// ----------------------------------------入站
 						// 修改服务器俩张表
 
@@ -935,6 +977,11 @@ public class BianDaiActivity extends Activity {
 
 					}
 				}
+				if("updateServerTable_200".equals(string)){
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					System.out.println(jsonObject);
+				}
 				if ("kaigongUpdata".equals(string)) {
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
@@ -948,7 +995,7 @@ public class BianDaiActivity extends Activity {
 									|| m.getState1().equals("02")) {
 								// ------------------------修改服务器的俩张表（开工）
 								String sidAndlotno = m.getSid1() + ";"
-										+ m.getLotno()+";"+m.getSbid()==null?shebeihao:m.getSbid();
+										+ m.getLotno()+";"+shebeihao;
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
@@ -957,7 +1004,7 @@ public class BianDaiActivity extends Activity {
 												MyApplication.BIANDAI_ZCNO,
 												"200");
 								httpRequestQueryRecord(MyApplication.MESURL,
-										updateServerTable, "updateServerTable");
+										updateServerTable, "updateServerTable_200");
 								// ------------------------修改服务器的俩张表（开工）
 							}
 						}
@@ -974,7 +1021,7 @@ public class BianDaiActivity extends Activity {
 						httpRequestQueryRecord(MyApplication.MESURL, map,
 								"updateRefresh");
 					} else {
-						ToastUtil.showToast(biandaiActivity,
+						ToastUtil.showToast(BianDaiActivity.this,
 								String.valueOf(jsonObject.get("message")), 0);
 					}
 				}
@@ -989,7 +1036,7 @@ public class BianDaiActivity extends Activity {
 							Log.i("mes", m.toString());
 							if (m.getState1().equals("03")) {
 								// ------------------------修改服务器的俩张表（出站）
-								String sidAndlotno = m.getSid1() + ";"+ m.getLotno()+";"+m.getSbid()==null?shebeihao:m.getSbid();
+								String sidAndlotno = m.getSid1() + ";"+ m.getLotno()+";"+shebeihao;
 								Map<String, String> updateServerTable = MyApplication
 										.UpdateServerTableMethod(
 												MyApplication.DBID,
@@ -998,7 +1045,7 @@ public class BianDaiActivity extends Activity {
 												MyApplication.BIANDAI_ZCNO,
 												"200");
 								httpRequestQueryRecord(MyApplication.MESURL,
-										updateServerTable, "updateServerTable1");
+										updateServerTable, "updateServerTable1_200");
 							}
 						}
 						updateListState.clear();
@@ -1029,10 +1076,39 @@ public class BianDaiActivity extends Activity {
 					}
 				}
 			} catch (Exception e) {
-				ToastUtil.showToast(biandaiActivity, e.toString(), 0);
+				ToastUtil.showToast(BianDaiActivity.this,"编带（服务器处理）--err:"+e.toString(), 0);
 			}
 		}
 	};
+	
+	/**
+	 * 跳转首检界面
+	 * @param msg
+	 */
+	private void JumShouJianlDialog(String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				BianDaiActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+				+ "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						intent.setClass(BianDaiActivity.this,IPQC_shoujian.class);// 跳转到首检
+						// 利用bundle来存取数据
+						Bundle bundle = new Bundle();
+						bundle.putString("json",newJson.toString());
+						// 再把bundle中的数据传给intent，以传输过去
+						intent.putExtras(bundle);
+						startActivity(intent);
+					}
+				});
+		normalDialog.setNegativeButton("取消", null);		// 显示
+		normalDialog.show();
+	}
 
 	/*
 	 * 弹出提示框
@@ -1062,9 +1138,6 @@ public class BianDaiActivity extends Activity {
 	private List<Map<String, Object>> QueryList(JSONObject jsonobject) {
 		List<Map<String, Object>> mesList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> mesMap = null;
-		BianDaiCHScrollView headerScroll = (BianDaiCHScrollView) findViewById(R.id.biandai_scroll_title);
-		BianDaiScrollViews.add(headerScroll);
-		mListView = (ListView) findViewById(R.id.biandai_scroll_list);
 		Map<String, String> stateName = MyApplication.getStateName();
 		if ((JSONArray) jsonobject.get("values") == null) {
 			return null;

@@ -511,6 +511,7 @@ public class IPQC_xunjian extends Activity {
 								errJumpOK = true;
 								errorJSON.put("sid", ((JSONObject) jsonObject
 										.get("data")).get("sid"));
+								errorJSON.put("checkType",chtype);
 								ToastUtil.showToast(IPQC_xunjian.this,"保存成功",0);
 							}
 						}

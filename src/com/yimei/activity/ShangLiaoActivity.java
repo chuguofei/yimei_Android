@@ -335,31 +335,36 @@ public class ShangLiaoActivity extends TabActivity {
 		for (int i = 0; i < materialAdapter.getCount(); i++) {
 			Map<String, String> map = (Map<String, String>) materialAdapter
 					.getItem(i);
-			Log.i("Tag", map.get("Material_cailiaoNum"));
 			if (type.equals("料号")) {
-				if (map.get("Material_cailiaoNum").equals(
-						yimei_shangliao_materialCode.getText().toString()
-								.trim())) {
-					isFlag = true;
+				if(map.get("Material_cailiaoNum")!=null){
+					if (map.get("Material_cailiaoNum").equals(
+							yimei_shangliao_materialCode.getText().toString()
+									.trim())) {
+						isFlag = true;
+					}
 				}
 			} else if (type.equals("料号+批号")) {
-				if (map.get("Material_cailiaoNum").equals(
-						yimei_shangliao_materialCode.getText().toString()
-								.trim())
-						&& map.get("Material_cailiaopici").equals(
-								yimei_shangliao_materialPihao.getText()
-										.toString().trim())) {
+				if(map.get("Material_cailiaoNum")!=null){
+					if (map.get("Material_cailiaoNum").equals(
+							yimei_shangliao_materialCode.getText().toString()
+									.trim())
+							&& map.get("Material_cailiaopici").equals(
+									yimei_shangliao_materialPihao.getText()
+											.toString().trim())) {
 
-					isFlag = true;
+						isFlag = true;
+					}
 				}
 			} else if (type.equals("料号+bincode")) {
-				if (map.get("Material_cailiaoNum").equals(
-						yimei_shangliao_materialCode.getText().toString()
-								.trim())
-						&& map.get("Material_cailiaopici").equals(
-								yimei_shangliao_materialBinCode.getText()
-										.toString().trim())) {
-					isFlag = true;
+				if(map.get("Material_cailiaoNum")!=null){
+					if (map.get("Material_cailiaoNum").equals(
+							yimei_shangliao_materialCode.getText().toString()
+									.trim())
+							&& map.get("Material_cailiaopici").equals(
+									yimei_shangliao_materialBinCode.getText()
+											.toString().trim())) {
+						isFlag = true;
+					}
 				}
 			}
 
@@ -404,6 +409,7 @@ public class ShangLiaoActivity extends TabActivity {
 					.toString().trim());
 		} catch (NumberFormatException e) {
 			ToastUtil.showToast(shangliaoActivity, "请输入数量", 0);
+			yimei_shangliao_Num.selectAll();
 			return false;
 		}
 		if (isBtnCheck.getText().toString().equals("√")) { // 如果选中验证数量
@@ -449,26 +455,27 @@ public class ShangLiaoActivity extends TabActivity {
 			jsonSon.put("cid", Collections.max(MaxCid) + 1);
 		}
 		if (shuliangMap == null) { // 如果固晶不扫描料号
-			jsonSon.put("prd_no", ZCNOSaveSonMap.get("Material_cailiaoNum"));
-			jsonSon.put(
-					"bat_no",
-					picihao == null ? ZCNOSaveSonMap
-							.get("Material_cailiaopici") : picihao);
-			jsonSon.put("BinCode", ZCNOSaveSonMap.get("Material_BinCode"));
-			jsonSon.put("prd_name", ZCNOSaveSonMap.get("Material_cailiaoName"));
-			jsonSon.put("qty", yimei_shangliao_Num.getText());
-			jsonSon.put("dcid", GetAndroidMacUtil.getMac());
-			jsonSon.put("op", mesObj.getOp());
-			jsonstr.put("sbid", mesObj.getSbid());
-			jsonstr.put("zcno", mesObj.getZcno());
-			jsonSon.put("sys_stated", "3");
-		} else {
-			jsonSon.put("prd_no", shuliangMap.get("Material_cailiaoNum"));
-			jsonSon.put("bat_no",
-					picihao == null ? shuliangMap.get("Material_cailiaopici")
-							: picihao);
-			jsonSon.put("BinCode", shuliangMap.get("Material_BinCode"));
-			jsonSon.put("prd_name", shuliangMap.get("Material_cailiaoName"));
+			if(ZCNOSaveSonMap==null){
+				showNormalDialog("没有【"+yimei_shangliao_materialPihao.getText()+"】材料批号!");
+				yimei_shangliao_materialPihao.selectAll();
+				return false;
+			}else{
+				jsonSon.put("prd_no",ZCNOSaveSonMap.containsKey("Material_cailiaoNum")?(ZCNOSaveSonMap.get("Material_cailiaoNum")==null?"":ZCNOSaveSonMap.get("Material_cailiaoNum")):"");
+				jsonSon.put("bat_no",picihao == null ? ZCNOSaveSonMap.get("Material_cailiaopici") : picihao);
+				jsonSon.put("BinCode", ZCNOSaveSonMap.containsKey("Material_BinCode")?(ZCNOSaveSonMap.get("Material_BinCode")==null?"":ZCNOSaveSonMap.get("Material_BinCode")):"");
+				jsonSon.put("prd_name", ZCNOSaveSonMap.containsKey("Material_cailiaoName")?(ZCNOSaveSonMap.get("Material_cailiaoName")==null?"":ZCNOSaveSonMap.get("Material_cailiaoName")):"");
+				jsonSon.put("qty", yimei_shangliao_Num.getText());
+				jsonSon.put("dcid", GetAndroidMacUtil.getMac());
+				jsonSon.put("op", mesObj.getOp());
+				jsonstr.put("sbid", mesObj.getSbid());
+				jsonstr.put("zcno", mesObj.getZcno());
+				jsonSon.put("sys_stated", "3");
+			}
+		} else {  //固晶上料
+			jsonSon.put("prd_no",shuliangMap.containsKey("Material_cailiaoNum")?(shuliangMap.get("Material_cailiaoNum")==null?"":shuliangMap.get("Material_cailiaoNum")):"");
+			jsonSon.put("bat_no",picihao == null ? shuliangMap.get("Material_cailiaopici"): picihao);
+			jsonSon.put("BinCode", shuliangMap.containsKey("Material_BinCode")?(shuliangMap.get("Material_BinCode")==null?"":shuliangMap.get("Material_BinCode")):"");
+			jsonSon.put("prd_name", shuliangMap.containsKey("Material_cailiaoName")?(shuliangMap.get("Material_cailiaoName")==null?"":shuliangMap.get("Material_cailiaoName")):"");
 			jsonSon.put("qty", yimei_shangliao_Num.getText());
 			jsonSon.put("dcid", GetAndroidMacUtil.getMac());
 			jsonSon.put("op", mesObj.getOp());
@@ -606,6 +613,7 @@ public class ShangLiaoActivity extends TabActivity {
 									.getText().toString().trim());
 						} catch (NumberFormatException e) {
 							ToastUtil.showToast(shangliaoActivity, "请输入数量", 0);
+							yimei_shangliao_Num.selectAll();
 							return false;
 						}
 						if (isBtnCheck.getText().toString().equals("√")) { // 如果选中验证数量
@@ -655,35 +663,27 @@ public class ShangLiaoActivity extends TabActivity {
 							jsonSon.put("cid", Collections.max(MaxCid) + 1);
 						}
 						if (shuliangMap == null) { // 如果固晶不扫描料号
-							jsonSon.put("prd_no",
-									ZCNOSaveSonMap.get("Material_cailiaoNum"));
-							jsonSon.put(
-									"bat_no",
-									picihao == null ? ZCNOSaveSonMap
-											.get("Material_cailiaopici")
-											: picihao);
-							jsonSon.put("BinCode",
-									ZCNOSaveSonMap.get("Material_BinCode"));
-							jsonSon.put("prd_name",
-									ZCNOSaveSonMap.get("Material_cailiaoName"));
-							jsonSon.put("qty", yimei_shangliao_Num.getText());
-							jsonSon.put("dcid", GetAndroidMacUtil.getMac());
-							jsonSon.put("op", mesObj.getOp());
-							jsonstr.put("sbid", mesObj.getSbid());
-							jsonstr.put("zcno", mesObj.getZcno());
-							jsonSon.put("sys_stated", "3");
-						} else {
-							jsonSon.put("prd_no",
-									shuliangMap.get("Material_cailiaoNum"));
-							jsonSon.put(
-									"bat_no",
-									picihao == null ? shuliangMap
-											.get("Material_cailiaopici")
-											: picihao);
-							jsonSon.put("BinCode",
-									shuliangMap.get("Material_BinCode"));
-							jsonSon.put("prd_name",
-									shuliangMap.get("Material_cailiaoName"));
+							if(ZCNOSaveSonMap==null){
+								showNormalDialog("没有【"+yimei_shangliao_materialPihao.getText()+"】材料批号!");
+								yimei_shangliao_materialPihao.selectAll();
+								return false;
+							}else{
+								jsonSon.put("prd_no",ZCNOSaveSonMap.containsKey("Material_cailiaoNum")?(ZCNOSaveSonMap.get("Material_cailiaoNum")==null?"":ZCNOSaveSonMap.get("Material_cailiaoNum")):"");
+								jsonSon.put("bat_no",picihao == null ? ZCNOSaveSonMap.get("Material_cailiaopici") : picihao);
+								jsonSon.put("BinCode", ZCNOSaveSonMap.containsKey("Material_BinCode")?(ZCNOSaveSonMap.get("Material_BinCode")==null?"":ZCNOSaveSonMap.get("Material_BinCode")):"");
+								jsonSon.put("prd_name", ZCNOSaveSonMap.containsKey("Material_cailiaoName")?(ZCNOSaveSonMap.get("Material_cailiaoName")==null?"":ZCNOSaveSonMap.get("Material_cailiaoName")):"");
+								jsonSon.put("qty", yimei_shangliao_Num.getText());
+								jsonSon.put("dcid", GetAndroidMacUtil.getMac());
+								jsonSon.put("op", mesObj.getOp());
+								jsonstr.put("sbid", mesObj.getSbid());
+								jsonstr.put("zcno", mesObj.getZcno());
+								jsonSon.put("sys_stated", "3");
+							}
+						} else {  //固晶上料
+							jsonSon.put("prd_no",shuliangMap.containsKey("Material_cailiaoNum")?(shuliangMap.get("Material_cailiaoNum")==null?"":shuliangMap.get("Material_cailiaoNum")):"");
+							jsonSon.put("bat_no",picihao == null ? shuliangMap.get("Material_cailiaopici"): picihao);
+							jsonSon.put("BinCode", shuliangMap.containsKey("Material_BinCode")?(shuliangMap.get("Material_BinCode")==null?"":shuliangMap.get("Material_BinCode")):"");
+							jsonSon.put("prd_name", shuliangMap.containsKey("Material_cailiaoName")?(shuliangMap.get("Material_cailiaoName")==null?"":shuliangMap.get("Material_cailiaoName")):"");
 							jsonSon.put("qty", yimei_shangliao_Num.getText());
 							jsonSon.put("dcid", GetAndroidMacUtil.getMac());
 							jsonSon.put("op", mesObj.getOp());
@@ -718,25 +718,27 @@ public class ShangLiaoActivity extends TabActivity {
 					for (int i = 0; i < materialAdapter.getCount(); i++) {
 						Map<String, String> map = (Map<String, String>) materialAdapter
 								.getItem(i);
-						if (map.get("Material_cailiaopici").equals(
-								yimei_shangliao_materialPihao.getText()
-										.toString().trim())) {
-							if(mesObj.getZcno().equals("11")){
-								// 将值填到数量框中
-								yimei_shangliao_Num.setText(map
-										.containsKey("Material_cailiaoQty") ? map
-										.get("Material_cailiaoQty") : "");
-								ZCNOSaveSonMap = map;
+						if(map.containsKey("Material_cailiaopici")){
+							if (map.get("Material_cailiaopici").equals(
+									yimei_shangliao_materialPihao.getText()
+											.toString().trim())) {
+								if(mesObj.getZcno().equals("11")){
+									// 将值填到数量框中
+									yimei_shangliao_Num.setText(map
+											.containsKey("Material_cailiaoQty") ? map
+											.get("Material_cailiaoQty") : "");
+									ZCNOSaveSonMap = map;
+								}
+								flag = true;
+							}else if(mesObj.getZcno().equals("21")){
+								yimei_shangliao_Num.setText("500");
 							}
-							flag = true;
-						}else if(mesObj.getZcno().equals("21")){
-							yimei_shangliao_Num.setText("500");
 						}
 					}
 					if (type.equals("料号")) {
 						picihao = yimei_shangliao_materialPihao.getText()
 								.toString().trim();
-						shuliangEnter();
+						shuliangEnter();  //直接带出数量
 					} else {
 						if (flag == false) {
 							yimei_shangliao_materialPihao.selectAll();
@@ -823,6 +825,7 @@ public class ShangLiaoActivity extends TabActivity {
 				ShangLiaoActivity.this);
 		normalDialog.setTitle("提示");
 		normalDialog.setMessage(mes);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
 		normalDialog.setPositiveButton("确定",
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -911,18 +914,23 @@ public class ShangLiaoActivity extends TabActivity {
 										StringQTY.indexOf("."));
 							}
 							map.put("Material_cailiaoQty", qty);
-							String Material_SumNum;
-							if (String.valueOf(Valuesmap.get("qty_rsv")) != null) {
-								Material_SumNum = String
-										.valueOf(Valuesmap.get("qty_rsv"))
-										.substring(
-												0,
-												String.valueOf(
-														Valuesmap
-																.get("qty_rsv"))
-														.indexOf("."));
-							} else {
-								Material_SumNum = "";
+							String Material_SumNum = null;
+//							Log.i("qty",Valuesmap.get("qty_rsv"));
+							try {
+								if (String.valueOf(Valuesmap.get("qty_rsv")) != null) {
+									Material_SumNum = String
+											.valueOf(Valuesmap.get("qty_rsv"))
+											.substring(
+													0,
+													String.valueOf(
+															Valuesmap
+																	.get("qty_rsv"))
+															.indexOf("."));
+								} else {
+									Material_SumNum = "";
+								}
+							} catch (Exception e) {
+								Material_SumNum = "0";
 							}
 							map.put("Material_SumNum", Material_SumNum);
 							map.put("Material_tidaipin",
@@ -1034,6 +1042,7 @@ public class ShangLiaoActivity extends TabActivity {
 						if (MaxCid != null) {
 							MaxCid.clear();
 						}
+						ZCNOSaveSonMap = null;
 						ToastUtil.showToast(shangliaoActivity, "添加成功", 0);
 						if(mesObj.getZcno().equals("11")){
 							nextEditFocus(yimei_shangliao_materialPihao);
@@ -1153,11 +1162,13 @@ public class ShangLiaoActivity extends TabActivity {
 		for (int i = 0; i < materialAdapter.getCount(); i++) {
 			Map<String, String> map = (Map<String, String>) materialAdapter
 					.getItem(i);
-			Log.i("Tag", map.get("Material_cailiaoNum"));
-			if (map.get("Material_cailiaoNum").equals(
-					yimei_shangliao_materialCode.getText().toString().trim())) {
-				isFlag = true;
-				mesShow = map;
+//			Log.i("Tag", map.get("Material_cailiaoNum"));
+			if(map.get("Material_cailiaoNum")!=null){
+				if (map.get("Material_cailiaoNum").equals(
+						yimei_shangliao_materialCode.getText().toString().trim())) {
+					isFlag = true;
+					mesShow = map;
+				}
 			}
 		}
 		if (!mesObj.getZcno().equals("11")) { // 固晶
