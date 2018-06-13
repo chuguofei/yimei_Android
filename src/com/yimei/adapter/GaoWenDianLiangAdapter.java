@@ -74,6 +74,8 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 				KanDaiActivity.addHViews((GeneralCHScrollView) convertView
 						.findViewById(R.id.gaowendianliang_item_scroll));
 			}
+			viewHolder.gaowendianliang_op  = (TextView) convertView
+					.findViewById(R.id.gaowendianliang_op);
 			viewHolder.gaowendianliang_sid1 = (TextView) convertView
 					.findViewById(R.id.gaowendianliang_sid1);
 			viewHolder.gaowendianliang_slkid = (TextView) convertView
@@ -92,6 +94,7 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 		}
 
 		Map<String, String> map = listData.get(position);
+		viewHolder.gaowendianliang_op.setText((String) map.get("op"));
 		viewHolder.gaowendianliang_sid1.setText((String) map.get("sid1"));
 		viewHolder.gaowendianliang_slkid.setText((String) map.get("slkid"));
 		viewHolder.gaowendianliang_prd_no.setText((String) map.get("prd_no"));
@@ -102,6 +105,7 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 	}
 
 	class ViewHolder {
+		public TextView gaowendianliang_op;
 		public TextView gaowendianliang_sid1;
 		public TextView gaowendianliang_slkid;
 		public TextView gaowendianliang_prd_no;

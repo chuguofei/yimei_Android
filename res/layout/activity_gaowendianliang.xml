@@ -87,6 +87,13 @@
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
+                    android:text="@string/yimei_biandai_user"
+                    android:textColor="#850" />
+                
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
                     android:text="@string/gaowendianliang_sid1"
                     android:textColor="#850" />
 				

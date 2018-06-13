@@ -38,11 +38,8 @@ import android.widget.TextView.OnEditorActionListener;
 
 /**
  * 
- * @author Administrator 
- * 对象：D50301 
- * 辅助：TESTQUERY //lot号查询
- * MOZCLISTWEB //查询批次号
- * 功能：快速过站
+ * @author Administrator 对象：D50301 辅助：TESTQUERY //lot号查询 MOZCLISTWEB //查询批次号
+ *         功能：快速过站
  */
 public class KanDaiActivity extends Activity {
 
@@ -77,9 +74,11 @@ public class KanDaiActivity extends Activity {
 				}
 				if (tag.equals("高温点亮作业员")) { // 作业员
 					gaowen_user.setText(barcodeData);
-					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
-							||gaowen_user.getText().toString().toUpperCase().trim()==null){
-						ToastUtil.showToast(KanDaiActivity.this,"作业员不能为空",0);
+					if (gaowen_user.getText().toString().toUpperCase().trim()
+							.equals("")
+							|| gaowen_user.getText().toString().toUpperCase()
+									.trim() == null) {
+						ToastUtil.showToast(KanDaiActivity.this, "作业员不能为空", 0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
 					}
@@ -88,15 +87,18 @@ public class KanDaiActivity extends Activity {
 				}
 				if (tag.equals("高温点亮批次号")) { // 作业员
 					gaowen_sid1.setText(barcodeData);
-					if(gaowen_user.getText().toString().toUpperCase().trim().equals("")
-							||gaowen_user.getText().toString().toUpperCase().trim()==null){
-						ToastUtil.showToast(KanDaiActivity.this,"作业员不能为空",0);
+					if (gaowen_user.getText().toString().toUpperCase().trim()
+							.equals("")
+							|| gaowen_user.getText().toString().toUpperCase()
+									.trim() == null) {
+						ToastUtil.showToast(KanDaiActivity.this, "作业员不能为空", 0);
 						MyApplication.nextEditFocus(gaowen_user);
 						return;
 					}
-					if(gaowen_sid1.getText().toString().toUpperCase().equals("")
-							||gaowen_sid1.getText().toString().toUpperCase()==null){
-						ToastUtil.showToast(KanDaiActivity.this,"批次号不能为空",0);
+					if (gaowen_sid1.getText().toString().toUpperCase()
+							.equals("")
+							|| gaowen_sid1.getText().toString().toUpperCase() == null) {
+						ToastUtil.showToast(KanDaiActivity.this, "批次号不能为空", 0);
 						MyApplication.nextEditFocus(gaowen_sid1);
 						return;
 					}
@@ -180,8 +182,7 @@ public class KanDaiActivity extends Activity {
 					if (gaowen_user.getText().toString().toUpperCase()
 							.equals("")
 							|| gaowen_user.getText() == null) {
-						ToastUtil.showToast(KanDaiActivity.this,
-								"用户名不能为空！", 0);
+						ToastUtil.showToast(KanDaiActivity.this, "用户名不能为空！", 0);
 						return false;
 					}
 					op = gaowen_user.getText().toString().toUpperCase();
@@ -193,15 +194,13 @@ public class KanDaiActivity extends Activity {
 					if (gaowen_user.getText().toString().toUpperCase()
 							.equals("")
 							|| gaowen_user.getText() == null) {
-						ToastUtil.showToast(KanDaiActivity.this,
-								"用户名不能为空！", 0);
+						ToastUtil.showToast(KanDaiActivity.this, "用户名不能为空！", 0);
 						return false;
 					}
 					if (gaowen_sid1.getText().toString().toUpperCase()
 							.equals("")
 							|| gaowen_user.getText() == null) {
-						ToastUtil.showToast(KanDaiActivity.this,
-								"批次号不能为空！", 0);
+						ToastUtil.showToast(KanDaiActivity.this, "批次号不能为空！", 0);
 						return false;
 					}
 					sid1 = gaowen_sid1.getText().toString().toUpperCase()
@@ -234,127 +233,135 @@ public class KanDaiActivity extends Activity {
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code")
 									.toString()) == 0) {
-								ToastUtil
-										.showToast(
-												KanDaiActivity.this,
-												"在该制程"
-														+ MyApplication.KANDAI_ZCNO
-														+ "，没有该批次【" + sid1
-														+ "】或该批次已入站!", 0);
+								ToastUtil.showToast(KanDaiActivity.this, "在该制程"
+										+ MyApplication.KANDAI_ZCNO + "，没有该批次【"
+										+ sid1 + "】或该批次已入站!", 0);
 								gaowen_sid1.selectAll();
 								return;
 							} else {
 								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
 										.get("values")).get(0);
-								// 0.测试站  1.编带站 2.看带站
-								if (Integer.parseInt(jsonValue.get("lotstate").toString()) == 0) {
-									ToastUtil.showToast(KanDaiActivity.this,"该批号不具备入站条件,上个工序未出站!", 0);
+								// 0.测试站 1.编带站 2.看带站
+								/*if (Integer.parseInt(jsonValue.get("lotstate")
+										.toString()) == 0) {
+									ToastUtil.showToast(KanDaiActivity.this,
+											"该批号不具备入站条件,上个工序未出站!", 0);
 									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
-								}else if(Integer.parseInt(jsonValue.get("lotstate").toString()) == 2){
-									ToastUtil.showToast(KanDaiActivity.this,"该批号已经出站!", 0);
-									MyApplication.nextEditFocus(gaowen_sid1);
-									gaowen_sid1.selectAll();
-									return;
-								}else {
-									Map<String, String> map = MyApplication.QueryBatNo(
-											"MOZCLISTWEB", "~sid1='" + jsonValue.get("sid1") + "' and zcno='81' ");
-									OkHttpUtils.getInstance().getServerExecute(
-											MyApplication.MESURL, null, map, null, mHander,
-											true, "QuertPlanaSid1");
-								}
-							}
-						}
-						if(string.equals("QuertPlanaSid1")){  //查询批次号(mes_lot_plana)
-							JSONObject jsonObject = JSON.parseObject(b
-									.getString("jsonObj").toString());
-							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
-								ToastUtil.showToast(KanDaiActivity.this,"没有查到批次（mes_lot_plana）",0);
-								MyApplication.nextEditFocus(gaowen_sid1);
-								gaowen_sid1.selectAll();
-								return;
-							}else{
-								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject.get("values")).get(0);
-								/*if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
-									ToastUtil.showToast(KanDaiActivity.this, "该lot号所对的批次号不具备开工条件!",0);
-									MyApplication.nextEditFocus(gaowen_sid1);
-									gaowen_sid1.selectAll();
-									return;
-								} else if (jsonValue.get("state").toString().equals("02")
-										|| jsonValue.get("state").toString().equals("03")) {
-									ToastUtil.showToast(KanDaiActivity.this, "该lot号所对的批次号已经入站!", 0);
-									gaowen_sid1.selectAll();
-									return;
-								} else if (jsonValue.get("state").toString().equals("04")) {
-									ToastUtil.showToast(KanDaiActivity.this, "该lot号所对的批次号经出站!", 0);
+								} else if (Integer.parseInt(jsonValue.get(
+										"lotstate").toString()) == 2) {
+									ToastUtil.showToast(KanDaiActivity.this,
+											"该批号已经出站!", 0);
 									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
 								} else {*/
-									jsonValue.put("sbuid", "D0071");
-									jsonValue.put("dcid",GetAndroidMacUtil.getMac());
-									jsonValue.put("hpdate",MyApplication.GetServerNowTime());
-									jsonValue.put("smake", MyApplication.user);
-									jsonValue.put("mkdate",MyApplication.GetServerNowTime());
-									jsonValue.put("op", op);
-									jsonValue.put("prd_name",jsonValue.get("prd_name"));
-									jsonValue.put("outdate",MyApplication.GetServerNowTime());
-									jsonValue.put("slkid", jsonValue.get("sid"));
-									jsonValue.put("zcno",MyApplication.KANDAI_ZCNO);
-									// savedate--------------------------------------------
-									Map<String, String> mesIdMap = MyApplication
-											.httpMapKeyValueMethod(
-													MyApplication.DBID,
-													"savedata",
-													MyApplication.user,
-													jsonValue.toJSONString(),
-													"D50301", "1");
+
+									Map<String, String> map = MyApplication
+											.QueryBatNo(
+													"MOZCLISTWEB",
+													"~sid1='"
+															+ jsonValue
+																	.get("sid1")
+															+ "' and zcno='81' ");
 									OkHttpUtils.getInstance().getServerExecute(
-											MyApplication.MESURL, null,
-											mesIdMap, null, mHander, true,
-											"savedata");
-									// savedate--------------------------------------------
-									// 200请求--------------------------------------------------
-									String sidAndlotno = jsonValue.get("sid1") + ";" +gaowen_sid1.getText();
-									Map<String, String> updateServerTable = MyApplication
-											.UpdateServerTableMethod(
-													MyApplication.DBID,
-													MyApplication.user,
-													jsonValue.get("state").toString(),"04",
-													sidAndlotno,jsonValue.get("slkid").toString(),
-													MyApplication.KANDAI_ZCNO,
-													"200");
-									OkHttpUtils.getInstance().getServerExecute(
-											MyApplication.MESURL, null,
-											updateServerTable, null, mHander,
-											true, "updateTableState");
-									// 200请求--------------------------------------------------
-	
-									// 适配器填值
-									List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
-									Map<String, String> map = new HashMap<String, String>();
-									map.put("sid1", sid1);
-									map.put("slkid", jsonValue.get("slkid").toString());
-									map.put("prd_no",jsonValue.getString("prd_no").toString());
-									map.put("qty", jsonValue.get("qty").toString());
-									map.put("zcno","看带");
-									map.put("zcno1","包装");
-									mList.add(map);
-									if (gaowendianliangApapter == null) {
-										gaowendianliangApapter = new GaoWenDianLiangAdapter(
-												KanDaiActivity.this,
-												mList);
-										mListView
-												.setAdapter(gaowendianliangApapter);
-									} else {
-										gaowendianliangApapter.listData
-												.add(map);
-										gaowendianliangApapter
-												.notifyDataSetChanged();
-									}
-									gaowen_sid1.selectAll();
+											MyApplication.MESURL, null, map,
+											null, mHander, true,
+											"QuertPlanaSid1");
 //								}
+							}
+						}
+						if (string.equals("QuertPlanaSid1")) { // 查询批次号(mes_lot_plana)
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code")
+									.toString()) == 0) {
+								ToastUtil.showToast(KanDaiActivity.this,
+										"没有查到批次（mes_lot_plana）", 0);
+								MyApplication.nextEditFocus(gaowen_sid1);
+								gaowen_sid1.selectAll();
+								return;
+							} else {
+								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
+										.get("values")).get(0);
+								jsonValue.put("sbuid", "D0071");
+								jsonValue.put("dcid",
+										GetAndroidMacUtil.getMac());
+								jsonValue.put("hpdate",
+										MyApplication.GetServerNowTime());
+								jsonValue.put("smake", MyApplication.user);
+								jsonValue.put("lotno", sid1);
+								jsonValue.put("bok","1");
+								jsonValue.put("mkdate",
+										MyApplication.GetServerNowTime());
+								jsonValue.put("op", op);
+								jsonValue.put("op_b", op);
+								jsonValue.put("op_o", op);
+								jsonValue.put("state1", "04");
+								jsonValue.put("prd_name",
+										jsonValue.get("prd_name"));
+								jsonValue.put("outdate",
+										MyApplication.GetServerNowTime());
+								jsonValue.put("slkid", jsonValue.get("sid"));
+								jsonValue
+										.put("zcno", MyApplication.KANDAI_ZCNO);
+								// savedate--------------------------------------------
+								Map<String, String> mesIdMap = MyApplication
+										.httpMapKeyValueMethod(
+												MyApplication.DBID, "savedata",
+												MyApplication.user,
+												jsonValue.toJSONString(),
+												"D0071", "1");
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null, mesIdMap,
+										null, mHander, true, "savedata");
+								// savedate--------------------------------------------
+								// 200请求--------------------------------------------------
+								String sidAndlotno = jsonValue.get("sid1")
+										+ ";" + gaowen_sid1.getText();
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user, jsonValue
+														.get("state")
+														.toString(), "04",
+												sidAndlotno,
+												jsonValue.get("slkid")
+														.toString(),
+												MyApplication.KANDAI_ZCNO,
+												"200");
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null,
+										updateServerTable, null, mHander, true,
+										"updateTableState");
+
+								// 200请求--------------------------------------------------
+
+								// 适配器填值
+								List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
+								Map<String, String> map = new HashMap<String, String>();
+								map.put("op", op);
+								map.put("sid1", sid1);
+								map.put("slkid", jsonValue.get("slkid")
+										.toString());
+								map.put("prd_no", jsonValue.getString("prd_no")
+										.toString());
+								map.put("qty", jsonValue.get("qty").toString());
+								map.put("zcno", "看带");
+								map.put("zcno1", "包装");
+								mList.add(map);
+								if (gaowendianliangApapter == null) {
+									gaowendianliangApapter = new GaoWenDianLiangAdapter(
+											KanDaiActivity.this, mList);
+									mListView
+											.setAdapter(gaowendianliangApapter);
+								} else {
+									gaowendianliangApapter.listData.add(map);
+									gaowendianliangApapter
+											.notifyDataSetChanged();
+								}
+								gaowen_sid1.selectAll();
 							}
 							System.out.println(jsonObject);
 						}

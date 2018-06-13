@@ -886,7 +886,7 @@ public class IPQC_shoujian extends Activity {
 		switch (id) {
 		case MyApplication.ERRORNOTICE:
 			if (errJumpOK) {
-				if(yimei_shoujian_ps.getText().equals("OK")){
+				if(yimei_shoujian_ps.getText().equals("NG")){
 					Intent intent = new Intent();
 					intent.setClass(IPQC_shoujian.this, ErrorNotice_shoujian.class);// 跳转到加载界面
 

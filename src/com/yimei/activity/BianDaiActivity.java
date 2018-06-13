@@ -396,7 +396,7 @@ public class BianDaiActivity extends Activity {
 										"选中的批次不能出站！", 0);
 							}
 						}
-						Thread.sleep(400); //可能会出现连接池不够睡眠半秒
+//						Thread.sleep(400); //可能会出现连接池不够睡眠半秒
 					}
 					break;
 				}
@@ -642,20 +642,26 @@ public class BianDaiActivity extends Activity {
 						}
 					} else {
 						// 清空列表
-						if (mListView != null) {
+//						if (mListView != null) {
+						if (biandaiPrdNocomparison != null) {
+							if(biandaiPrdNocomparison.size()!=0){								
+								biandaiPrdNocomparison.clear();
+							}
+						}
 							biandai_kaigong.setEnabled(true);
 							biandai_chuzhan.setEnabled(true);
+							BianDaiAdapter = null;
 							mListView.setAdapter(null);
-							mListView = null;
+//							mListView = null;
 							if(BianDaiAdapter!=null){								
 								BianDaiAdapter.notifyDataSetChanged();
 							}
 							MyApplication
 									.nextEditFocus(yimei_biandai_proNum_edt);
-						} else {
+//						} else {
 							biandai_kaigong.setEnabled(false);
 							biandai_chuzhan.setEnabled(false);
-						}
+//						}
 					}
 				}
 				if ("shebeiQuery1".equals(string)) {
@@ -680,22 +686,21 @@ public class BianDaiActivity extends Activity {
 						}
 					} else {
 						// 清空列表
-						if (mListView != null) {
+						if (biandaiPrdNocomparison != null) {
+							if(biandaiPrdNocomparison.size()!=0){								
+								biandaiPrdNocomparison.clear();
+							}
+						}
+							BianDaiAdapter = null;
 							mListView.setAdapter(null);
-							mListView = null;
+//							mListView = null;
 							if(BianDaiAdapter!=null){								
 								BianDaiAdapter.notifyDataSetChanged();
 							}
 							MyApplication
 									.nextEditFocus(yimei_biandai_proNum_edt);
-						}
-						if (mListView == null) {
 							biandai_kaigong.setEnabled(false);
 							biandai_chuzhan.setEnabled(false);
-						} else {
-							biandai_kaigong.setEnabled(true);
-							biandai_chuzhan.setEnabled(true);
-						}
 					}
 				}
 				if ("updateRefresh".equals(string)) { //刷新列表
@@ -722,7 +727,11 @@ public class BianDaiActivity extends Activity {
 							/*mListView.setAdapter(null);
 							BianDaiAdapter.notifyDataSetChanged();*/
 							// 如果等于空可以扫新的批号
-							biandaiPrdNocomparison.clear();
+							if (biandaiPrdNocomparison != null) {
+								if(biandaiPrdNocomparison.size()!=0){								
+									biandaiPrdNocomparison.clear();
+								}
+							}
 						}
 
 					}
@@ -850,12 +859,12 @@ public class BianDaiActivity extends Activity {
 							return;
 						} else {
 							//如果有首检标示
-							if(jsonValue.get("fircheck").toString().equals("1")){
+							/*if(jsonValue.get("fircheck").toString().equals("1")){
 								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
 									JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
 									return;
 								}
-							}
+							}*/
 							if (biandaiPrdNocomparison != null) {
 
 								if (biandaiPrdNocomparison.size() != 0) {
@@ -934,8 +943,7 @@ public class BianDaiActivity extends Activity {
 					String a = jsonObject.toString();
 				}
 				if (string.equals("id")) {
-					JSONObject jsonObject = JSON.parseObject(b.getString(
-							"jsonObj").toString());
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 					JSONObject jsondata = (JSONObject) jsonObject.get("data");
 					String newsid = jsondata.get("sid").toString(); // 拿到返回的sib1
 					if (newsid != "") {

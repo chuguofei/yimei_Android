@@ -513,6 +513,9 @@ public class IPQC_xunjian extends Activity {
 										.get("data")).get("sid"));
 								errorJSON.put("checkType",chtype);
 								ToastUtil.showToast(IPQC_xunjian.this,"保存成功",0);
+								yimei_xunjian_sbid.setText("");
+								yimei_xunjian_sid1.setText("");
+								MyApplication.nextEditFocus(yimei_xunjian_sbid);
 							}
 						}
 						if (string.equals("SpinnerValue")) { // 给下拉框赋值
@@ -594,17 +597,19 @@ public class IPQC_xunjian extends Activity {
 								ToastUtil.showToast(IPQC_xunjian.this, "没有【"
 										+ sid1 + "】批次号!", 0);
 								yimei_xunjian_sid1.selectAll();
+								xunjianAdapter = null;
+								mListView.setAdapter(xunjianAdapter);
 								return;
 							} else {
 								JSONObject jsonObj = (JSONObject) ((JSONArray) jsonObject
 										.get("values")).get(0);
-								if (jsonObj.get("state").toString()
+							/*	if (jsonObj.get("state").toString()
 										.equals("04")) {
 									ToastUtil.showToast(IPQC_xunjian.this,
 											"该【" + sid1 + "】批号已经出站!", 0);
 									yimei_xunjian_sid1.selectAll();
 									return;
-								} else {
+								} else {*/
 									Sid1Json = jsonObj;
 									errorJSON = Sid1Json; // 审批流的json
 									errorJSON.put("slkid", Sid1Json.get("sid").toString());
@@ -628,7 +633,7 @@ public class IPQC_xunjian extends Activity {
 									yimei_xunjian_prd_no.setText(jsonObj
 											.containsKey("prd_no") ? jsonObj
 											.get("prd_no").toString() : "");
-								}
+//								}
 							}
 						}
 					} catch (Exception e) {
@@ -698,16 +703,16 @@ public class IPQC_xunjian extends Activity {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(1, MyApplication.ERRORNOTICE, 4, MyApplication.ERRORNOTICETEXT);
 		return true;
-	}
+	}*/
 
 	/**
 	 * 异常通知单
 	 */
-	@Override
+	/*@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		switch (id) {
@@ -729,5 +734,5 @@ public class IPQC_xunjian extends Activity {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
+	}*/
 }

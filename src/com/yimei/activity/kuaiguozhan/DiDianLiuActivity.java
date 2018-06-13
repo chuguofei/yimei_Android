@@ -275,7 +275,13 @@ public class DiDianLiuActivity extends Activity {
 									jsonValue.put("sbuid", "D0001");
 									jsonValue.put("dcid",
 											GetAndroidMacUtil.getMac());
-									jsonValue.put("smake", MyApplication.user);
+									jsonValue.put("mkdate",MyApplication.GetServerNowTime());
+									jsonValue.put("hpdate",MyApplication.GetServerNowTime());
+									jsonValue.put("outdate",MyApplication.GetServerNowTime());
+									jsonValue.put("op", op);
+									jsonValue.put("op_b", op);
+									jsonValue.put("bok","1");
+									jsonValue.put("state1", "04");
 									jsonValue.put("mkdate",
 											MyApplication.GetServerNowTime());
 									jsonValue.put("op", op);

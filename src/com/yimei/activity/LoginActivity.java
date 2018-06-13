@@ -88,7 +88,7 @@ public class LoginActivity extends Activity {
 
 			@Override
 			public boolean onLongClick(View v) {
-				ToastUtil.showToastLocation(loginActivity, "进入更新系统窗口----", 0);
+				ToastUtil.showToastLocation(loginActivity, "进入更新系统窗口v18/6/13/pm", 0);
 				showNormalDialog();
 				return true;
 			}
