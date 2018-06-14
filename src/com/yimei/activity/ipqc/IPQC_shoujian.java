@@ -84,7 +84,9 @@ public class IPQC_shoujian extends Activity {
 	private String lotno;
 	private JSONObject errorJSON;
 	private boolean errJumpOK = false; // 是否保存数据
-
+	private int chooseIndex = 0;
+	private Map<Integer,String> AuditorMap = new HashMap<>();
+	
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -602,7 +604,109 @@ public class IPQC_shoujian extends Activity {
 								errorJSON.put("sid", ((JSONObject) jsonObject
 										.get("data")).get("sid"));
 								errorJSON.put("checkType",chtype);
-								ToastUtil.showToast(IPQC_shoujian.this,"保存成功",0);
+								
+								//33请求=====================================
+								Map<String, String> map = new HashMap<>();
+								map.put("dbid", MyApplication.DBID);
+								map.put("usercode", MyApplication.user);
+								map.put("apiId", "chkup");
+								map.put("chkid", "33");
+								JSONObject ceaJson = new JSONObject();
+								ceaJson.put("sid", errorJSON.get("sid"));
+								ceaJson.put("sbuid", "Q00101"); //首检审批流
+								ceaJson.put("statefr", "0");
+								ceaJson.put("stateto", "0");
+								map.put("cea", ceaJson.toString());
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null, map, null,
+										mHander, true, "Approval_33");
+								//33请求=====================================
+								
+							}
+						}
+						if(string.equals("Approval_33")){
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("id")
+									.toString()) == 0) {
+								JSONObject data = (JSONObject) jsonObject
+									 	.get("data");
+								final JSONObject info = (JSONObject) data.get("info");
+								JSONArray list = (JSONArray)info.get("list");
+								final JSONObject listJson = (JSONObject) list.get(0);
+								//判断是否有用户
+								if(listJson.containsKey("users")){
+									JSONArray jsonarr =  (JSONArray) listJson.get("users");
+									for (int i = 0; i < jsonarr.size(); i++) {
+										JSONObject jsonOp = (JSONObject) jsonarr.get(i);
+										jsonOp.get("userCode");
+										jsonOp.get("userName");
+										AuditorMap.put(i,jsonOp.get("userCode")+"-"+jsonOp.get("userName"));
+									}
+									
+									AlertDialog.Builder builder = new AlertDialog.Builder(IPQC_shoujian.this);  
+					                builder.setTitle("请选择审核人");  
+					                builder.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+					                final String[] Auditor = new String[AuditorMap.size()];
+					                for (int j = 0; j < AuditorMap.size(); j++) {
+					                	Auditor[j] = AuditorMap.get(j); 
+									}
+					                builder.setSingleChoiceItems(Auditor,chooseIndex, new DialogInterface.OnClickListener()  
+					                {  
+					                    @Override  
+					                    public void onClick(DialogInterface dialog, int which)  
+					                    {  
+					                    	chooseIndex = which;
+					                    }  
+					                });  
+					                builder.setPositiveButton("确定", new DialogInterface.OnClickListener()  
+					                {  
+					                    @Override  
+					                    public void onClick(DialogInterface dialog, int which)  
+					                    {  
+					                    	JSONObject ceaJson = new JSONObject();
+											ceaJson.put("stateto", listJson.get("stateId"));
+											ceaJson.put("sid", errorJSON.get("sid"));
+											ceaJson.put("sbuid", "Q00101"); //首检审批流34
+											ceaJson.put("ckd", info.get("checked"));
+											ceaJson.put("yjcontext", "");
+											ceaJson.put("bup", "1");
+											ceaJson.put("statefr", "0");
+											ceaJson.put("tousr",AuditorMap.get(chooseIndex).substring(0,AuditorMap.get(chooseIndex).indexOf("-")));
+											Map<String, String> map = new HashMap<>();
+											map.put("dbid", MyApplication.DBID);
+											map.put("usercode", MyApplication.user);
+											map.put("apiId", "chkup");
+											map.put("chkid", "34");
+											map.put("cea", ceaJson.toString());
+											OkHttpUtils.getInstance().getServerExecute(
+													MyApplication.MESURL, null, map, null,
+													mHander, true, "Approval_34");
+					                    }  
+					                });
+					                builder.setNegativeButton("取消", new DialogInterface.OnClickListener()  
+					                {  
+					                    @Override  
+					                    public void onClick(DialogInterface dialog, int which)  
+					                    {  
+					                          
+					                    }  
+					                });  
+					                builder.show();  
+								}else{
+									ToastUtil.showToast(IPQC_shoujian.this,"没有审核人",0);
+								}
+							}
+						}
+						if(string.equals("Approval_34")){
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
+								ToastUtil.showToast(IPQC_shoujian.this,"审批提交成功", 0);
+								yimei_shoujian_sid1.selectAll();
+							} else {
+								ToastUtil.showToast(IPQC_shoujian.this,
+										"审批提交失败", 0);
 							}
 						}
 						if (string.equals("SpinnerValue")) { // 给下拉框赋值

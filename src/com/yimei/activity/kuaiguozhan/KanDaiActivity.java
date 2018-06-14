@@ -242,7 +242,7 @@ public class KanDaiActivity extends Activity {
 								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
 										.get("values")).get(0);
 								// 0.测试站 1.编带站 2.看带站
-								/*if (Integer.parseInt(jsonValue.get("lotstate")
+								if (Integer.parseInt(jsonValue.get("lotstate")
 										.toString()) == 0) {
 									ToastUtil.showToast(KanDaiActivity.this,
 											"该批号不具备入站条件,上个工序未出站!", 0);
@@ -256,7 +256,7 @@ public class KanDaiActivity extends Activity {
 									MyApplication.nextEditFocus(gaowen_sid1);
 									gaowen_sid1.selectAll();
 									return;
-								} else {*/
+								} else {
 
 									Map<String, String> map = MyApplication
 											.QueryBatNo(
@@ -269,7 +269,7 @@ public class KanDaiActivity extends Activity {
 											MyApplication.MESURL, null, map,
 											null, mHander, true,
 											"QuertPlanaSid1");
-//								}
+								}
 							}
 						}
 						if (string.equals("QuertPlanaSid1")) { // 查询批次号(mes_lot_plana)

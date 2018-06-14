@@ -78,6 +78,11 @@ public class LoginActivity extends Activity {
 		myapp.removeALLActivity_();
 		myapp.addActivity_(LoginActivity.this);
 		loginActivity = LoginActivity.this;
+		
+ 		TextView show_text =  (TextView) findViewById(R.id.show_version);
+		show_text.setText(MyApplication.SHOW_VERSION);
+		TextView show_ip =  (TextView) findViewById(R.id.show_ip);
+		show_ip.setText(MyApplication.MESIP);
 		if (!isWiFi(LoginActivity.this)) {
 			// 进入手机设置界面
 			// startActivity(new Intent(Settings.ACTION_SETTINGS)); //
@@ -88,7 +93,7 @@ public class LoginActivity extends Activity {
 
 			@Override
 			public boolean onLongClick(View v) {
-				ToastUtil.showToastLocation(loginActivity, "进入更新系统窗口v18/6/13/pm", 0);
+				ToastUtil.showToastLocation(loginActivity, "进入更新系统窗口", 0);
 				showNormalDialog();
 				return true;
 			}

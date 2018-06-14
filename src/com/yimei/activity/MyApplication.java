@@ -17,7 +17,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
-
+	public static final String MESIP = "192.168.7.15:8088";
 	public static String MESURL = "http://192.168.7.15:8088/mes/api";
 	/*public static final String MESURL = "http://115.28.191.203:89/mes/api";
 	public static final String MESDOWNLOADAPKURL = "http://115.28.191.203:89/mes/yimei.apk";
@@ -51,6 +51,7 @@ public class MyApplication extends Application {
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
 	public static final String SCN_CUST_EX_SCODE = "scannerdata";
 
+	public static final String SHOW_VERSION = "v18-6-14 15:40";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息

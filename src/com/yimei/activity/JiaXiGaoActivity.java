@@ -99,7 +99,7 @@ public class JiaXiGaoActivity extends Activity {
 					}
 					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
 					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-							"MESEQUTM", "~id='" + sbid + "' zc_id='S03'");
+							"MESEQUTM", "~id='" + sbid + "' and zc_id='S03'");
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "QuerySbid");
@@ -218,7 +218,7 @@ public class JiaXiGaoActivity extends Activity {
 					sbid = yimei_jiaxigao_sbid.getText().toString().toUpperCase().trim();
 					yimei_jiaxigao_sbid.setText(sbid);
 					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-							"MESEQUTM", "~id='" + sbid + "' ");//and zc_id='S03'
+							"MESEQUTM", "~id='" + sbid + "' and zc_id='S03' ");//
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "QuerySbid");

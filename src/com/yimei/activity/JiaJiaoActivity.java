@@ -43,6 +43,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+/**
+ * 
+ * @author Administrator
+ * 辅助:
+ *   MESGLUEJOB //查询胶杯号
+ *   MESEQUTM // 查询设备号
+ *   
+ *   
+ */
 public class JiaJiaoActivity extends Activity {
 
 	public HorizontalScrollView mTouchView;
@@ -57,7 +66,7 @@ public class JiaJiaoActivity extends Activity {
 	private String jiaobeipihao;
 	private String zuoyeyuan;
 	private String sbid;
-
+	private String Production_slkid = ""; //正在生产的工单 
 	
 	/**
 	 * 获取pda扫描（广播）
@@ -331,10 +340,10 @@ public class JiaJiaoActivity extends Activity {
 				super.handleMessage(msg);
 				Bundle b = msg.getData();
 				String string = b.getString("type");
-				if (string.equals("Isshebei1")) {
+				if (string.equals("Isshebei1")) { //胶杯批次回车 
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
-					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {  //如没有这个机台
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
@@ -348,21 +357,40 @@ public class JiaJiaoActivity extends Activity {
 									"没有该胶机编号!", 0);
 						}
 					} else {
-						Map<String, String> mapSbid = new HashMap<String, String>();
-						mapSbid.put("dbid", MyApplication.DBID);
-						mapSbid.put("usercode", MyApplication.user);
-						mapSbid.put("apiId", "assist");
-						mapSbid.put("assistid", "{MESGLUEJOB}");
-						mapSbid.put("cont", "~prtno='" + jiaobeipihao + "'");
-						httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
-								"QueryMESgluejob");
-						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+						auxiliaryQuery("MSBMOLIST","~sbid='"+sbid+"' and state1='03'","Query_Precord_slkid_1"); //查询任务表中正在生产的工单
+					}
+				}
+				if(string.equals("Query_Precord_slkid_1")){ //胶杯回车去查设备号是否正确
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+					if(Integer.parseInt(jsonObject.get("code").toString()) == 1){
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+						if(jsonValue.containsKey("slkid")){							
+							Production_slkid = jsonValue.get("slkid").toString();
+							ToastUtil.showToast(JiaJiaoActivity.this,jsonValue.get("slkid").toString(),0);
+							
+							//查询胶杯批次号
+							Map<String, String> mapSbid = new HashMap<String, String>();
+							mapSbid.put("dbid", MyApplication.DBID);
+							mapSbid.put("usercode", MyApplication.user);
+							mapSbid.put("apiId", "assist");
+							mapSbid.put("assistid", "{MESGLUEJOB}");
+							mapSbid.put("cont", "~prtno='" + jiaobeipihao + "'");
+							httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
+									"QueryMESgluejob");
+							nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+						}else{
+							ToastUtil.showToast(JiaJiaoActivity.this,"当前正在生产的【"+jsonValue.get("sid1")+"】批次号没有绑定工单号,请联系管理员!",0);
+							yimei_jiajiao_jidiaojinumber.selectAll();
+						}
+					}else{
+						showSlkid("当前没有正在生产的批次，请先将批次入站开工！");
+						yimei_jiajiao_jidiaojinumber.selectAll();
 					}
 				}
 				if (string.equals("Isshebei")) {
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
-					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { //如果没有这个机台
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
@@ -377,8 +405,26 @@ public class JiaJiaoActivity extends Activity {
 							ToastUtil.showToast(getApplicationContext(),
 									"没有该胶机编号!", 0);
 						}
-					} else {
-						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+					} else { //有这个机台
+						auxiliaryQuery("MSBMOLIST","~sbid='"+sbid+"' and state1='03'","Query_Precord_slkid"); //查询任务表中正在生产的工单
+//						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+					}
+				}
+				if(string.equals("Query_Precord_slkid")){ //查询任务列表中正在生产的工单号
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+					if(Integer.parseInt(jsonObject.get("code").toString()) == 1){
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+						if(jsonValue.containsKey("slkid")){							
+							Production_slkid = jsonValue.get("slkid").toString();
+//							ToastUtil.showToast(JiaJiaoActivity.this,jsonValue.get("slkid").toString(),0);
+							MyApplication.nextEditFocus(yimei_jiajiao_jiaobeipihao);
+						}else{
+							ToastUtil.showToast(JiaJiaoActivity.this,"当前正在生产的【"+jsonValue.get("sid1")+"】批次号没有绑定工单号,请联系管理员!",0);
+							yimei_jiajiao_jidiaojinumber.selectAll();
+						}
+					}else{
+						showSlkid("当前没有正在生产的批次，请先将批次入站开工！");
+						yimei_jiajiao_jidiaojinumber.selectAll();
 					}
 				}
 				if (string.equals("QueryMESgluejob")) { // 查胶杯批号
@@ -387,68 +433,76 @@ public class JiaJiaoActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
-						if(jsonValue.containsKey("newly_time")){
-							//混胶的新时间 
-							if (!jsonValue.get("newly_time").toString().equals("")) {
-	
-								SimpleDateFormat sdf = new SimpleDateFormat(
-										"yyyy-MM-dd HH:mm");
-								String newly_time =  jsonValue.get("newly_time").toString();
-								if(newly_time.length() == 16){
-									newly_time += ":00";
-								}
-								long vdate = sdf.parse(newly_time).getTime()- MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime();
-								if (vdate < 0) {
-									ToastUtil.showToast(getApplicationContext(),
-											"胶杯已过有效期", 0);
-									return;
-								}
-							}
-							if(jsonValue.containsKey("mixing_time")){
-								if(!jsonValue.get("mixing_time").toString().equals("")){
-									String mixing_time = jsonValue.get("mixing_time").toString();
-									if(mixing_time.length() == 16){
-										mixing_time+=":00";
+						if(!Production_slkid.equals("")){
+							//判断工单正在生产的工单和扫描胶杯的工单是否匹配
+							if(Production_slkid.equals(jsonValue.get("mo_no").toString())){
+								if(jsonValue.containsKey("newly_time")){
+									//混胶的新时间 
+									if (!jsonValue.get("newly_time").toString().equals("")) {
+			
+										SimpleDateFormat sdf = new SimpleDateFormat(
+												"yyyy-MM-dd HH:mm");
+										String newly_time =  jsonValue.get("newly_time").toString();
+										if(newly_time.length() == 16){
+											newly_time += ":00";
+										}
+										long vdate = sdf.parse(newly_time).getTime()- MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime();
+										if (vdate < 0) {
+											ToastUtil.showToast(getApplicationContext(),
+													"胶杯已过有效期", 0);
+											return;
+										}
 									}
-									long Time = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()  - MyApplication.df.parse(mixing_time).getTime();
-									long Time1 = Time/1000/60;
-									if(!((Time/1000/60) < Integer.parseInt(jsonValue.get("fr_add_time").toString()))&&(Time/1000/60)>0){
-										ToastUtil.showToast(JiaJiaoActivity.this,"请联系工程人员！",0);
+									if(jsonValue.containsKey("mixing_time")){
+										if(!jsonValue.get("mixing_time").toString().equals("")){
+											String mixing_time = jsonValue.get("mixing_time").toString();
+											if(mixing_time.length() == 16){
+												mixing_time+=":00";
+											}
+											long Time = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()  - MyApplication.df.parse(mixing_time).getTime();
+											long Time1 = Time/1000/60;
+											if(!((Time/1000/60) < Integer.parseInt(jsonValue.get("fr_add_time").toString()))&&(Time/1000/60)>0){
+												ToastUtil.showToast(JiaJiaoActivity.this,"请联系工程人员！",0);
+												return;
+											}
+										}else{
+											ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
+											return;
+										}
+									}else{
+										ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
 										return;
 									}
 								}else{
 									ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
 									return;
 								}
+								
+								jsonValue.put("op", zuoyeyuan);
+								jsonValue.put("sbid", sbid);
+								jsonValue.put("prtno", jsonValue.get("prtno"));
+								jsonValue.put("indate",MyApplication.GetServerNowTime());
+								jsonValue.put("edate", jsonValue.get("vdate"));// 到期时间
+								jsonValue.put("mkdate", jsonValue.get("tprn"));// 胶杯打印时间
+								jsonValue.put("slkid", jsonValue.get("mo_no"));// 工单号（制令单号）
+								// jsonValue.put("prd_name",jsonValue.get("prdno"));//货品名称
+								jsonValue.put("dcid", GetAndroidMacUtil.getMac());
+								jsonValue.put("sys_stated", "3");
+								jsonValue.put("zcno", "31");
+								jsonValue.put("sbuid", "D2010");
+								jsonValue.put("qty", "1");
+								Map<String, String> mesIdMap = MyApplication
+										.httpMapKeyValueMethod(MyApplication.DBID,
+												"savedata", MyApplication.user,
+												jsonValue.toJSONString(), "D2010", "1");
+								httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
+										"AddMESgluejob");
 							}else{
-								ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
-								return;
+								showSlkid("正在生产的工单为【"+Production_slkid+"】\n扫描的加胶为【"+jsonValue.get("mo_no").toString()+"】,请检查!");
 							}
 						}else{
-							ToastUtil.showToast(JiaJiaoActivity.this,"请先做混胶~",0);
-							return;
+							ToastUtil.showToast(JiaJiaoActivity.this,"请先扫机台号",0);
 						}
-						
-						jsonValue.put("op", zuoyeyuan);
-						jsonValue.put("sbid", sbid);
-						jsonValue.put("prtno", jsonValue.get("prtno"));
-						jsonValue.put("indate",MyApplication.GetServerNowTime());
-						jsonValue.put("edate", jsonValue.get("vdate"));// 到期时间
-						jsonValue.put("mkdate", jsonValue.get("tprn"));// 胶杯打印时间
-						jsonValue.put("slkid", jsonValue.get("mo_no"));// 工单号（制令单号）
-						// jsonValue.put("prd_name",jsonValue.get("prdno"));//货品名称
-						jsonValue.put("dcid", GetAndroidMacUtil.getMac());
-						jsonValue.put("sys_stated", "3");
-						jsonValue.put("zcno", "31");
-						jsonValue.put("sbuid", "D2010");
-						jsonValue.put("qty", "1");
-						Map<String, String> mesIdMap = MyApplication
-								.httpMapKeyValueMethod(MyApplication.DBID,
-										"savedata", MyApplication.user,
-										jsonValue.toJSONString(), "D2010", "1");
-						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
-								"AddMESgluejob");
-						
 					} else {
 						ToastUtil.showToast(getApplicationContext(), "没有"
 								+ jiaobeipihao + "胶杯批号！", 0);
@@ -540,6 +594,20 @@ public class JiaJiaoActivity extends Activity {
 			}
 		}
 	};
+	
+	/**
+	 * 辅助查询
+	 */
+	private void auxiliaryQuery(String assistid,String count,String id){
+		Map<String, String> mapSbid = new HashMap<String, String>();
+		mapSbid.put("dbid", MyApplication.DBID);
+		mapSbid.put("usercode", MyApplication.user);
+		mapSbid.put("apiId", "assist");
+		mapSbid.put("assistid", "{"+assistid+"}");
+		mapSbid.put("cont",count);
+		httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
+				id);
+	}
 
 	/**
 	 * http请求
@@ -627,6 +695,26 @@ public class JiaJiaoActivity extends Activity {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * 弹出提示框
+	 * 
+	 * @param mes
+	 */
+	private void showSlkid(String mes) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(JiaJiaoActivity.this);
+		normalDialog.setTitle("提示");
+		normalDialog.setMessage(mes);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+		// 显示
+		normalDialog.show();
 	}
 
 	/**

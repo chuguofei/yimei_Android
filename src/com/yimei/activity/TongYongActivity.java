@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -86,6 +87,7 @@ public class TongYongActivity extends Activity {
 	private static String currSlkid;
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
 	private Map<String, String> ptime = new HashMap<String, String>();
+	private HashMap<Integer,String> SlkidMapJudge = new HashMap<>(); // 不同工单不能入站
 
 	/**
 	 * 获取pda扫描（广播）
@@ -497,30 +499,57 @@ public class TongYongActivity extends Activity {
 					} else {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
+						if(zcno.equals("31")){
+							if (SlkidMapJudge != null) {
+								if (SlkidMapJudge.size() != 0) {
+									for (int i = 0; i < SlkidMapJudge.size(); i++) {
+										String slkid = SlkidMapJudge.get(i);
+										if (!slkid.toUpperCase().equals(jsonValue.get("sid")
+												.toString().toUpperCase())) {
+											showNormalDialog("（工单不符）","\n当前工单为：【"+SlkidMapJudge.get(i)+"】\n"
+													+ "扫描工单为:【"+jsonValue.get("sid")+"】\n不能入站，请先将当前批次出站后再入站生产!");
+											return;
+										}
+									}
+								}
+							}
+						}
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
-							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",
-									0);
+							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",0);
 							yimei_proNum_edt.selectAll();
 							return;
 						} else if (jsonValue.get("state").toString()
 								.equals("02")
 								|| jsonValue.get("state").toString()
 										.equals("03")) {
-							ToastUtil.showToast(gujingActivity, "该批号已经入站!", 0);
+							ToastUtil.showToast(gujingActivity, "该批号状态为【入站】!", 0);
 							yimei_proNum_edt.selectAll();
 							return;
 						} else if (jsonValue.get("state").toString()
 								.equals("04")) {
-							ToastUtil.showToast(gujingActivity, "该批号已经出站!", 0);
+							ToastUtil.showToast(gujingActivity, "该批号状态为【出站】!", 0);
 							yimei_proNum_edt.selectAll();
 							return;
-						} else {
-							//如果有首检标示
-							/*if(jsonValue.get("fircheck").toString().equals("1")){
-								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
-									JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
-								}
-							}*/
+						}else if (jsonValue.get("state").toString().equals("07")) {
+							ToastUtil.showToast(gujingActivity, "该批号状态为【出站待检】!", 0);
+							yimei_proNum_edt.selectAll();
+							return;
+						}else if (jsonValue.get("state").toString().equals("0A")) {
+							ToastUtil.showToast(gujingActivity, "该批号状态为【异常状态】!", 0);
+							yimei_proNum_edt.selectAll();
+							return;
+						} 
+						else {
+							// 如果有首检标示
+							/*
+							 * if(jsonValue.get("fircheck").toString().equals("1"
+							 * )){
+							 * if(currSlkid!=null&&!(jsonValue.get("sid").toString
+							 * ().equals(currSlkid))){
+							 * JumShouJianlDialog("现工单为:【"
+							 * +currSlkid+"】,扫描的工单为【"+
+							 * jsonValue.get("sid").toString()+"】,是否进行首检？"); } }
+							 */
 							currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
 							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 							jsonValue.put("slkid", jsonValue.get("sid"));
@@ -671,12 +700,21 @@ public class TongYongActivity extends Activity {
 							"jsonObj").toString());
 					// 判断设备号在服务器中是否存在
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						if (SlkidMapJudge != null) { // 清空存在工单的集合
+							if (SlkidMapJudge.size() != 0) {
+								SlkidMapJudge.clear();
+							}
+						}
 						for (int i = 0; i < ((JSONArray) jsonObject
 								.get("values")).size(); i++) {
 							JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 									.get("values")).get(i));
 							jsonValue.put("sbid", jsonValue.get("sbid")
 									.toString().toUpperCase());
+							
+							if(zcno.equals("31")){
+								SlkidMapJudge.put(i,jsonValue.get("slkid").toString()); // 获取mes_precord表中的工单号,为下次批次入站做不同工单禁止入站功能
+							}
 							mesPrecord new_mes = jsonValue
 									.toJavaObject(mesPrecord.class);
 							if (!gujing_list.IsSid1AndZncoAndSbid(
@@ -798,8 +836,10 @@ public class TongYongActivity extends Activity {
 
 					} else {
 						/* Log.i("kaigongUpdata", "服务器修改开工状态失败"); */
-						ToastUtil.showToast(gujingActivity,
-								String.valueOf("（通用）服务器修改开工状态失败--err:"+jsonObject.get("message")), 0);
+						ToastUtil.showToast(
+								gujingActivity,
+								String.valueOf("（通用）服务器修改开工状态失败--err:"
+										+ jsonObject.get("message")), 0);
 					}
 				}
 				if (string.equals("chuzhanUpdata")) {
@@ -808,6 +848,13 @@ public class TongYongActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
 							|| Integer
 									.parseInt(jsonObject.get("id").toString()) == 1) {
+						if(zcno.equals("31")){							
+							if(SlkidMapJudge != null){ 
+								if(SlkidMapJudge.size()!=0){ //如果集合中还有值就删除第一个下标，所有的批次号出站后也就为空了
+									SlkidMapJudge.remove(0);
+								}
+							}
+						}
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
 							Log.i("mes", m.toString());
@@ -856,8 +903,9 @@ public class TongYongActivity extends Activity {
 					}
 				}
 			} catch (Exception e) {
-				Log.i("err","（通用）"+e.toString());
-				ToastUtil.showToast(gujingActivity,"（通用）请求服务器:"+e.toString(), 0);
+				Log.i("err", "（通用）" + e.toString());
+				ToastUtil.showToast(gujingActivity,
+						"（通用）请求服务器:" + e.toString(), 0);
 			}
 		}
 	};
@@ -1005,15 +1053,17 @@ public class TongYongActivity extends Activity {
 					if (count > 2) {
 						ToastUtil.showToast(TongYongActivity.this, "固晶"
 								+ ShowstateName + "最多是两批物料~", 0);
-						updatekaigongSid1.clear();  //清空需要修改的列表 ，如果第一次选择3个，第二次选择2个，list里的值为3个
+						updatekaigongSid1.clear(); // 清空需要修改的列表
+													// ，如果第一次选择3个，第二次选择2个，list里的值为3个
 						return;
 					}
 				}
-				if (ShowstateName.equals("开工") &&zcno.equals("21")) {
+				if (ShowstateName.equals("开工") && zcno.equals("21")) {
 					if (count > 1) {
 						ToastUtil.showToast(TongYongActivity.this, "焊接"
 								+ ShowstateName + "最多是一批物料~", 0);
-						updatekaigongSid1.clear(); //清空需要修改的列表 ，如果第一次选择3个，第二次选择2个，list里的值为3个
+						updatekaigongSid1.clear(); // 清空需要修改的列表
+													// ，如果第一次选择3个，第二次选择2个，list里的值为3个
 						return;
 					}
 				}
@@ -1021,7 +1071,8 @@ public class TongYongActivity extends Activity {
 					if (count > 1) {
 						ToastUtil.showToast(TongYongActivity.this,
 								"只可选择一个批次开工。", 0);
-						updatekaigongSid1.clear(); //清空需要修改的列表 ，如果第一次选择3个，第二次选择2个，list里的值为3个
+						updatekaigongSid1.clear(); // 清空需要修改的列表
+													// ，如果第一次选择3个，第二次选择2个，list里的值为3个
 						return;
 					}
 				}
@@ -1044,7 +1095,7 @@ public class TongYongActivity extends Activity {
 							// 如果状态是入站和上料都可以开工
 							if (json.get("state1").toString().equals("01")) {
 								// 点胶站和焊接站只许一个批次开工
-								if (zcno.equals("31")||zcno.equals("21")) {
+								if (zcno.equals("31") || zcno.equals("21")) {
 									int state02 = 0;
 									for (int j = 0; j < scrollAdapter
 											.getCount(); j++) {
@@ -1072,7 +1123,7 @@ public class TongYongActivity extends Activity {
 												MyApplication.MESURL,
 												updateTimeMethod, publicState);
 									}
-								}else if(zcno.equals("11")){ //固晶可开俩批
+								} else if (zcno.equals("11")) { // 固晶可开俩批
 									int state02 = 0;
 									for (int j = 0; j < scrollAdapter
 											.getCount(); j++) {
@@ -1100,7 +1151,7 @@ public class TongYongActivity extends Activity {
 												MyApplication.MESURL,
 												updateTimeMethod, publicState);
 									}
-								}else {
+								} else {
 									Map<String, String> updateTimeMethod = MyApplication
 											.updateServerTimeMethod(
 													MyApplication.DBID,
@@ -1112,8 +1163,8 @@ public class TongYongActivity extends Activity {
 											updateTimeMethod, publicState);
 								}
 							} else if (json.get("state1").toString()
-									.equals("02")) {      
-								if (zcno.equals("31")||zcno.equals("21")) {
+									.equals("02")) {
+								if (zcno.equals("31") || zcno.equals("21")) {
 									int state02 = 0;
 									for (int j = 0; j < scrollAdapter
 											.getCount(); j++) {
@@ -1141,7 +1192,7 @@ public class TongYongActivity extends Activity {
 												MyApplication.MESURL,
 												updateTimeMethod, publicState);
 									}
-								}else if(zcno.equals("11")){
+								} else if (zcno.equals("11")) {
 									int state02 = 0;
 									for (int j = 0; j < scrollAdapter
 											.getCount(); j++) {
@@ -1169,13 +1220,12 @@ public class TongYongActivity extends Activity {
 												MyApplication.MESURL,
 												updateTimeMethod, publicState);
 									}
-								}else{
+								} else {
 									Map<String, String> updateTimeMethod = MyApplication
 											.updateServerTimeMethod(
 													MyApplication.DBID,
-													MyApplication.user,
-													"02", "03",
-													mes_precord.getSid(),
+													MyApplication.user, "02",
+													"03", mes_precord.getSid(),
 													zuoyeyuan, zcno, "202");
 									httpRequestQueryRecord(
 											MyApplication.MESURL,
@@ -1227,13 +1277,14 @@ public class TongYongActivity extends Activity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			ToastUtil.showToast(TongYongActivity.this,"（通用）请求服务器:"+e.toString(), 0);
+			ToastUtil.showToast(TongYongActivity.this,
+					"（通用）请求服务器:" + e.toString(), 0);
 		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuItem item=menu.add(0,0,0,""); 
+		MenuItem item = menu.add(0, 0, 0, "");
 		menu.add(1, MyApplication.LOGOUT, 1, MyApplication.LOGOUTText);
 		menu.add(1, MyApplication.ABOUTUS, 2, MyApplication.ABOUTUSText);
 		menu.add(1, MyApplication.VERSION, 3, MyApplication.VERSIONText);
@@ -1255,17 +1306,18 @@ public class TongYongActivity extends Activity {
 
 			break;
 		case MyApplication.VERSION:
-			showNormalDialog("1.点胶站:增加程序控制，同一台点胶机可允许有同一工单的多个批次入站，但只能有一个生产批次状态处于生产中，该批次未出站前，不允许再选择其他批次开工。\n"
+			showNormalDialog("版本","1.点胶站:增加程序控制，同一台点胶机可允许有同一工单的多个批次入站，但只能有一个生产批次状态处于生产中，该批次未出站前，不允许再选择其他批次开工。\n"
 					+ "2.机型名称对应字段应该是prd_no\n"
 					+ "3.【固晶站】修改了上料操作"
-					+ "4.修复上料后不能开工问题"
-					+ "5.增加换工单首检功能4");
+					+ "4.修复上料后不能开工问题" + "5.增加换工单首检功能4");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
 	/**
 	 * 跳转首检界面
+	 * 
 	 * @param msg
 	 */
 	private void JumShouJianlDialog(String msg) {
@@ -1280,10 +1332,11 @@ public class TongYongActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Intent intent = new Intent();
-						intent.setClass(TongYongActivity.this,IPQC_shoujian.class);// 跳转到首检
+						intent.setClass(TongYongActivity.this,
+								IPQC_shoujian.class);// 跳转到首检
 						// 利用bundle来存取数据
 						Bundle bundle = new Bundle();
-						bundle.putString("json",newJson.toString());
+						bundle.putString("json", newJson.toString());
 						// 再把bundle中的数据传给intent，以传输过去
 						intent.putExtras(bundle);
 						startActivity(intent);
@@ -1291,11 +1344,11 @@ public class TongYongActivity extends Activity {
 				});
 		normalDialog.show();
 	}
-	
-	private void showNormalDialog(String msg) {
+
+	private void showNormalDialog(String Title,String msg) {
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
 				TongYongActivity.this);
-		normalDialog.setTitle("提示");
+		normalDialog.setTitle(Title);
 		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
 				+ "</font>"));
 		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
@@ -1424,7 +1477,7 @@ public class TongYongActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
-			if (v.getId() == R.id.yimei_user_edt) {
+			if (v.getId() == R.id.yimei_user_edt) { // 作业员回车
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
@@ -1436,7 +1489,7 @@ public class TongYongActivity extends Activity {
 					flag = true;
 				}
 			}
-			if (v.getId() == R.id.yimei_equipment_edt) {
+			if (v.getId() == R.id.yimei_equipment_edt) { // 设备号回车
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					shebeihao = yimei_equipment_edt.getText().toString().trim();
 					shebeihao = shebeihao.toUpperCase().trim();
@@ -1461,8 +1514,7 @@ public class TongYongActivity extends Activity {
 					}
 				}
 			}
-			// 生产批号的回车事件
-			if (v.getId() == R.id.yimei_proNum_edt) {
+			if (v.getId() == R.id.yimei_proNum_edt) { // 生产批号的回车事件
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
