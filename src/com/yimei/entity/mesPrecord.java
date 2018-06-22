@@ -62,6 +62,26 @@ public class mesPrecord implements Serializable {
 	private String remark;
 	private String bfirst;
 	private int cref3;
+	private String fircheck; //首检检验
+	private String textcolor; //是否进行首检
+	
+
+	public String getTextcolor() {
+		return textcolor;
+	}
+
+	public void setTextcolor(String textcolor) {
+		this.textcolor = textcolor;
+	}
+
+	public String getFircheck() {
+		return fircheck;
+	}
+
+	public void setFircheck(String fircheck) {
+		this.fircheck = fircheck;
+	}
+
 	public String getCkdate() {
 		return ckdate;
 	}

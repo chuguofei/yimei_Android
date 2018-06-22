@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +11,12 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
-	public static final String MESIP = "192.168.7.15:8088";
 	public static String MESURL = "http://192.168.7.15:8088/mes/api";
 	/*public static final String MESURL = "http://115.28.191.203:89/mes/api";
 	public static final String MESDOWNLOADAPKURL = "http://115.28.191.203:89/mes/yimei.apk";
@@ -45,13 +44,14 @@ public class MyApplication extends Application {
 	public static final String MESServerTime = "http://192.168.7.15:8088/mes/mservlet";  //服务器时间
 //	 public static final String MESServerTime = "http://192.168.5.88/mes/mservlet";  //服务器时间
 	public static final String MESDOWNLOADAPKURL = "http://192.168.7.15:8088/mes/yimei.apk"; //下载apk
-	public static String user = "";
-	public static String sorg = "";
+	public static String user = ""; //登录的人
+	public static String sorg = ""; //部门
+	public static final String MESIP = "IP:"+MESURL.substring(7,MESURL.lastIndexOf(":"));
 
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
 	public static final String SCN_CUST_EX_SCODE = "scannerdata";
-
-	public static final String SHOW_VERSION = "v18-6-14 15:40";
+	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核";
+	public static final String SHOW_VERSION = "v18-6-22 16:00";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息
@@ -67,6 +67,7 @@ public class MyApplication extends Application {
 	public static String Base64pwd(String pwd) {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
 	}
+	
 
 	/**
 	 * 获取服务器时间
@@ -131,7 +132,7 @@ public class MyApplication extends Application {
 	@SuppressLint("SimpleDateFormat")
 	public static SimpleDateFormat df = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");// 设置日期格式
-	public static long ServerTimeCha = 0;
+	public static long ServerTimeCha = 0; //手机和服务
 
 	public static final String GUJING_ZCNO = "11"; //固晶
 	public static final String HANJIE_ZCNO = "21"; //焊接

@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -68,7 +69,9 @@ public class MoZuActivity extends Activity {
 	private String sid1;
 	private String currSlkid;
 	private static JSONObject newJson; // 拿新sid存在json
-
+	
+	private String EQIRP_prdno; //判断是否做首检的机型号
+	private String EQIRP_firstchk; //判断是否做首检的标示
 	private String shebeihao;
 	private String zuoyeyuan;
 	private String picihao;
@@ -211,6 +214,15 @@ public class MoZuActivity extends Activity {
 			mozu_kaigong.setEnabled(true);
 			mozu_chuzhan.setEnabled(true);
 		}
+	}
+	
+	/**
+	 * 隐藏键盘
+	 */
+	private void InputHidden() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 如果软键盘已经显示，则隐藏，反之则显示
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	/**
@@ -410,6 +422,11 @@ public class MoZuActivity extends Activity {
 					if (publicState.equals("kaigongUpdata")) {
 						// 如果状态是入站和上料都可以开工
 						if (json.get("state1").toString().equals("01")) {
+							httpRequestQueryRecord(
+									MyApplication.MESURL,     
+									MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
+											+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
+							
 							Map<String, String> updateTimeMethod = MyApplication
 									.updateServerTimeMethod(MyApplication.DBID,
 											MyApplication.user,json.get("state1").toString(), "03",
@@ -660,6 +677,22 @@ public class MoZuActivity extends Activity {
 								+ zcno + "'");
 						httpRequestQueryRecord(MyApplication.MESURL, map,
 								"shebeiQuery");
+						
+						httpRequestQueryRecord(
+								MyApplication.MESURL,     
+								MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
+										+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
+					}
+				}
+				if (string.equals("fircheckQuery")) { // 首检
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+						EQIRP_prdno = jsonValue.get("prdno").toString();
+						EQIRP_firstchk =  jsonValue.get("firstchk").toString();
+					} else {
+						ToastUtil.showToast(mozuActivity, "没有【" + shebeihao+ "】", 0);
 					}
 				}
 				if (string.equals("IsSbidQuery1")) {
@@ -670,12 +703,12 @@ public class MoZuActivity extends Activity {
 						Log.i("code", jsonObject.get("code").toString());
 						if (mListView != null) {
 							mListView.setAdapter(null);
-							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-									0);
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",0);
+							InputHidden(); //隐藏键盘
 							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						} else {
-							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",
-									0);
+							ToastUtil.showToast(getApplicationContext(), "没有该设备号!",0);
+							InputHidden(); //隐藏键盘
 							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						}
 						return;
@@ -690,6 +723,8 @@ public class MoZuActivity extends Activity {
 								+ "'");
 						httpRequestQueryRecord(MyApplication.MESURL, map,
 								"ListViewIsLotNo");
+						
+						
 					}
 				}
 				if ("ListViewIsLotNo".equals(string)) {
@@ -713,6 +748,7 @@ public class MoZuActivity extends Activity {
 								MoZuAdapter.notifyDataSetChanged();
 								ToastUtil.showToast(getApplicationContext(), "《"
 										+ picihao + "》测试号存在,已经帮你选中", 0);
+								InputHidden(); //隐藏键盘
 							} else {
 								// 去服务器拿
 								// 查询制程和批次是否存在
@@ -745,6 +781,7 @@ public class MoZuActivity extends Activity {
 						// 提示没有该批号
 						ToastUtil.showToast(getApplication(), "没有该批次号！", 0);
 						MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
+						InputHidden(); //隐藏键盘
 					}
 				}
 				if ("ServerIsZcnoAndLotNo".equals(string)) {
@@ -754,6 +791,7 @@ public class MoZuActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						ToastUtil.showToast(getApplication(), "《" + picihao
 								+ "》测试号已绑定过设备号！", 0);
+						InputHidden(); //隐藏键盘
 					} else {
 						// （json） 拿数据
 						Map<String, String> map = new HashMap<String, String>();
@@ -777,6 +815,7 @@ public class MoZuActivity extends Activity {
 							ToastUtil.showToast(MoZuActivity.this, "该批号不具备入站条件!",
 									0);
 							yimei_mozu_proNum_edt.selectAll();
+							InputHidden(); //隐藏键盘
 							return;
 						} else if (jsonValue.get("state").toString()
 								.equals("02")
@@ -784,11 +823,13 @@ public class MoZuActivity extends Activity {
 										.equals("03")) {
 							ToastUtil.showToast(MoZuActivity.this, "该批号已经入站!", 0);
 							yimei_mozu_proNum_edt.selectAll();
+							InputHidden(); //隐藏键盘
 							return;
 						} else if (jsonValue.get("state").toString()
 								.equals("04")) {
 							ToastUtil.showToast(MoZuActivity.this, "该批号已经出站!", 0);
 							yimei_mozu_proNum_edt.selectAll();
+							InputHidden(); //隐藏键盘
 							return;
 						} else {
 							//如果有首检标示

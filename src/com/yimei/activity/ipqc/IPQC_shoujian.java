@@ -86,7 +86,7 @@ public class IPQC_shoujian extends Activity {
 	private boolean errJumpOK = false; // 是否保存数据
 	private int chooseIndex = 0;
 	private Map<Integer,String> AuditorMap = new HashMap<>();
-	
+	private String json ; //首检跳转带过来的值
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -240,8 +240,8 @@ public class IPQC_shoujian extends Activity {
 		ipqc_zcno_text =(TextView)findViewById(R.id.ipqc_zcno_text);
 		//========================================线上换工单的巡检===============================================
 		Intent intent = getIntent();
-		String json = intent.getStringExtra("json");
-		if(json!=null){	
+		json = intent.getStringExtra("json");
+		if(json!=null&&!json.equals("")){	
 			selectValue.setVisibility(View.GONE);
 			JSONObject jsonSlkid = JSONObject.parseObject(json);
 			yimei_shoujian_sbid.setText(jsonSlkid.get("sbid").toString());
@@ -703,7 +703,11 @@ public class IPQC_shoujian extends Activity {
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
 								ToastUtil.showToast(IPQC_shoujian.this,"审批提交成功", 0);
-								yimei_shoujian_sid1.selectAll();
+								if(json!=null){									
+									IPQC_shoujian.this.finish();
+								}else{
+									yimei_shoujian_sid1.selectAll();
+								}
 							} else {
 								ToastUtil.showToast(IPQC_shoujian.this,
 										"审批提交失败", 0);

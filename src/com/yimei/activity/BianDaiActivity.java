@@ -1,12 +1,9 @@
 package com.yimei.activity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
@@ -17,7 +14,6 @@ import com.yimei.scrollview.BianDaiCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;

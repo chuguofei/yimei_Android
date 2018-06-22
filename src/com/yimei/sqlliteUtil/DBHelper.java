@@ -42,6 +42,8 @@ public class DBHelper extends SQLiteOpenHelper{
 			+ "mkdate	TIMESTAMP,"
 			+ "iid	INT,"
 			+ "remark	VARCHAR(200),"
+			+ "fircheck	VARCHAR(20),"
+			+ "textcolor char(1),"
 			+ "bfirst	CHAR(1))";
 
 	@Override

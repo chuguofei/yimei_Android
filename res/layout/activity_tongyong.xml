@@ -192,6 +192,12 @@
                     android:gravity="center"
                     android:text="@string/Data5"
                     android:textColor="#850" />
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/fircheck"
+                    android:textColor="#850" />
             </LinearLayout>
         </com.yimei.scrollview.CHScrollView>
     </LinearLayout>

@@ -161,7 +161,7 @@ public class LoginActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (editText.getText().toString()
-								.equals("shineonadmin")) {
+								.equals("adminadmin")) {
 							ToastUtil.showToastLocation(loginActivity,
 									"下载新的版本", 0);
 							try {

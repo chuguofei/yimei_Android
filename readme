@@ -28,3 +28,9 @@
 	
 查辅助方法： MyApplication.QueryBatNo(辅助名,where查询);  //通用只要查数据都可以用
 		MyApplication.httpMapKeyValueMethod(); //服务器的增删改查
+		MyApplication.GetServerNowTime() //拿服务器时间
+		MyApplication.ChooseTime() //判断开工时间是否可以出站
+隐藏键盘的代码：
+	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	// 如果软键盘已经显示，则隐藏，反之则显示
+	imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);

@@ -265,11 +265,17 @@ public class ZhuanChuActivity extends Activity {
 									yimei_zhuanchu_sid.selectAll();
 									return;
 								} else if (jsonValue.get("state").toString().equals("02")
-										|| jsonValue.get("state").toString().equals("03")) {
-									ToastUtil.showToast(ZhuanChuActivity.this, "该批号已经入站!", 0);
+										|| jsonValue.get("state").toString().equals("03")
+										|| jsonValue.get("state").toString().equals("01")) {
+									ToastUtil.showToast(ZhuanChuActivity.this, "该批次号状态不是【出站】,请将批次出站后再在转序!", 0);
 									yimei_zhuanchu_sid.selectAll();
 									return;
-								} else{
+								} /*else if (jsonValue.get("state").toString().equals("04")) {
+									ToastUtil.showToast(ZhuanChuActivity.this, "该批号的状态为【出站】!", 0);
+									yimei_zhuanchu_sid.selectAll();
+									return;
+								} */
+								else{
 									if(zhuanchuAdapter!=null){
 										for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
 											JSONObject json = (JSONObject) ((JSONArray) jsonObject.get("values")).get(i);

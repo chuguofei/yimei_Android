@@ -378,6 +378,15 @@ public class ZhuangXiangActivity extends TabActivity {
 					chukushenqingJson.put("plqty", manxiangshuliang);
 					chukushenqingJson.put("sys_stated", "3"); // 新增
 					chukushenqingJson.put("sopr", zuoyeyuan);
+					chukushenqingJson.put("sbuid","H0003");
+					chukushenqingJson.put("state","0");
+					chukushenqingJson.put("mkdate",MyApplication.GetServerNowTime());
+					chukushenqingJson.put("cprn","1");
+					chukushenqingJson.put("wh","01");
+					chukushenqingJson.put("prtqty","1");
+					chukushenqingJson.put("pkid","0");
+					chukushenqingJson.put("pkqty",yimei_zhuangxiang_manxiangNum.getText());
+					
 					Map<String, String> mesIdMap = MyApplication
 							.httpMapKeyValueMethod(MyApplication.DBID,
 									"savedata", MyApplication.user,
@@ -571,15 +580,11 @@ public class ZhuangXiangActivity extends TabActivity {
 			// 批次号没有查到添加
 			JSONObject jsonobj = new JSONObject();
 			jsonobj.put("cid", cidgagarin); // 项次
-			jsonobj.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString()
-					.trim());// 批次号
-			jsonobj.put("bincode", yimei_zhuangxiang_bincode.getText()
-					.toString().trim()); // bincode
-			jsonobj.put("qty", yimei_zhuangxiang_Num.getText().toString()
-					.trim()); // 新增
+			jsonobj.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim());// 批次号
+			jsonobj.put("bincode", yimei_zhuangxiang_bincode.getText().toString().trim()); // bincode
+			jsonobj.put("qty", yimei_zhuangxiang_Num.getText().toString().trim()); // 新增
 			jsonobj.put("prd_name", canpinmingcheng); // 产品名称
-			jsonobj.put("prd_no", yimei_zhuangxiang_canpindaihao.getText()
-					.toString().trim()); // 产品代号
+			jsonobj.put("prd_no", yimei_zhuangxiang_canpindaihao.getText().toString().trim()); // 产品代号
 			jsonobj.put("sys_stated", "3"); // 新增
 			jsonobj.put("sid", sid); // 主表的sid
 			cidgagarin++;
@@ -597,8 +602,7 @@ public class ZhuangXiangActivity extends TabActivity {
 			map.put("zhuangxiang_qty", jsonobj.get("qty").toString());
 			mList.add(map);
 			if (ZhuangXiangAdapter == null) {
-				ZhuangXiangAdapter = new ZhuangXiangAdapter(
-						zhuangxiangActivity, mList);
+				ZhuangXiangAdapter = new ZhuangXiangAdapter(zhuangxiangActivity, mList);
 				mListView.setAdapter(ZhuangXiangAdapter);
 				ZhuangXiangAdapter.notifyDataSetChanged();
 				MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
@@ -882,27 +886,15 @@ public class ZhuangXiangActivity extends TabActivity {
 												// 满箱数量回车后需要的json
 												// （服务器添加箱码号）
 			// 给界面添加数据================================
-			canpinmingcheng = jsonObj.get("prd_name")
-					.toString();
-			yimei_zhuangxiang_canpindaihao
-					.setText(jsonObj.get("prd_no")
-							.toString());
-			yimei_zhuangxiang_canpinxinghao.setText(
-					jsonObj.get("prd_name")
-							.toString());
-			yimei_zhuangxiang_chukuNum.setText(jsonObj
-					.get("qty")
-					.toString()
-					.substring(
-							0,
-							jsonObj.get("qty").toString()
-									.indexOf(".")));
+			canpinmingcheng = jsonObj.get("prd_name").toString();
+			yimei_zhuangxiang_canpindaihao.setText(jsonObj.get("prd_no").toString());
+			yimei_zhuangxiang_canpinxinghao.setText(jsonObj.get("prd_name").toString());
+			yimei_zhuangxiang_chukuNum.setText(jsonObj.get("qty").toString().substring(0,jsonObj.get("qty").toString().indexOf(".")));
 			/*yimei_zhuangxiang_shoudingdanhao
 					.setText(jsonObj.get("os_no")==null?"":jsonObj.get("os_no").toString());*/
 			// 给界面添加数据================================
 	
-			MyApplication
-					.nextEditFocus(yimei_zhuangxiang_manxiangNum);
+			MyApplication.nextEditFocus(yimei_zhuangxiang_manxiangNum);
 	
 			Map<String, String> map1 = MyApplication.QueryBatNo(
 					"SHENQINGSUM", "~spno='" + chukushenqing
@@ -964,23 +956,20 @@ public class ZhuangXiangActivity extends TabActivity {
 	 * @param jsonObject
 	 */
 	private void bat_noExist(JSONObject jsonObject) { // 批次号存在
-		cus_pnJsonObject = (JSONObject) ((JSONArray) jsonObject.get("values"))
-				.get(0); // 全局适配器添加数据
+		cus_pnJsonObject = (JSONObject) ((JSONArray) jsonObject.get("values")).get(0); // 全局适配器添加数据
 		if (Integer.parseInt(cus_pnJsonObject.get("qty").toString()) > manxiangshuliang) {
 			ToastUtil.showToast(getApplicationContext(), "满箱数量已超出,最多可以扫："
 					+ manxiangshuliang + "", 0);
 			return;
 		}
-		panduan_manxiangNum(Integer.parseInt(cus_pnJsonObject.get("qty")
-				.toString())); // 判断出库数据有没有超出
+		panduan_manxiangNum(Integer.parseInt(cus_pnJsonObject.get("qty").toString())); // 判断出库数据有没有超出
 		if (cus_pnJsonObject.containsKey("qty")
 				|| cus_pnJsonObject.containsKey("prd_no")
 				|| cus_pnJsonObject.containsKey("bincode")) {
 			cus_pnJsonObject.put("sys_stated", "3"); // 新增
 			cus_pnJsonObject.put("cid", cidgagarin); // 项次
 			cus_pnJsonObject.put("sid", sid); // 主表的sid
-			cus_pnJsonObject.put("bat_no", yimei_zhuangxiang_bat_no.getText()
-					.toString().trim()); // 主表的sid
+			cus_pnJsonObject.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim()); // 主表的sid
 			cidgagarin++;
 			Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(
 					MyApplication.DBID, "savedata", MyApplication.user,

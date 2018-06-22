@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.yimei.activity.R.color;
 import com.yimei.activity.TongYongActivity;
 import com.yimei.activity.R;
 import com.yimei.scrollview.CHScrollView;
@@ -88,6 +89,16 @@ public class ScrollAdapter extends BaseAdapter {
 		TextView remark = (TextView) convertView.findViewById(R.id.remark);
 		remark.setText((String) listData.get(position).get("remark"));
 
+		TextView fircheck = (TextView) convertView.findViewById(R.id.fircheck);
+		fircheck.setText((String) listData.get(position).get("fircheck"));
+		if(((String) listData.get(position).get("fircheck")).toString().equals("2")){
+			sid1.setTextColor(color.darkgoldenrod);
+			slkid.setTextColor(color.darkgoldenrod);
+			prd_no.setTextColor(color.darkgoldenrod);
+			qty.setTextColor(color.darkgoldenrod);
+			remark.setTextColor(color.darkgoldenrod);
+			fircheck.setTextColor(color.darkgoldenrod);
+		}
 		CheckBox check = (CheckBox) convertView.findViewById(R.id.item_title);
 		check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,

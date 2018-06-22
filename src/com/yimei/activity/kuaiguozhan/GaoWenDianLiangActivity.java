@@ -5,19 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
-import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
-import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
-import com.yimei.activity.MyApplication;
-import com.yimei.activity.R;
-import com.yimei.activity.R.id;
-import com.yimei.activity.R.layout;
-import com.yimei.adapter.GaoWenDianLiangAdapter;
-import com.yimei.scrollview.GeneralCHScrollView;
-import com.yimei.util.GetAndroidMacUtil;
-import com.yimei.util.OkHttpUtils;
-import com.yimei.util.ToastUtil;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -27,16 +14,27 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.MyApplication;
+import com.yimei.activity.R;
+import com.yimei.adapter.GaoWenDianLiangAdapter;
+import com.yimei.scrollview.GeneralCHScrollView;
+import com.yimei.util.GetAndroidMacUtil;
+import com.yimei.util.OkHttpUtils;
+import com.yimei.util.ToastUtil;
 
 /**
  * 
@@ -351,6 +349,9 @@ public class GaoWenDianLiangActivity extends Activity {
 												.notifyDataSetChanged();
 									}
 									gaowen_sid1.selectAll();
+									InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									// 如果软键盘已经显示，则隐藏，反之则显示
+									imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
 								}
 							}
 						}

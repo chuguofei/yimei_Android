@@ -5,6 +5,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
@@ -15,26 +35,6 @@ import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 /**
  * 
@@ -228,7 +228,7 @@ public class KanDaiActivity extends Activity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
-						if (string.equals("QuertSid1")) { // 模具编号回车
+						if (string.equals("QuertSid1")) { 
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code")
@@ -362,6 +362,10 @@ public class KanDaiActivity extends Activity {
 											.notifyDataSetChanged();
 								}
 								gaowen_sid1.selectAll();
+								//调用键盘类
+								InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+								// 如果软键盘已经显示，则隐藏，反之则显示
+								imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
 							}
 							System.out.println(jsonObject);
 						}

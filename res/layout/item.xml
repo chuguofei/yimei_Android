@@ -59,7 +59,13 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#071" />
-          
+            <!-- 是否首检-->
+            <TextView
+                android:id="@+id/fircheck"
+                android:layout_width="100dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#071" />
         </LinearLayout>
     </com.yimei.scrollview.CHScrollView>
 

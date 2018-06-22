@@ -32,6 +32,7 @@
     <string name="Data3">机种</string>
     <string name="Data4">数量</string>
     <string name="Data5">备注</string>
+    <string name="fircheck">是否首检</string>
     <string name="mainTitle">主页面</string>
     <string name="gujing_type">制　程</string>
     <string name="main_gujin">固晶工站</string>
