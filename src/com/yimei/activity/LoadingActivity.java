@@ -305,8 +305,29 @@ public class LoadingActivity extends Activity {
 							m.setValue(quanxian1.get("menuName").toString());
 
 							list.add(m);
+							/*{"childMenu":[
+ {"haveChild":false,"command":"pbuid=D0001&pmenuid=D0001","menuId":"D0001","menuName":"通用工站","top":false}
+,{"haveChild":false,"command":"pbuid=D0020&pmenuid=D0020","menuId":"D0020","menuName":"编带管理","top":false},
+{"haveChild":false,"command":"pbuid=D0030&pmenuid=D0030","menuId":"D0030","menuName":"器件转出登记","top":false},
+{"haveChild":false,"command":"pbuid=D0031&pmenuid=D0031","menuId":"D0031","menuName":"器件接收登记","top":false}]
+		,"haveChild":true,"command":"","menuId":"D0","menuName":"器件生产","top":true}*/
+							/*if(quanxian1.get("menuId").toString().length()==2){
+								HashMap<String,JSONObject> map = new HashMap<>();
+								JSONObject mainjson = new JSONObject();
+								JSONArray childMenu = (JSONArray) quanxian1.get("childMenu");
+								for (int j = 0; j < childMenu.size(); j++) {
+									JSONObject childMenuSon =  (JSONObject) childMenu.get(j);
+									mainjson.put(childMenuSon.getString("menuName"), childMenuSon.get("menuId"));
+								}
+								map.put(quanxian1.get("menuName").toString(),mainjson);
+								m.setMainJSON(map);
+								list.add(m);
+							}*/
 						}
-
+						/*for (int i = 0; i < list.size(); i++) {	
+							Main_map m = list.get(i);
+							Log.i("mainList",m.getMainJSON().toString());
+						}*/
 						Intent intent = new Intent(LoadingActivity.this,
 								MainActivity.class);
 						Bundle bundle = new Bundle();

@@ -93,8 +93,6 @@ public class MoZuAdapter extends BaseAdapter {
 					.findViewById(R.id.yimei_mozu_qty);
 			viewHolder.mozu_item_state = (TextView) convertView
 					.findViewById(R.id.yimei_mozu_state);
-			viewHolder.mozu_item_bincode = (TextView) convertView
-					.findViewById(R.id.yimei_mozu_bincode);
 			viewHolder.mozu_item_xianbie = (TextView) convertView
 					.findViewById(R.id.yimei_mozu_xianbie);
 			viewHolder.mozu_item_title = (CheckBox) convertView
@@ -110,7 +108,6 @@ public class MoZuAdapter extends BaseAdapter {
 		viewHolder.mozu_item_prd_name.setText((String) map.get("prd_name"));
 		viewHolder.mozu_item_qty.setText((String) map.get("qty"));
 		viewHolder.mozu_item_state.setText((String) map.get("state"));
-		viewHolder.mozu_item_bincode.setText((String) map.get("bincode"));
 		viewHolder.mozu_item_xianbie.setText((String) map.get("xianbie"));
 		viewHolder.mozu_item_title
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -133,7 +130,6 @@ public class MoZuAdapter extends BaseAdapter {
 		public TextView mozu_item_state;
 		public TextView mozu_item_prd_name;
 		public TextView mozu_item_qty;
-		public TextView mozu_item_bincode;
 		public TextView mozu_item_xianbie;
 	}
 }

@@ -191,14 +191,6 @@
                     android:gravity="center"
                     android:text="@string/mozu_qty"
                     android:textColor="#850" />
-                
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="fill_parent"
-                    android:gravity="center"
-                    android:text="BinCode"
-                    android:textColor="#850" />
-                
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"

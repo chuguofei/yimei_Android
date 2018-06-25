@@ -31,11 +31,29 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="制具清洗作业员"
                 android:labelFor="@+id/yimei_zhijuqingxi_user_edt"
-                android:paddingLeft="10dp" />
+                android:paddingLeft="10dp"
+                android:tag="制具清洗作业员" />
         </TableRow>
-         <TableRow android:paddingTop="20dp" >
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_zhijuqingxi_zhangliceshi" />
+            
+            <Button
+                android:id="@+id/yimei_zhijuqingxi_zhangliceshi"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="@string/yimei_zhijuqingxi_zhangliceshi" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -51,12 +69,11 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="制具清洗模具编号"
                 android:labelFor="@+id/yimei_zhijuqingxi_mojuId"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:tag="制具清洗模具编号" />
         </TableRow>
-        
     </TableLayout>
 
     <LinearLayout
@@ -80,7 +97,7 @@
                 android:layout_height="fill_parent"
                 android:orientation="horizontal" >
 
-               <TextView
+                <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
                     android:gravity="center"
@@ -93,7 +110,7 @@
                     android:gravity="center"
                     android:text="@string/zhijulingchu_sbid"
                     android:textColor="#850" />
-                
+
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"
@@ -107,7 +124,7 @@
     <ListView
         android:id="@+id/zhijuqingxi_scroll_list"
         android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_below="@id/zhijuqingxi_data_title"
         android:cacheColorHint="@android:color/transparent"
         android:scrollbars="none" >

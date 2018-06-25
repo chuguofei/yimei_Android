@@ -8,6 +8,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#D8D8EB">
 
+    <!-- <GridView
+        android:id="@+id/Main_gridlist_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="100dp"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth" >
+    </GridView> -->
+    
+    
     <GridView
         android:id="@+id/Main_gridlist_view"
         android:layout_width="match_parent"

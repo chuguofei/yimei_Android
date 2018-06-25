@@ -82,7 +82,7 @@ public class MoZuActivity extends Activity {
 	private String zcno;
 	private Spinner selectValue; // 下拉框
 	private List<mesPrecord> updateListState; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
-
+	private ArrayList<String> SlkidMapJudge = new ArrayList<String>(); // 不同工单不能入站
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -193,13 +193,20 @@ public class MoZuActivity extends Activity {
 		mozuActivity = this;
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
 
+		String cont;
+		if(MyApplication.user.equals("admin")){
+			cont="";
+		}else{
+			cont ="~sorg='"+MyApplication.sorg+"'";
+		}
 		httpRequestQueryRecord(MyApplication.MESURL,
-				MyApplication.QueryBatNo("M_PROCESS", "~sorg='"+MyApplication.sorg+"'"),"SpinnerValue");
+				MyApplication.QueryBatNo("M_PROCESS",cont),"SpinnerValue");
 		selectValue = (Spinner) findViewById(R.id.mozu_selectValue); // 下拉框id
 
 		quanxuan = (CheckBox) findViewById(R.id.mozu_quanxuan); // 全选按钮
 		listenerQuanXuan();
 		mozu_shangliao = (Button) findViewById(R.id.mozu_shangliao); // 获取开工id
+		mozu_shangliao.setVisibility(View.GONE); //隐藏上料按钮
 		mozu_kaigong = (Button) findViewById(R.id.mozu_kaigong); // 获取开工id
 		mozu_chuzhan = (Button) findViewById(R.id.mozu_chuzhan); // 获取开工id
 		mozu_kaigong.setOnClickListener(kaigongClick); // 开工点击事件
@@ -426,6 +433,25 @@ public class MoZuActivity extends Activity {
 									MyApplication.MESURL,     
 									MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
 											+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
+							
+							//===========================判断是否做了首检===============================================
+							// 打了首检标示（fircheck：首件检）
+							if (json.get("fircheck").toString().equals("1")) {
+								String a = json.get("prd_no").toString();
+								String a1 = EQIRP_prdno;
+								if(!json.get("prd_no").toString().equals(EQIRP_prdno)){ //判断当前机型和设备中的机型是否匹配
+									ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（prdno）!",0);
+									updateListState.clear();
+									return;
+								}
+								if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){ //是否做过首检
+									ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（fircheck）!",0);
+									updateListState.clear();
+									return;
+								}
+							}
+							//===========================判断是否做了首检===============================================
+							
 							
 							Map<String, String> updateTimeMethod = MyApplication
 									.updateServerTimeMethod(MyApplication.DBID,
@@ -811,6 +837,27 @@ public class MoZuActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
+						if(SlkidMapJudge!=null){
+							if (SlkidMapJudge.size() != 0) {
+								for (int i = 0; i < SlkidMapJudge.size(); i++) {
+									String slkid = SlkidMapJudge.get(i);
+									if (!slkid.toUpperCase().equals(
+											jsonValue.get("sid").toString()
+													.toUpperCase())) {
+										showNormalDialog(
+												"（工单不符）",
+												"\n当前工单为：【"
+														+ SlkidMapJudge.get(i)
+														+ "】\n"
+														+ "扫描工单为:【"
+														+ jsonValue.get("sid")
+														+ "】\n不能入站，请先将当前批次出站后再入站生产!");
+										return;
+									}
+								}
+							}
+						}
+						
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 							ToastUtil.showToast(MoZuActivity.this, "该批号不具备入站条件!",
 									0);
@@ -832,18 +879,24 @@ public class MoZuActivity extends Activity {
 							InputHidden(); //隐藏键盘
 							return;
 						} else {
-							//如果有首检标示
-							if(jsonValue.get("fircheck").toString().equals("1")){
-								if(currSlkid!=null&&!(jsonValue.get("sid").toString().equals(currSlkid))){
-									JumShouJianlDialog("现工单为:【"+currSlkid+"】,扫描的工单为【"+jsonValue.get("sid").toString()+"】,是否进行首检？");
+						// 如果有首检标示
+						if (jsonValue.get("fircheck").toString().equals("1")) { // 打了首检标示（fircheck：首件检）
+							if(!jsonValue.get("prd_no").toString().equals(EQIRP_prdno)){
+								JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
+							}else{
+								if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){
+									JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
 								}
 							}
+						}
+						SlkidMapJudge.add(jsonValue.get("sid").toString()); //不同工单禁止入站
+						Log.i("SlkidMapJudge","入站"+SlkidMapJudge.toString());
 						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
-						
 						sid1 = jsonValue.get("sid1").toString(); // 修改服务器表的sid1
 						jsonValue.put("slkid", jsonValue.get("sid"));
 						jsonValue.put("sid", "");
 						jsonValue.put("state1", "01");
+						jsonValue.put("firstchk",jsonValue.get("fircheck"));
 						jsonValue.put("state", "0");
 						jsonValue.put("prd_name", jsonValue.containsKey("prd_name")?jsonValue.get("prd_name"):"");
 						jsonValue.put("dcid", GetAndroidMacUtil.getMac());
@@ -939,6 +992,11 @@ public class MoZuActivity extends Activity {
 				if ("shebeiQuery".equals(string)) {
 					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj")
 							.toString());
+					if (SlkidMapJudge != null) { // 清空存在工单的集合
+						if (SlkidMapJudge.size() != 0) {
+							SlkidMapJudge.clear();
+						}
+					}
 					// 判断设备号+制程在服务器中是否有数据
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 
@@ -1002,6 +1060,15 @@ public class MoZuActivity extends Activity {
 							.toString());
 					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
 							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
+						if (SlkidMapJudge != null) {
+							if (SlkidMapJudge.size() != 0) { // 如果集合中还有值就删除第一个下标，所有的批次号出站后也就为空了
+								try {
+									SlkidMapJudge.remove(0);
+								} catch (Exception e) {
+									SlkidMapJudge.clear();
+								}
+							}
+						}
 						updateListState.clear();
 						// 刷新列表
 						// 去服务器中拿设备号
@@ -1045,10 +1112,10 @@ public class MoZuActivity extends Activity {
 	 * 跳转首检界面
 	 * @param msg
 	 */
-	private void JumShouJianlDialog(String msg) {
+	private void JumShouJianlDialog(String title,String msg) {
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
 				MoZuActivity.this);
-		normalDialog.setTitle("提示");
+		normalDialog.setTitle(title);
 		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
 				+ "</font>"));
 		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
@@ -1066,7 +1133,7 @@ public class MoZuActivity extends Activity {
 						startActivity(intent);
 					}
 				});
-		normalDialog.setNegativeButton("取消", null);		// 显示
+//		normalDialog.setNegativeButton("取消", null);		// 显示
 		normalDialog.show();
 	}
 
@@ -1112,7 +1179,11 @@ public class MoZuActivity extends Activity {
 		MoZuCHScrollViews.add(headerScroll);
 		mListView = (ListView) findViewById(R.id.mozu_scroll_list);
 		Map<String, String> stateName = MyApplication.getStateName();
-
+		if (SlkidMapJudge != null) { // 清空存在工单的集合
+			if (SlkidMapJudge.size() != 0) {
+				SlkidMapJudge.clear();
+			}
+		}
 		if ((JSONArray) jsonobject.get("values") == null) {
 			return null;
 		} else {
@@ -1120,19 +1191,21 @@ public class MoZuActivity extends Activity {
 			for (int i = 0; i < ((JSONArray) jsonobject.get("values")).size(); i++) {
 				JSONObject jsonValue = (JSONObject) (((JSONArray) jsonobject
 						.get("values")).get(i));
+				SlkidMapJudge.add(jsonValue.get("slkid").toString());
 				mesMap = new HashMap<String, Object>();
 				mesPrecord new_mes = jsonValue.toJavaObject(mesPrecord.class);
 				Log.i("newmes", new_mes.toString());
 				mesMap.put("mozu_item_title", new_mes);
 				mesMap.put("sid1", new_mes.getSid1());
 				mesMap.put("sid", new_mes.getSlkid());
-				mesMap.put("prd_name", new_mes.getPrd_name());
+				mesMap.put("prd_name",jsonValue.get("prd_no"));
 				mesMap.put("qty", new_mes.getQty());
 				mesMap.put("state", stateName.get(new_mes.getState1()));
 				mesMap.put("xianbie", new_mes.getFiles());
-				mesMap.put("bincode", new_mes.getFj_root());
 				mesList.add(mesMap);
 			}
+			
+			Log.i("SlkidMapJudge","刷新"+SlkidMapJudge.toString());
 		}
 		return mesList;
 	}
@@ -1172,6 +1245,13 @@ public class MoZuActivity extends Activity {
 		super.onResume();
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
+		
+		if(SlkidMapJudge.size()!=0){
+			MyApplication.nextEditFocus(yimei_mozu_proNum_edt);
+			InputHidden();
+			yimei_mozu_proNum_edt.selectAll();
+		}
+		
 		yimei_mozu_user_edt = (EditText) findViewById(R.id.yimei_mozu_user_edt);
 		yimei_mozu_sbid_edt = (EditText) findViewById(R.id.yimei_mozu_sbid_edt);
 		yimei_mozu_proNum_edt = (EditText) findViewById(R.id.yimei_mozu_proNum_edt);
@@ -1184,6 +1264,24 @@ public class MoZuActivity extends Activity {
 		yimei_mozu_sbid_edt.setOnFocusChangeListener(EditGetFocus);
 		yimei_mozu_proNum_edt.setOnFocusChangeListener(EditGetFocus);
 
+	}
+	
+	private void showNormalDialog(String Title, String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				MoZuActivity.this);
+		normalDialog.setTitle(Title);
+		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+				+ "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+		// 显示
+		normalDialog.show();
 	}
 
 	public static void addHViews(final MoZuCHScrollView hScrollView) {

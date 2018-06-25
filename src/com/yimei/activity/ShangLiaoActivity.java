@@ -466,9 +466,10 @@ public class ShangLiaoActivity extends TabActivity {
 				jsonSon.put("prd_name", ZCNOSaveSonMap.containsKey("Material_cailiaoName")?(ZCNOSaveSonMap.get("Material_cailiaoName")==null?"":ZCNOSaveSonMap.get("Material_cailiaoName")):"");
 				jsonSon.put("qty", yimei_shangliao_Num.getText());
 				jsonSon.put("dcid", GetAndroidMacUtil.getMac());
-				jsonSon.put("op", mesObj.getOp());
-				jsonstr.put("sbid", mesObj.getSbid());
-				jsonstr.put("zcno", mesObj.getZcno());
+				jsonSon.put("op", mesObj.getOp()==null?"":mesObj.getOp());
+				jsonSon.put("sbid", mesObj.getSbid()==null?"":mesObj.getSbid());
+				jsonSon.put("zcno", mesObj.getZcno()==null?"":mesObj.getZcno());
+				jsonSon.put("hpdate", MyApplication.GetServerNowTime());
 				jsonSon.put("sys_stated", "3");
 			}
 		} else {  //固晶上料
@@ -478,9 +479,10 @@ public class ShangLiaoActivity extends TabActivity {
 			jsonSon.put("prd_name", shuliangMap.containsKey("Material_cailiaoName")?(shuliangMap.get("Material_cailiaoName")==null?"":shuliangMap.get("Material_cailiaoName")):"");
 			jsonSon.put("qty", yimei_shangliao_Num.getText());
 			jsonSon.put("dcid", GetAndroidMacUtil.getMac());
-			jsonSon.put("op", mesObj.getOp());
-			jsonstr.put("sbid", mesObj.getSbid());
-			jsonstr.put("zcno", mesObj.getZcno());
+			jsonSon.put("op", mesObj.getOp()==null?"":mesObj.getOp());
+			jsonSon.put("sbid", mesObj.getSbid()==null?"":mesObj.getSbid());
+			jsonSon.put("zcno", mesObj.getZcno()==null?"":mesObj.getZcno());
+			jsonSon.put("hpdate", MyApplication.GetServerNowTime());
 			jsonSon.put("sys_stated", "3");
 		}
 		// =======================子对象=======================================

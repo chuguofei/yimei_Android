@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,6 +42,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
@@ -86,7 +88,8 @@ public class TongYongActivity extends Activity {
 	private static String fircheck_PRDNO = ""; // 首检的机种名称（换机种要做首检）
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
 	private Map<String, String> ptime = new HashMap<String, String>();
-	private HashMap<Integer, String> SlkidMapJudge = new HashMap<>(); // 不同工单不能入站
+//	private HashMap<Integer, String> SlkidMapJudge = new HashMap<>(); // 不同工单不能入站
+	private ArrayList<String> SlkidMapJudge = new ArrayList<String>(); // 不同工单不能入站
 
 	/**
 	 * 获取pda扫描（广播）
@@ -510,9 +513,10 @@ public class TongYongActivity extends Activity {
 					} else {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
-						// if(zcno.equals("31")){
+					if(!zcno.equals("41")){ //烤箱只做记录
 						if (SlkidMapJudge != null) {
 							if (SlkidMapJudge.size() != 0) {
+//								SlkidMapJudge.add(jsonValue.get("sid").toString());
 								for (int i = 0; i < SlkidMapJudge.size(); i++) {
 									String slkid = SlkidMapJudge.get(i);
 									if (!slkid.toUpperCase().equals(
@@ -530,14 +534,15 @@ public class TongYongActivity extends Activity {
 									}
 								}
 							} else{  //如果集合中没有值
-								int key = 0;
+								/*int key = 0;
 								while(SlkidMapJudge.containsKey(key)){  //如果存在key循环自增 																				
 									key++;
 								}
-								SlkidMapJudge.put(key,jsonValue.get("sid").toString());
+								SlkidMapJudge.put(key,jsonValue.get("sid").toString());*/
+								
 							}
 						}
-						// }
+					 }
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",0);
 							yimei_proNum_edt.selectAll();
@@ -574,26 +579,31 @@ public class TongYongActivity extends Activity {
 							InputHidden(); // 隐藏键盘
 							return;
 						} else {
-							// 如果有首检标示
-							if (jsonValue.get("fircheck").toString().equals("1")) { // 打了首检标示（fircheck：首件检）
-								// fircheck_PRDNO != null&&
-//								if (!(jsonValue.get("prd_no").toString().equals(fircheck_PRDNO))) {
+							if(!zcno.equals("41")){ //烤箱只做记录
+								// 如果有首检标示
+								if (jsonValue.get("fircheck").toString().equals("1")) { // 打了首检标示（fircheck：首件检）
 									if(!jsonValue.get("prd_no").toString().equals(EQIRP_prdno)){
 										JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
 									}else{
-										if(EQIRP_firstchk.equals("0")){
+										if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){
 											JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
 										}
 									}
-//								}
+								}
 							}
+							SlkidMapJudge.add(jsonValue.get("sid").toString());
+							Log.i("SlkidMapJudge","入站:"+SlkidMapJudge.toString());
 							currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
 							fircheck_PRDNO = jsonValue.get("prd_no").toString(); // 进行首检的机种
 							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 							jsonValue.put("slkid", jsonValue.get("sid"));
 							jsonValue.put("sid", "");
 							jsonValue.put("firstchk",jsonValue.get("fircheck"));
-							jsonValue.put("state1", "01");
+							if(zcno.equals("41")){
+								jsonValue.put("state1", "03");	
+							}else{
+								jsonValue.put("state1", "01");
+							}
 							jsonValue.put("state", "0");
 							jsonValue
 									.put("prd_name",
@@ -637,7 +647,7 @@ public class TongYongActivity extends Activity {
 							Map<String, String> updateServerTable = MyApplication
 									.UpdateServerTableMethod(
 											MyApplication.DBID,
-											MyApplication.user, "00", "01",
+											MyApplication.user, "00",zcno.equals("41")?"03":"01",
 											yimei_pro_edt, currSlkid, zcno,
 											"200");
 							httpRequestQueryRecord(MyApplication.MESURL,
@@ -661,7 +671,9 @@ public class TongYongActivity extends Activity {
 							mesPrecord new_mes = newJson
 									.toJavaObject(mesPrecord.class);
 							if (gujing_list.addNewIdData(new_mes)) {
-
+ 								if(zcno.equals("41")){ //烘烤修改入站时间 ，后面出站需要卡控时间
+									gujing_list.kaigongState1Update(newJson.get("sid1").toString(),MyApplication.GetServerNowTime());
+								}
 								kaigong.setEnabled(true);
 								chuzhan.setEnabled(true);
 								List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
@@ -770,8 +782,8 @@ public class TongYongActivity extends Activity {
 									.toString().toUpperCase());
 
 							// if (zcno.equals("31")) {
-							SlkidMapJudge.put(i, jsonValue.get("slkid")
-									.toString()); // 获取mes_precord表中的工单号,为下次批次入站做不同工单禁止入站功能
+//							SlkidMapJudge.put(i, jsonValue.get("slkid").toString()); // 获取mes_precord表中的工单号,为下次批次入站做不同工单禁止入站功能
+							SlkidMapJudge.add(jsonValue.get("slkid").toString());
 							// }
 							mesPrecord new_mes = jsonValue
 									.toJavaObject(mesPrecord.class);
@@ -814,6 +826,7 @@ public class TongYongActivity extends Activity {
 								}
 							}
 						}
+						Log.i("SlkidMapJudge","设备"+SlkidMapJudge.toString());
 						// 将当前的文本框的设备号传入,查当前文本框的设备的批号
 						List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 								shebeihao, zcno);
@@ -874,7 +887,7 @@ public class TongYongActivity extends Activity {
 								Thread.sleep(400);
 								if (gujing_list.kaigongState1Update(
 										m.getSid1(),
-										MyApplication.GetServerNowTime())) {
+										MyApplication.GetServerNowTime())) { //修改本地入站时间和状态，出站需要开工的卡控时间
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
 									scrollAdapter = new ScrollAdapter(
@@ -925,6 +938,15 @@ public class TongYongActivity extends Activity {
 										updateServerTable, "updateServerTable");
 								Thread.sleep(400);
 								if (gujing_list.delSid(m.getSid())) {
+									if (SlkidMapJudge != null) {
+										if (SlkidMapJudge.size() != 0) { // 如果集合中还有值就删除第一个下标，所有的批次号出站后也就为空了
+											try {
+												SlkidMapJudge.remove(0);
+											} catch (Exception e) {
+												SlkidMapJudge.clear();
+											}
+										}
+									}
 									Log.i("kaigongUpdata", "本地库已删除~");
 									List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 											shebeihao, zcno);
@@ -938,11 +960,7 @@ public class TongYongActivity extends Activity {
 								}
 							}
 						}
-						if (SlkidMapJudge != null) {
-							if (SlkidMapJudge.size() != 0) { // 如果集合中还有值就删除第一个下标，所有的批次号出站后也就为空了
-								SlkidMapJudge.clear();
-							}
-						}
+						Log.i("SlkidMapJudge","出站："+SlkidMapJudge.toString());
 						updatekaigongSid1.clear();
 					} else {
 						ToastUtil.showToast(gujingActivity,
@@ -1166,6 +1184,7 @@ public class TongYongActivity extends Activity {
 								httpRequestQueryRecord(MyApplication.MESURL,  MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
 												+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
 								Thread.sleep(100);
+								//===========================判断是否做了首检===============================================
 								// 打了首检标示（fircheck：首件检）
 								if (json.get("fircheck").toString().equals("1")) {
 									String a = json.get("prd_no").toString();
@@ -1176,14 +1195,14 @@ public class TongYongActivity extends Activity {
 										Log.i("check",String.valueOf(updatekaigongSid1.size()));	
 										return;
 									}
-									if(EQIRP_firstchk.equals("0")){ //是否做过首检
+									if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){ //是否做过首检
 										ToastUtil.showToast(gujingActivity,"【"+json.get("prd_no")+"】机型没有做首检（fircheck）!",0);
 										updatekaigongSid1.clear();
 										Log.i("check",String.valueOf(updatekaigongSid1.size()));
 										return;
 									}
 								}
-								
+								//===========================判断是否做了首检===============================================
 								// 点胶站和焊接站只许一个批次开工
 								if (zcno.equals("31") || zcno.equals("21")) {
 									int state02 = 0;
@@ -1488,23 +1507,28 @@ public class TongYongActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
-			if (position == 2) {
-				shangliao.setVisibility(View.GONE);
-			} else {
-				shangliao.setVisibility(View.VISIBLE);
-			}
 			switch (position) {
 			case 0:
 				zcno = "11";
+				shangliao.setVisibility(View.VISIBLE);
+				kaigong.setVisibility(View.VISIBLE);
 				break;
 			case 1:
 				zcno = "21";
+				shangliao.setVisibility(View.VISIBLE);
+				kaigong.setVisibility(View.VISIBLE);
 				break;
 			case 2:
 				zcno = "31";
+				shangliao.setVisibility(View.GONE);
+				if(kaigong.getVisibility() == View.GONE){
+					kaigong.setVisibility(View.VISIBLE);
+				}
 				break;
 			case 3:
 				zcno = "41";
+				shangliao.setVisibility(View.GONE);
+				kaigong.setVisibility(View.GONE);
 				break;
 			/*
 			 * case 4: zcno = "51"; break; case 5: zcno = "61"; break; case 6:
@@ -1535,12 +1559,14 @@ public class TongYongActivity extends Activity {
 					zuoyeyuan = yimei_user_edt.getText().toString().trim();
 				} else {
 					yimei_user_edt.setSelectAllOnFocus(true);
+					InputHidden(); // 隐藏键盘
 				}
 			}
 			if (v.getId() == R.id.yimei_equipment_edt) {
 				if (hasFocus) {
 					Log.i("foucus", "设备号获取焦点");
 					yimei_equipment_edt.setSelectAllOnFocus(true);
+					InputHidden(); // 隐藏键盘
 				} else {
 					shebeihao = yimei_equipment_edt.getText().toString().trim(); // 失去焦点给设备号赋值
 					shebeihao = shebeihao.toUpperCase().trim();
@@ -1550,6 +1576,7 @@ public class TongYongActivity extends Activity {
 			if (v.getId() == R.id.yimei_proNum_edt) {
 				if (hasFocus) {
 					yimei_proNum_edt.setSelectAllOnFocus(true);
+					InputHidden(); // 隐藏键盘
 				}
 			}
 		}

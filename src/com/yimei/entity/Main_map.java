@@ -1,6 +1,9 @@
 package com.yimei.entity;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 
 public class Main_map implements Serializable{
 
@@ -17,5 +20,13 @@ public class Main_map implements Serializable{
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	private Map<String,JSONObject> mainJSON;
+	public Map<String, JSONObject> getMainJSON() {
+		
+		return mainJSON;
+	}
+	public void setMainJSON(Map<String, JSONObject> mainJSON) {
+		this.mainJSON = mainJSON;
 	}
 }

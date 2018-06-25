@@ -1,7 +1,9 @@
 package com.yimei.adapter;
 
 import java.util.List;
+import java.util.Map;
 
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.activity.BianDaiActivity;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
@@ -79,10 +81,19 @@ public class MainMyAdapter extends BaseAdapter {
         View view=inflater.inflate(R.layout.main_griditem,null);
         final Main_map mainMap=getItem(position);
         TextView tv = (TextView) view.findViewById(R.id.main_text);
+//        TextView toptext = (TextView) view.findViewById(R.id.main_toptext);
         ImageView img = (ImageView) view.findViewById(R.id.main_image);
         img.setImageResource(R.drawable.mozu);
+        /*Map<String, JSONObject> mainJSON = mainMap.getMainJSON();
+        for (String element : mainJSON.keySet()) {
+        	String key = element;
+        	String value = mainJSON.get(key).toString();
+        	toptext.setText(key);
+        	System.out.println(key+"-"+value);
+        	Log.i("keyvalue",key+":"+value);
+		}*/
         setImg(mainMap,img);
-         if(mainMap.getKey().equals("D0050")){        	
+        if(mainMap.getKey().equals("D0050")){        	
         	tv.setText("烤箱管理");
         }else{
         	tv.setText(mainMap.getValue());
@@ -195,7 +206,6 @@ public class MainMyAdapter extends BaseAdapter {
 					Intent intent = new Intent(context,ORT_quyang.class);
 					v.getContext().startActivity(intent);
 				}
-				
 			}
 		});
         return view;

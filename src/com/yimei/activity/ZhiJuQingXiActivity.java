@@ -8,6 +8,7 @@ import java.util.Map;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.ZhiJuQingXiAdapter;
 import com.yimei.entity.Pair;
 import com.yimei.scrollview.GeneralCHScrollView;
@@ -17,8 +18,11 @@ import com.yimei.util.ToastUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -26,13 +30,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
@@ -48,9 +56,12 @@ public class ZhiJuQingXiActivity extends Activity {
 	private static ListView mListView;
 	private static ZhiJuQingXiAdapter ZhiJuQingXiAdapter; // 适配器
 	private EditText yimei_zhijuqingxi_user, yimei_zhijuqingxi_mojuId;
+	private Button yimei_zhijuqingxi_zhangliceshi;
 	private String mojuId;
 	private String zuoyeyuan;
-
+	private EditText A,B,C,D,E,F,G;
+	private String a,b1,c,d,e,f,g;
+	private View dialog; //张力测试的view
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -125,6 +136,8 @@ public class ZhiJuQingXiActivity extends Activity {
 		GeneralCHScrollView headerScroll = (GeneralCHScrollView) findViewById(R.id.zhijuqingxi_scroll_title);
 		GeneralCHScrollView.add(headerScroll);
 		mListView = (ListView) findViewById(R.id.zhijuqingxi_scroll_list);
+	
+	
 	}
 
 	@Override
@@ -135,16 +148,77 @@ public class ZhiJuQingXiActivity extends Activity {
 		
 		yimei_zhijuqingxi_user = (EditText) findViewById(R.id.yimei_zhijuqingxi_user_edt);
 		yimei_zhijuqingxi_mojuId = (EditText) findViewById(R.id.yimei_zhijuqingxi_mojuId);
-
+		yimei_zhijuqingxi_zhangliceshi = (Button) findViewById(R.id.yimei_zhijuqingxi_zhangliceshi);
 		yimei_zhijuqingxi_user.setOnEditorActionListener(editEnter);
 		yimei_zhijuqingxi_mojuId.setOnEditorActionListener(editEnter);
 		
 		yimei_zhijuqingxi_user.setOnFocusChangeListener(EditGetFocus);
 		yimei_zhijuqingxi_mojuId.setOnFocusChangeListener(EditGetFocus);
-
+		
+		
+		yimei_zhijuqingxi_zhangliceshi.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showNormalDialog();
+			}
+		});
 	}
-
-	@Override
+	
+	/**
+	 * 张力测试
+	 * 
+	 * @param mes
+	 */
+	private void showNormalDialog() {
+		LayoutInflater inflater = getLayoutInflater();
+		dialog = inflater.inflate(R.layout.activity_zhangliceshi_dig,
+				(ViewGroup) findViewById(R.id.zhangliceshi_dialog));
+		A = (EditText) dialog.findViewById(R.id.A);
+		B = (EditText) dialog.findViewById(R.id.B);
+		C = (EditText) dialog.findViewById(R.id.C);
+		D = (EditText) dialog.findViewById(R.id.D);
+		E = (EditText) dialog.findViewById(R.id.E);
+		F = (EditText) dialog.findViewById(R.id.F);
+		G = (EditText) dialog.findViewById(R.id.G);
+		
+		A.setOnFocusChangeListener(EditGetFocus);
+		B.setOnFocusChangeListener(EditGetFocus);
+		C.setOnFocusChangeListener(EditGetFocus);
+		D.setOnFocusChangeListener(EditGetFocus);
+		E.setOnFocusChangeListener(EditGetFocus);
+		F.setOnFocusChangeListener(EditGetFocus);
+		G.setOnFocusChangeListener(EditGetFocus);
+		
+		A.setText(a==null?"":a);
+		B.setText(b1==null?"":b1);
+		C.setText(c==null?"":c);
+		D.setText(d==null?"":d);
+		E.setText(e==null?"":e);
+		F.setText(f==null?"":f);
+		G.setText(g==null?"":g);
+		
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				ZhiJuQingXiActivity.this);
+		normalDialog.setTitle("张力测试");
+		normalDialog.setView(dialog);
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						a = A.getText().toString();
+						b1 = B.getText().toString();
+						c = C.getText().toString();
+						d = D.getText().toString();
+						e = E.getText().toString();
+						f = F.getText().toString();
+						g = G.getText().toString();
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}	@Override
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(barcodeReceiver); // 取消广播注册
@@ -220,9 +294,74 @@ public class ZhiJuQingXiActivity extends Activity {
 					yimei_zhijuqingxi_mojuId.setSelectAllOnFocus(true);
 				}
 			}
+			if (v.getId() == R.id.A) {
+				if (!hasFocus) {
+					a = A.getText().toString();
+				}else{
+					A.setText(a==null?"":a);
+				}
+			}
+			if (v.getId() == R.id.B) {
+				if (!hasFocus) {
+					b1 = B.getText().toString();
+				}else{
+					B.setText(b1==null?"":b1);
+				}
+			}
+			if (v.getId() == R.id.C) {
+				if (!hasFocus) {
+					c = C.getText().toString();
+				}else{
+					C.setText(c==null?"":c);
+				}
+			}
+			if (v.getId() == R.id.C) {
+				if (!hasFocus) {
+					c = C.getText().toString();
+				}else{
+					C.setText(c==null?"":c);
+				}
+			}
+			if (v.getId() == R.id.D) {
+				if (!hasFocus) {
+					d = D.getText().toString();
+				}else{
+					D.setText(d==null?"":d);
+				}
+			}
+			if (v.getId() == R.id.E) {
+				if (!hasFocus) {
+					e = E.getText().toString();
+				}else{
+					E.setText(e==null?"":e);
+				}
+			}
+			if (v.getId() == R.id.F) {
+				if (!hasFocus) {
+					f = F.getText().toString();
+				}else{
+					F.setText(f==null?"":f);
+				}
+			}
+			if (v.getId() == R.id.G) {
+				if (!hasFocus) {
+					g = G.getText().toString();
+				}else{
+					G.setText(g==null?"":g);
+				}
+			}
+			
 		}
 	};
 	
+	/**
+	 * 隐藏键盘
+	 */
+	private void InputHidden() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 如果软键盘已经显示，则隐藏，反之则显示
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+	}
 	
 	/**
 	 * 逻辑判断
@@ -241,7 +380,8 @@ public class ZhiJuQingXiActivity extends Activity {
 									.getString("jsonObj").toString());
 							if(Integer.parseInt(jsonObject.getString("code").toString()) == 0){
 								ToastUtil.showToast(getApplicationContext(),"没有该模具编号或制程！",0);
-								
+								InputHidden(); 
+								zhangliEditClear();
 								if (mListView != null) {
 									mListView.setAdapter(null);
 									if (ZhiJuQingXiAdapter != null) {
@@ -255,9 +395,21 @@ public class ZhiJuQingXiActivity extends Activity {
 								jsonValue.put("op",yimei_zhijuqingxi_user.getText().toString().toUpperCase().trim());
 								jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 								jsonValue.put("dcid",GetAndroidMacUtil.getMac());
-								jsonValue.put("sbuid","E5004");
+								jsonValue.put("sbuid","E5006");
+								jsonValue.put("sbid",mojuId);
+								jsonValue.put("zcno","S");
+								jsonValue.put("qty","1");
+								jsonValue.put("state","0");
+								jsonValue.put("zt","0");
 								jsonValue.put("smake",MyApplication.user);
 								jsonValue.put("sys_stated", "3");
+								jsonValue.put("strain_a", a==null?"":a);
+								jsonValue.put("strain_b", b1==null?"":b1);
+								jsonValue.put("strain_c", c==null?"":c);
+								jsonValue.put("strain_d", d==null?"":d);
+								jsonValue.put("strain_e", e==null?"":e);
+								jsonValue.put("strain_f", f==null?"":f);
+								jsonValue.put("strain_g", g==null?"":g);
 								//添加数据到清洗的表中
 								Map<String, String> addServerQingXiData = MyApplication
 										.httpMapKeyValueMethod(MyApplication.DBID,
@@ -281,9 +433,12 @@ public class ZhiJuQingXiActivity extends Activity {
 								map.put("sbid",mojuId==null?"":mojuId);
 								map.put("mkdate",MyApplication.GetServerNowTime());
 								mList.add(map);
-								if(ZhiJuQingXiAdapter == null){									
+								if(ZhiJuQingXiAdapter == null){							
 									ZhiJuQingXiAdapter = new ZhiJuQingXiAdapter(ZhiJuQingXiActivity.this,mList);
 									mListView.setAdapter(ZhiJuQingXiAdapter);
+									InputHidden();
+									yimei_zhijuqingxi_mojuId.selectAll();
+									zhangliEditClear();
 								}else{
 									ZhiJuQingXiAdapter.listData.add(map);
 									mListView.setAdapter(ZhiJuQingXiAdapter);
@@ -308,6 +463,23 @@ public class ZhiJuQingXiActivity extends Activity {
 			}
 		}
 	};
+	
+	private void zhangliEditClear(){
+		A.setText("");
+		B.setText("");
+		C.setText("");
+		D.setText("");
+		E.setText("");
+		F.setText("");
+		G.setText("");
+		a = "";
+		b1 = "";
+		c = "";
+		d = "";
+		e = "";
+		f = "";
+		g = "";
+	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
 		if (!GeneralCHScrollView.isEmpty()) {
