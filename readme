@@ -34,3 +34,5 @@
 	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 	// 如果软键盘已经显示，则隐藏，反之则显示
 	imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+
+18/6/27修改了202|200线程提交，批量提交走一个线程，208，209

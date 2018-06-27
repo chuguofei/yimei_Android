@@ -287,6 +287,8 @@ public class ZhiJuRukKuActivity extends Activity {
 									return;
 								} else {
 									jsonValue.put("op", zuoyeyuan);
+									jsonValue.put("sorg",MyApplication.sorg);
+									jsonValue.put("zcno","S03");
 									jsonValue.put("mkdate",
 											MyApplication.GetServerNowTime());
 									jsonValue.put("dcid",

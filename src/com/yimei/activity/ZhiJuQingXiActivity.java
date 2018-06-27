@@ -60,7 +60,13 @@ public class ZhiJuQingXiActivity extends Activity {
 	private String mojuId;
 	private String zuoyeyuan;
 	private EditText A,B,C,D,E,F,G;
-	private String a,b1,c,d,e,f,g;
+	private String a = "0";
+	private String b1 = "0";
+	private String c = "0";
+	private String d = "0";
+	private String e = "0";
+	private String f = "0";
+	private String g = "0";
 	private View dialog; //张力测试的view
 	/**
 	 * 获取pda扫描（广播）
@@ -137,7 +143,6 @@ public class ZhiJuQingXiActivity extends Activity {
 		GeneralCHScrollView.add(headerScroll);
 		mListView = (ListView) findViewById(R.id.zhijuqingxi_scroll_list);
 	
-	
 	}
 
 	@Override
@@ -145,7 +150,6 @@ public class ZhiJuQingXiActivity extends Activity {
 		super.onResume();
 		registerReceiver(barcodeReceiver, new IntentFilter(
 				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
-		
 		yimei_zhijuqingxi_user = (EditText) findViewById(R.id.yimei_zhijuqingxi_user_edt);
 		yimei_zhijuqingxi_mojuId = (EditText) findViewById(R.id.yimei_zhijuqingxi_mojuId);
 		yimei_zhijuqingxi_zhangliceshi = (Button) findViewById(R.id.yimei_zhijuqingxi_zhangliceshi);
@@ -154,7 +158,6 @@ public class ZhiJuQingXiActivity extends Activity {
 		
 		yimei_zhijuqingxi_user.setOnFocusChangeListener(EditGetFocus);
 		yimei_zhijuqingxi_mojuId.setOnFocusChangeListener(EditGetFocus);
-		
 		
 		yimei_zhijuqingxi_zhangliceshi.setOnClickListener(new View.OnClickListener() {
 			
@@ -171,6 +174,7 @@ public class ZhiJuQingXiActivity extends Activity {
 	 * @param mes
 	 */
 	private void showNormalDialog() {
+
 		LayoutInflater inflater = getLayoutInflater();
 		dialog = inflater.inflate(R.layout.activity_zhangliceshi_dig,
 				(ViewGroup) findViewById(R.id.zhangliceshi_dialog));
@@ -190,35 +194,40 @@ public class ZhiJuQingXiActivity extends Activity {
 		F.setOnFocusChangeListener(EditGetFocus);
 		G.setOnFocusChangeListener(EditGetFocus);
 		
-		A.setText(a==null?"":a);
-		B.setText(b1==null?"":b1);
-		C.setText(c==null?"":c);
-		D.setText(d==null?"":d);
-		E.setText(e==null?"":e);
-		F.setText(f==null?"":f);
-		G.setText(g==null?"":g);
+		A.setText(a.equals("0")?"":a);
+		B.setText(b1.equals("0")?"":b1);
+		C.setText(c.equals("0")?"":c);
+		D.setText(d.equals("0")?"":d);
+		E.setText(e.equals("0")?"":e);
+		F.setText(f.equals("0")?"":f);
+		G.setText(g.equals("0")?"":g);
 		
-		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
-				ZhiJuQingXiActivity.this);
-		normalDialog.setTitle("张力测试");
-		normalDialog.setView(dialog);
-		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
-		normalDialog.setPositiveButton("确定",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						a = A.getText().toString();
-						b1 = B.getText().toString();
-						c = C.getText().toString();
-						d = D.getText().toString();
-						e = E.getText().toString();
-						f = F.getText().toString();
-						g = G.getText().toString();
-					}
-				});
-		// 显示
-		normalDialog.show();
-	}	@Override
+		try {
+			final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+					ZhiJuQingXiActivity.this);
+			normalDialog.setTitle("张力测试");
+			normalDialog.setView(dialog);
+			normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+			normalDialog.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							a = A.getText().toString().trim().equals("")?"0":A.getText().toString().trim();
+							b1 = B.getText().toString().trim().equals("")?"0":B.getText().toString().trim();
+							c = C.getText().toString().trim().equals("")?"0":C.getText().toString().trim();
+							d = D.getText().toString().trim().equals("")?"0":D.getText().toString().trim();
+							e = E.getText().toString().trim().equals("")?"0":E.getText().toString().trim();
+							f = F.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
+							g = G.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
+						}
+					});
+			// 显示
+			normalDialog.show();
+		} catch (Exception e1) {
+			ToastUtil.showToast(ZhiJuQingXiActivity.this, e1.toString(), 0);
+		}
+	}
+	@Override
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(barcodeReceiver); // 取消广播注册
@@ -297,57 +306,65 @@ public class ZhiJuQingXiActivity extends Activity {
 			if (v.getId() == R.id.A) {
 				if (!hasFocus) {
 					a = A.getText().toString();
+					if(a.toString().trim().equals("")){
+						a = "0";
+					}
 				}else{
-					A.setText(a==null?"":a);
+					A.setText(a.equals("0")?"":a);
 				}
 			}
 			if (v.getId() == R.id.B) {
 				if (!hasFocus) {
 					b1 = B.getText().toString();
+					if(b1.toString().trim().equals("")){
+						b1 = "0";
+					}
 				}else{
-					B.setText(b1==null?"":b1);
+					B.setText(b1.equals("0")?"":b1);
 				}
 			}
 			if (v.getId() == R.id.C) {
 				if (!hasFocus) {
 					c = C.getText().toString();
+					if(c.toString().trim().equals("")){
+						c = "0";
+					}
 				}else{
-					C.setText(c==null?"":c);
-				}
-			}
-			if (v.getId() == R.id.C) {
-				if (!hasFocus) {
-					c = C.getText().toString();
-				}else{
-					C.setText(c==null?"":c);
+					C.setText(c.equals("0")?"":c);
 				}
 			}
 			if (v.getId() == R.id.D) {
 				if (!hasFocus) {
 					d = D.getText().toString();
+					if(d.toString().trim().equals("")){
+						d = "0";
+					}
 				}else{
-					D.setText(d==null?"":d);
+					D.setText(d.equals("0")?"":d);
 				}
 			}
 			if (v.getId() == R.id.E) {
 				if (!hasFocus) {
 					e = E.getText().toString();
+					if(e.toString().trim().equals("")){
+						e = "0";
+					}
 				}else{
-					E.setText(e==null?"":e);
+					E.setText(e.equals("0")?"":e);
 				}
 			}
 			if (v.getId() == R.id.F) {
 				if (!hasFocus) {
 					f = F.getText().toString();
 				}else{
-					F.setText(f==null?"":f);
+					F.setText(f.equals("0")?"":f);
 				}
 			}
 			if (v.getId() == R.id.G) {
 				if (!hasFocus) {
 					g = G.getText().toString();
 				}else{
-					G.setText(g==null?"":g);
+					G.setText(g.equals("0")?"":g);
 				}
 			}
 			
@@ -390,8 +407,49 @@ public class ZhiJuQingXiActivity extends Activity {
 								}
 								yimei_zhijuqingxi_mojuId.selectAll();
 								return;
-							}else{								
+							}else{
 								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+
+								if(jsonValue.get("id").toString().indexOf("N")!=-1){
+									if(a.toString().trim().equals("")){
+										a = "0";
+									}else if(b.toString().trim().equals("")){
+										b1 = "0";
+									}else if(c.toString().trim().equals("")){
+										c = "0";
+									}else if(d.toString().trim().equals("")){
+										d = "0";
+									}else if(e.toString().trim().equals("")){
+										e = "0";
+									}
+									if(Integer.parseInt(a)==0||(Integer.parseInt(a.toString())>0&&Integer.parseInt(a.toString())<35)||Integer.parseInt(a.toString())<0||Integer.parseInt(a.toString())>50){
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试A值必须在0~35之间",0);
+										yimei_zhijuqingxi_mojuId.selectAll();
+										InputHidden();
+										return;
+									}else if(Integer.parseInt(b1)==0||(Integer.parseInt(b1)>0&&Integer.parseInt(b1)<35)||Integer.parseInt(b1)<0||Integer.parseInt(b1)>50){
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试B值必须在0~35之间",0);
+										InputHidden();
+										yimei_zhijuqingxi_mojuId.selectAll();
+										return;
+									}else if(Integer.parseInt(c)==0||(Integer.parseInt(c)>0&&Integer.parseInt(c)<35)||Integer.parseInt(c)<0||Integer.parseInt(c)>50){
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试C值必须在0~35之间",0);
+										InputHidden();
+										yimei_zhijuqingxi_mojuId.selectAll();
+										return;
+									}else if(Integer.parseInt(d)==0||(Integer.parseInt(d)>0&&Integer.parseInt(d)<35)||Integer.parseInt(d)<0||Integer.parseInt(d)>50){
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试D值必须在0~35之间",0);
+										InputHidden();
+										yimei_zhijuqingxi_mojuId.selectAll();
+										return;
+									}else if(Integer.parseInt(e)==0||(Integer.parseInt(e)>0&&Integer.parseInt(e)<35)||Integer.parseInt(e)<0||Integer.parseInt(e)>50){
+									    ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试E值必须在0~35之间",0);
+										InputHidden();
+										yimei_zhijuqingxi_mojuId.selectAll();
+										return;
+									}
+									
+								}
 								jsonValue.put("op",yimei_zhijuqingxi_user.getText().toString().toUpperCase().trim());
 								jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 								jsonValue.put("dcid",GetAndroidMacUtil.getMac());
@@ -403,13 +461,13 @@ public class ZhiJuQingXiActivity extends Activity {
 								jsonValue.put("zt","0");
 								jsonValue.put("smake",MyApplication.user);
 								jsonValue.put("sys_stated", "3");
-								jsonValue.put("strain_a", a==null?"":a);
-								jsonValue.put("strain_b", b1==null?"":b1);
-								jsonValue.put("strain_c", c==null?"":c);
-								jsonValue.put("strain_d", d==null?"":d);
-								jsonValue.put("strain_e", e==null?"":e);
-								jsonValue.put("strain_f", f==null?"":f);
-								jsonValue.put("strain_g", g==null?"":g);
+								jsonValue.put("strain_a", a=="0"?"":a);
+								jsonValue.put("strain_b", b1=="0"?"":b1);
+								jsonValue.put("strain_c", c=="0"?"":c);
+								jsonValue.put("strain_d", d=="0"?"":d);
+								jsonValue.put("strain_e", e=="0"?"":e);
+								jsonValue.put("strain_f", f=="0"?"":f);
+								jsonValue.put("strain_g", g=="0"?"":g);
 								//添加数据到清洗的表中
 								Map<String, String> addServerQingXiData = MyApplication
 										.httpMapKeyValueMethod(MyApplication.DBID,
@@ -472,13 +530,13 @@ public class ZhiJuQingXiActivity extends Activity {
 		E.setText("");
 		F.setText("");
 		G.setText("");
-		a = "";
-		b1 = "";
-		c = "";
-		d = "";
-		e = "";
-		f = "";
-		g = "";
+		a = "0";
+		b1 = "0";
+		c = "0";
+		d = "0";
+		e = "0";
+		f = "0";
+		g = "0";
 	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {

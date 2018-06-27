@@ -17,14 +17,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
-	public static String MESURL = "http://192.168.7.15:8088/mes/api";
+//	public static String MESURL = "http://192.168.7.15:8088/mes/api";
 	//public static String MESURL = "http://59.53.182.251:8088/mes/api";
 	/*public static final String MESURL = "http://115.28.191.203:89/mes/api";
 	public static final String MESDOWNLOADAPKURL = "http://115.28.191.203:89/mes/yimei.apk";
 	public static final String MESServerTime = "http://115.28.191.203:89/mes/mservlet";*/
 //	public static  String MESURL = "http://59.53.182.251:8088/mes/api";
-	public static String DBID = "01";
-//	 public static String DBID = "mes";
+//	public static String DBID = "01";
+	 public static String DBID = "mes";
 	// 李老师宿舍
 //	public static  String MESURL = "http://192.168.8.107:8080/mes/api";
 //	 public static String MESURL = "http://192.168.8.102:8080/mes/api";
@@ -36,9 +36,9 @@ public class MyApplication extends Application {
 //	 public static String MESURL = "http://192.168.5.84:9050/jd/api";
 	
 	// 冯哥公司
-//	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
+	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
-//  public static final String MESURL = "http://192.168.8.106:9999/jd/api";
+//  public static String MESURL = "http://192.168.8.106:9999/jd/api";
 //	public static final String MESURL = "http://192.168.8.107:9999/jd/api";
 //	 public static String MESURL = "http://192.168.8.104:9999/jd/api";
 	
@@ -52,7 +52,7 @@ public class MyApplication extends Application {
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
 	public static final String SCN_CUST_EX_SCODE = "scannerdata";
 	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核";
-	public static final String SHOW_VERSION = "v18-6-25 12:00";
+	public static final String SHOW_VERSION = "v18-6-27 11:00";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息
