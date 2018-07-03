@@ -48,15 +48,15 @@ public class ZhiJuLingChuAdapter extends BaseAdapter {
 			ZhiJuLingChuActivity.addHViews((GeneralCHScrollView) convertView
 					.findViewById(R.id.zhijulingchu_item_scroll));
 			viewHolder.yimei_zhijulingchu_sid1 = (TextView) convertView
-					.findViewById(R.id.yimei_zhijulingchu_sid1);
-			viewHolder.yimei_zhijulingchu_sbid = (TextView) convertView
-					.findViewById(R.id.yimei_zhijulingchu_sbid);
-			viewHolder.yimei_zhijulingchu_slkid = (TextView) convertView
-					.findViewById(R.id.yimei_zhijulingchu_slkid);
-			viewHolder.yimei_zhijulingchu_prd_no = (TextView) convertView
-					.findViewById(R.id.yimei_zhijulingchu_prd_no);
-			viewHolder.yimei_zhijulingchu_mkdate = (TextView) convertView
-					.findViewById(R.id.yimei_zhijulingchu_mkdate);
+					.findViewById(R.id.yimei_zhuanchu_sid);
+			viewHolder.yimei_zhuanchu_zcno1 = (TextView) convertView
+					.findViewById(R.id.yimei_zhuanchu_zcno1);
+			viewHolder.yimei_zhuanchu_prd_name = (TextView) convertView
+					.findViewById(R.id.yimei_zhuanchu_prd_name);
+			viewHolder.yimei_zhuanchu_qty = (TextView) convertView
+					.findViewById(R.id.yimei_zhuanchu_qty);
+			viewHolder.yimei_zhuanchu_zcno1 = (TextView) convertView
+					.findViewById(R.id.yimei_zhuanchu_zcno1);
 			
 			convertView.setTag(viewHolder);
 		} else {// 如果缓存池中有对应的view缓存，则直接通过getTag取出viewHolder
@@ -65,19 +65,19 @@ public class ZhiJuLingChuAdapter extends BaseAdapter {
 
 		Map<String, String> map = listData.get(position);
 		String a = map.get("sbid");
-		viewHolder.yimei_zhijulingchu_sid1.setText(map.get("sid1"));
-		viewHolder.yimei_zhijulingchu_sbid.setText(map.get("sbid"));
-		viewHolder.yimei_zhijulingchu_slkid.setText(map.get("slkid"));
-		viewHolder.yimei_zhijulingchu_prd_no.setText(map.get("prd_no"));
-		viewHolder.yimei_zhijulingchu_mkdate.setText(map.get("mkdate"));
+		viewHolder.yimei_zhijulingchu_sid1.setText(map.get("sid"));
+		viewHolder.yimei_zhuanchu_zcno1.setText(map.get("zcno1"));
+		viewHolder.yimei_zhuanchu_prd_name.setText(map.get("prd_name"));
+		viewHolder.yimei_zhuanchu_qty.setText(map.get("qty"));
+		viewHolder.yimei_zhuanchu_zcno.setText(map.get("zcno"));
 		return convertView;
 	}
 
 	class ViewHolder {
 		public TextView yimei_zhijulingchu_sid1;
-		public TextView yimei_zhijulingchu_sbid;
-		public TextView yimei_zhijulingchu_slkid;
-		public TextView yimei_zhijulingchu_prd_no;
-		public TextView yimei_zhijulingchu_mkdate;
+		public TextView yimei_zhuanchu_zcno1;
+		public TextView yimei_zhuanchu_prd_name;
+		public TextView yimei_zhuanchu_qty;
+		public TextView yimei_zhuanchu_zcno;
 	}
 }

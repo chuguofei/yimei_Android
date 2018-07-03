@@ -14,6 +14,7 @@ import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -49,9 +51,9 @@ public class ZhuanChuActivity extends Activity {
 	private static ListView mListView;
 	private EditText yimei_zhuanchu_user,yimei_zhuanchu_sid;
 	private ZhuanChuAdapter zhuanchuAdapter;
-	private Spinner selectValue; // 下拉框
-	private String zcno; //当前制程
-	private String zcno1;
+//	private Spinner selectValue; // 下拉框
+	private String zcno = "51"; //当前制程
+	private String zcno1 = "61";
 	private String sid; //批次号
 	private String zuoyeyuan;
 	private Map<String,String> zcnoMap = new HashMap<String,String>();
@@ -103,8 +105,8 @@ public class ZhuanChuActivity extends Activity {
 					}	
 					sid = yimei_zhuanchu_sid.getText().toString().toUpperCase().trim();
 					OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-							MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"'"), null, mHander, true,
-							"QuerySid");
+							MyApplication.QueryBatNo("ZHUANXULIST", "~sbuid='D0030' and sid1='"+sid+"'"), null, mHander, true,
+							"QueryJiLu");
 				}
 			}
 		}
@@ -140,7 +142,7 @@ public class ZhuanChuActivity extends Activity {
 		
 		yimei_zhuanchu_sid.setOnEditorActionListener(editEnter);
 		yimei_zhuanchu_user.setOnEditorActionListener(editEnter);
-		selectValue = (Spinner) findViewById(R.id.zhuanchu_selectValue);
+//		selectValue = (Spinner) findViewById(R.id.zhuanchu_selectValue);
 		
 		yimei_zhuanchu_user.setOnFocusChangeListener(EditGetFocus);
 	}
@@ -205,8 +207,8 @@ public class ZhuanChuActivity extends Activity {
 					}
 					sid = yimei_zhuanchu_sid.getText().toString().toUpperCase().trim();
 					OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-							MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"'"), null, mHander, true,
-							"QuerySid");
+							MyApplication.QueryBatNo("ZHUANXULIST", "~sbuid='D0030' and sid1='"+sid+"'"), null, mHander, true,
+							"QueryJiLu");
 					flag = true;
 				}
 			}
@@ -238,7 +240,7 @@ public class ZhuanChuActivity extends Activity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
-						if (string.equals("SpinnerValue")) { // 给下拉框赋值
+						/*if (string.equals("SpinnerValue")) { // 给下拉框赋值
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code")
@@ -249,12 +251,25 @@ public class ZhuanChuActivity extends Activity {
 							} else {
 								SetSelectValue(jsonObject);
 							}
+						}*/
+						if(string.equals("QueryJiLu")){ //查询记录表中有没有该记录
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
+								OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
+										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"'"), null, mHander, true,
+										"QuerySid");
+							}else{
+								ToastUtil.showToast(ZhuanChuActivity.this, "该批次已经做过转序!",0);
+								yimei_zhuanchu_sid.selectAll();
+//								InputHidden();
+							}
 						}
 						if(string.equals("QuerySid")){
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
 								ToastUtil.showToast(getApplicationContext(), "没有该批次号!",0);
 								yimei_zhuanchu_sid.selectAll();
+								InputHidden();
 								return;
 							} else {
 								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
@@ -263,20 +278,25 @@ public class ZhuanChuActivity extends Activity {
 								if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 									ToastUtil.showToast(ZhuanChuActivity.this, "该批次不具备转序条件!",0);
 									yimei_zhuanchu_sid.selectAll();
+									InputHidden();
 									return;
-								} else if (jsonValue.get("state").toString().equals("02")
-										|| jsonValue.get("state").toString().equals("03")
-										|| jsonValue.get("state").toString().equals("01")) {
-									ToastUtil.showToast(ZhuanChuActivity.this, "该批次号状态不是【出站】,请将批次出站后再在转序!", 0);
+								} else if (jsonValue.get("state").toString().equals("01")
+										||jsonValue.get("state").toString().equals("02")
+										||jsonValue.get("state").toString().equals("03")
+										||jsonValue.get("state").toString().equals("00")
+										||jsonValue.get("state").toString().equals("07")) {
+									ToastUtil.showToast(ZhuanChuActivity.this, "该批次号状态不是【出站】,不能转出!", 0);
+									InputHidden();
 									yimei_zhuanchu_sid.selectAll();
 									return;
-								} /*else if (jsonValue.get("state").toString().equals("04")) {
+								} 
+								/*else if (jsonValue.get("state").toString().equals("04")) {
 									ToastUtil.showToast(ZhuanChuActivity.this, "该批号的状态为【出站】!", 0);
 									yimei_zhuanchu_sid.selectAll();
 									return;
-								} */
+								}*/ 
 								else{
-									if(zhuanchuAdapter!=null){
+									/*if(zhuanchuAdapter!=null){
 										for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
 											JSONObject json = (JSONObject) ((JSONArray) jsonObject.get("values")).get(i);
 											if(json.get("sid1").equals(sid)){
@@ -285,11 +305,41 @@ public class ZhuanChuActivity extends Activity {
 												return;
 											}
 										}
-									};
+									};*/
 									showJson = jsonValue;
 									zcno1 = jsonValue.get("zcno1").toString();
-									showNormalDialog("当前选中的制程为【"+zcnoMap.get(zcno)+"】,要转出的制程是【"+
-											zcnoMap.get(zcno1)+ "】确定转出吗？");
+									/*showNormalDialog("当前选中的制程为【"+zcnoMap.get(zcno)+"】,要转出的制程是【"+
+											zcnoMap.get(zcno1)+ "】确定转出吗？");*/
+									showJson.put("op",zuoyeyuan);
+									showJson.put("slkid",showJson.get("sid"));
+									showJson.put("sbuid","D0030");
+									showJson.put("sid", "");
+									showJson.put("sorg",MyApplication.sorg);
+									showJson.put("erid","0");
+									showJson.put("state","04");
+									showJson.put("op_c",yimei_zhuanchu_user.getText().toString().toUpperCase().trim());
+									showJson.put("state","0");
+									showJson.put("dcid",GetAndroidMacUtil.getMac());
+									showJson.put("smake",MyApplication.user);
+									showJson.put("mkdate",MyApplication.GetServerNowTime());
+									showJson.put("hpdate",MyApplication.GetServerNowTime());
+									showJson.put("outdate",MyApplication.GetServerNowTime());
+									showJson.put("cref3","1");
+									Map<String, String> mesIdMap = MyApplication
+											.httpMapKeyValueMethod(MyApplication.DBID,
+													"savedata", MyApplication.user,
+													showJson.toJSONString(),
+													"D0030WEB", "1");
+									OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,mesIdMap,null, mHander, true,"savedata");
+									
+									Map<String, String> updateServerTable = MyApplication
+											.UpdateServerTableMethod(
+													MyApplication.DBID,
+													MyApplication.user,
+													showJson.get("state").toString(), "04",
+													showJson.get("sid1").toString(),showJson.get("slkid").toString(),
+													zcno, "200");
+									OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,updateServerTable,null, mHander, true,"updateTableState");
 								}
 							}
 						}
@@ -300,9 +350,9 @@ public class ZhuanChuActivity extends Activity {
 							}else{
 								List<Map<String,String>> mList = new ArrayList<Map<String,String>>();								
 								Map<String,String> map = new HashMap<String,String>();
-								map.put("zcno",zcnoMap.get(zcno));
-								map.put("sid",showJson.get("sid1").toString());
-								map.put("zcno1",zcnoMap.get(zcno1));
+								map.put("zcno","外观");
+								map.put("zcno1","测试");
+								map.put("sid",sid);
 								map.put("slkid",showJson.get("sid").toString());
 								map.put("prd_name",showJson.get("prd_name").toString());
 								map.put("qty",showJson.get("qty").toString());
@@ -322,6 +372,8 @@ public class ZhuanChuActivity extends Activity {
 							if(!(Integer.parseInt(jsonObject.get("id").toString()) == 0)){
 //								ToastUtil.showToastLocation(getApplicationContext(),"（savedata）失败", 0);
 							}
+							InputHidden();
+							yimei_zhuanchu_sid.selectAll();
 						}
 						if(string.equals("updateServer_200")){
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
@@ -344,6 +396,15 @@ public class ZhuanChuActivity extends Activity {
 	};
 	
 	/**
+	 * 隐藏键盘
+	 */
+	private void InputHidden() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 如果软键盘已经显示，则隐藏，反之则显示
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+	
+	/**
 	 * 弹出提示框
 	 * 
 	 * @param mes
@@ -361,11 +422,14 @@ public class ZhuanChuActivity extends Activity {
 						showJson.put("op",zuoyeyuan);
 						showJson.put("slkid",showJson.get("sid"));
 						showJson.put("sbuid","D0030");
-//						showJson.put("state1", "01");
+						showJson.put("sid", "");
 						showJson.put("sorg",MyApplication.sorg);
+						showJson.put("erid","0");
+						showJson.put("state","04");
+						showJson.put("op_c",yimei_zhuanchu_user.getText().toString().toUpperCase().trim());
+						showJson.put("state","0");
 						showJson.put("dcid",GetAndroidMacUtil.getMac());
 						showJson.put("smake",MyApplication.user);
-						showJson.put("sid",showJson.get("sid1"));
 						showJson.put("mkdate",MyApplication.GetServerNowTime());
 						showJson.put("hpdate",MyApplication.GetServerNowTime());
 						showJson.put("outdate",MyApplication.GetServerNowTime());
@@ -386,13 +450,6 @@ public class ZhuanChuActivity extends Activity {
 										zcno, "200");
 						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,updateServerTable,null, mHander, true,"updateTableState");
 					
-						Map<String, String> updateServerTable1 = MyApplication
-								.UpdateServerTableMethod(
-										MyApplication.DBID,
-										MyApplication.user, "00", "01",
-										showJson.get("sid1").toString(),showJson.get("slkid").toString(),showJson.get("zcno1").toString(),"200");
-						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
-								null,updateServerTable1,null, mHander, true,"updateServer_200");
 					}
 				});
 		normalDialog.setNegativeButton("取消", null);
@@ -406,7 +463,7 @@ public class ZhuanChuActivity extends Activity {
 	 * 
 	 * @param hScrollView
 	 */
-	private void SetSelectValue(JSONObject jsonObject) {
+	/*private void SetSelectValue(JSONObject jsonObject) {
 		List<Pair> dicts = new ArrayList<Pair>();
 		for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
 			JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
@@ -431,7 +488,7 @@ public class ZhuanChuActivity extends Activity {
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		});
-	}
+	}*/
 	
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
 		if (!GeneralCHScrollView.isEmpty()) {

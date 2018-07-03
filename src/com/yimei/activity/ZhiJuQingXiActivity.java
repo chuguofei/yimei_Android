@@ -59,7 +59,7 @@ public class ZhiJuQingXiActivity extends Activity {
 	private Button yimei_zhijuqingxi_zhangliceshi;
 	private String mojuId;
 	private String zuoyeyuan;
-	private EditText A,B,C,D,E,F,G;
+	private EditText A,B,C,D,E;
 	private String a = "0";
 	private String b1 = "0";
 	private String c = "0";
@@ -183,24 +183,24 @@ public class ZhiJuQingXiActivity extends Activity {
 		C = (EditText) dialog.findViewById(R.id.C);
 		D = (EditText) dialog.findViewById(R.id.D);
 		E = (EditText) dialog.findViewById(R.id.E);
-		F = (EditText) dialog.findViewById(R.id.F);
-		G = (EditText) dialog.findViewById(R.id.G);
+//		F = (EditText) dialog.findViewById(R.id.F);
+//		G = (EditText) dialog.findViewById(R.id.G);
 		
 		A.setOnFocusChangeListener(EditGetFocus);
 		B.setOnFocusChangeListener(EditGetFocus);
 		C.setOnFocusChangeListener(EditGetFocus);
 		D.setOnFocusChangeListener(EditGetFocus);
 		E.setOnFocusChangeListener(EditGetFocus);
-		F.setOnFocusChangeListener(EditGetFocus);
-		G.setOnFocusChangeListener(EditGetFocus);
+//		F.setOnFocusChangeListener(EditGetFocus);
+//		G.setOnFocusChangeListener(EditGetFocus);
 		
 		A.setText(a.equals("0")?"":a);
 		B.setText(b1.equals("0")?"":b1);
 		C.setText(c.equals("0")?"":c);
 		D.setText(d.equals("0")?"":d);
 		E.setText(e.equals("0")?"":e);
-		F.setText(f.equals("0")?"":f);
-		G.setText(g.equals("0")?"":g);
+//		F.setText(f.equals("0")?"":f);
+//		G.setText(g.equals("0")?"":g);
 		
 		try {
 			final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
@@ -217,8 +217,8 @@ public class ZhiJuQingXiActivity extends Activity {
 							c = C.getText().toString().trim().equals("")?"0":C.getText().toString().trim();
 							d = D.getText().toString().trim().equals("")?"0":D.getText().toString().trim();
 							e = E.getText().toString().trim().equals("")?"0":E.getText().toString().trim();
-							f = F.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
-							g = G.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
+//							f = F.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
+//							g = G.getText().toString().trim().equals("")?"0":G.getText().toString().trim();
 						}
 					});
 			// 显示
@@ -353,7 +353,7 @@ public class ZhiJuQingXiActivity extends Activity {
 					E.setText(e.equals("0")?"":e);
 				}
 			}
-			if (v.getId() == R.id.F) {
+/*			if (v.getId() == R.id.F) {
 				if (!hasFocus) {
 					f = F.getText().toString();
 				}else{
@@ -366,7 +366,7 @@ public class ZhiJuQingXiActivity extends Activity {
 				}else{
 					G.setText(g.equals("0")?"":g);
 				}
-			}
+			}*/
 			
 		}
 	};
@@ -423,27 +423,27 @@ public class ZhiJuQingXiActivity extends Activity {
 										e = "0";
 									}
 									if(Integer.parseInt(a)==0||(Integer.parseInt(a.toString())>0&&Integer.parseInt(a.toString())<35)||Integer.parseInt(a.toString())<0||Integer.parseInt(a.toString())>50){
-										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试A值必须在0~35之间",0);
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试A值必须在35~50之间",0);
 										yimei_zhijuqingxi_mojuId.selectAll();
 										InputHidden();
 										return;
 									}else if(Integer.parseInt(b1)==0||(Integer.parseInt(b1)>0&&Integer.parseInt(b1)<35)||Integer.parseInt(b1)<0||Integer.parseInt(b1)>50){
-										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试B值必须在0~35之间",0);
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试B值必须在35~50之间",0);
 										InputHidden();
 										yimei_zhijuqingxi_mojuId.selectAll();
 										return;
 									}else if(Integer.parseInt(c)==0||(Integer.parseInt(c)>0&&Integer.parseInt(c)<35)||Integer.parseInt(c)<0||Integer.parseInt(c)>50){
-										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试C值必须在0~35之间",0);
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试C值必须在35~50之间",0);
 										InputHidden();
 										yimei_zhijuqingxi_mojuId.selectAll();
 										return;
 									}else if(Integer.parseInt(d)==0||(Integer.parseInt(d)>0&&Integer.parseInt(d)<35)||Integer.parseInt(d)<0||Integer.parseInt(d)>50){
-										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试D值必须在0~35之间",0);
+										ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试D值必须在35~50之间",0);
 										InputHidden();
 										yimei_zhijuqingxi_mojuId.selectAll();
 										return;
 									}else if(Integer.parseInt(e)==0||(Integer.parseInt(e)>0&&Integer.parseInt(e)<35)||Integer.parseInt(e)<0||Integer.parseInt(e)>50){
-									    ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试E值必须在0~35之间",0);
+									    ToastUtil.showToast(ZhiJuQingXiActivity.this,"钢网张力测试E值必须在35~50之间",0);
 										InputHidden();
 										yimei_zhijuqingxi_mojuId.selectAll();
 										return;
@@ -466,8 +466,8 @@ public class ZhiJuQingXiActivity extends Activity {
 								jsonValue.put("strain_c", c=="0"?"":c);
 								jsonValue.put("strain_d", d=="0"?"":d);
 								jsonValue.put("strain_e", e=="0"?"":e);
-								jsonValue.put("strain_f", f=="0"?"":f);
-								jsonValue.put("strain_g", g=="0"?"":g);
+//								jsonValue.put("strain_f", f=="0"?"":f);
+//								jsonValue.put("strain_g", g=="0"?"":g);
 								//添加数据到清洗的表中
 								Map<String, String> addServerQingXiData = MyApplication
 										.httpMapKeyValueMethod(MyApplication.DBID,
@@ -528,8 +528,8 @@ public class ZhiJuQingXiActivity extends Activity {
 		C.setText("");
 		D.setText("");
 		E.setText("");
-		F.setText("");
-		G.setText("");
+//		F.setText("");
+//		G.setText("");
 		a = "0";
 		b1 = "0";
 		c = "0";

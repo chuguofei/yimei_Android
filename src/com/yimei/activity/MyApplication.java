@@ -31,14 +31,14 @@ public class MyApplication extends Application {
 //	 public static String MESURL = "http://192.168.8.103:8080/mes/api";
 	
 	// 李老师公司
-//	 public static String MESURL = "http://192.168.5.88:8080/mes/api";
+	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 李老师调试
 //	 public static String MESURL = "http://192.168.5.84:9050/jd/api";
 	
 	// 冯哥公司
-	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
+//	 public static String MESURL = "http://192.168.5.86:9999/jd/api";
 	// 冯哥宿舍
-//  public static String MESURL = "http://192.168.8.106:9999/jd/api";
+//  public static String MESURL = "http://192.168.8.10:9999/jd/api";
 //	public static final String MESURL = "http://192.168.8.107:9999/jd/api";
 //	 public static String MESURL = "http://192.168.8.104:9999/jd/api";
 	
@@ -51,8 +51,9 @@ public class MyApplication extends Application {
 
 	public static final String INTENT_ACTION_SCAN_RESULT = "com.android.server.scannerservice.broadcast"; // 广播接收Action值
 	public static final String SCN_CUST_EX_SCODE = "scannerdata";
-	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核";
-	public static final String SHOW_VERSION = "v18-6-27 11:00";
+	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核"
+												+ "2.修改首检工单错误";
+	public static final String SHOW_VERSION = "v18-6-29 10:00";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息
@@ -64,6 +65,8 @@ public class MyApplication extends Application {
 	public static final String QIJIANSORG="05010000"; //器件部门
 	public static final String MOZUSORG="05040000"; //模组部门
 	public static final String SHOUJIAN_BUID = "Q00201"; //首检业务号
+	public static final String SHEBEISBUID = "D5061";
+	
 	
 	public static String Base64pwd(String pwd) {
 		return Base64.encodeToString(pwd.getBytes(), Base64.DEFAULT);
@@ -281,6 +284,32 @@ public class MyApplication extends Application {
 		UpdateServerTable.put("sid", sid1);
 		UpdateServerTable.put("slkid", slkid);
 		UpdateServerTable.put("zcno", zcno);
+		UpdateServerTable.put("apiId", "mesudp");
+		UpdateServerTable.put("id", id);
+		return UpdateServerTable;
+	}
+	
+	/**
+	 * 
+	 * @param dbid 
+	 * @param usercode
+	 * @param sid1 批次
+	 * @param zcno 工序
+	 * @param mbox 料盒
+	 * @param bind 状态
+	 * @param id 650
+	 * @return
+	 */
+	public static Map<String, String> MBoxServerUpdate(String dbid,
+			String usercode, String sid1, String zcno, String mbox,
+			String bind,String id) {
+		Map<String, String> UpdateServerTable = new HashMap<String, String>();
+		UpdateServerTable.put("dbid", dbid);
+		UpdateServerTable.put("usercode", usercode);
+		UpdateServerTable.put("sid1", sid1);
+		UpdateServerTable.put("zcno", zcno);
+		UpdateServerTable.put("mbox", mbox);
+		UpdateServerTable.put("bind", bind);
 		UpdateServerTable.put("apiId", "mesudp");
 		UpdateServerTable.put("id", id);
 		return UpdateServerTable;

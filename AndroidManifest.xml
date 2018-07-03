@@ -199,10 +199,20 @@
             android:name="com.yimei.activity.ipqc.ErrorNotice_shoujian"
             android:label="@string/xunjian_error_Title" >
         </activity>
-        <!-- 首检异常通知单 -->
+        <!-- 取样 -->
         <activity
             android:name="com.yimei.activity.ipqc.ORT_quyang"
             android:label="@string/ort_quyang_Title" >
+        </activity>
+        <!-- 解绑 -->
+        <activity
+            android:name="com.yimei.activity.JieBangMboxActivity"
+            android:label="@string/yimei_mbox_jiebang" >
+        </activity>
+        <!-- 维修 -->
+        <activity
+            android:name="com.yimei.shebei.shebeiweixiuActivity"
+            android:label="@string/yimei_weixiuTitle" >
         </activity>
     </application>
 

@@ -455,8 +455,8 @@ public class ShangLiaoActivity extends TabActivity {
 			jsonSon.put("cid", Collections.max(MaxCid) + 1);
 		}
 		if (shuliangMap == null) { // 如果固晶不扫描料号
-			if(ZCNOSaveSonMap==null){
-				showNormalDialog("没有【"+yimei_shangliao_materialPihao.getText()+"】材料批号!");
+			if(ZCNOSaveSonMap==null)	 {
+				showNormalDialog("【"+yimei_shangliao_materialPihao.getText()+"】在创批时已绑定数量，数量不可修改!");
 				yimei_shangliao_materialPihao.selectAll();
 				return false;
 			}else{
@@ -666,7 +666,7 @@ public class ShangLiaoActivity extends TabActivity {
 						}
 						if (shuliangMap == null) { // 如果固晶不扫描料号
 							if(ZCNOSaveSonMap==null){
-								showNormalDialog("没有【"+yimei_shangliao_materialPihao.getText()+"】材料批号!");
+								showNormalDialog("【"+yimei_shangliao_materialPihao.getText()+"】在创批时已绑定数量，数量不可修改!");
 								yimei_shangliao_materialPihao.selectAll();
 								return false;
 							}else{

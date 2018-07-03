@@ -38,7 +38,7 @@
                     android:tag="转出作业员" />
             </TableRow>
 
-            <TableRow android:paddingTop="20dp" >
+            <!-- <TableRow android:paddingTop="20dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                      android:background="@drawable/shape_edittext"
                      android:tag="转出制程号" />
 
-            </TableRow>
+            </TableRow> -->
 
             <TableRow android:paddingTop="20dp" >
 

@@ -348,7 +348,7 @@ public class IPQC_shoujian extends Activity {
 					FatherJson.put("chtype", chtype);
 					FatherJson.put("caused", caused);
 					FatherJson.put("sbid", sbid);
-					FatherJson.put("slkid", Sid1Json.get("sid"));
+					FatherJson.put("slkid", Sid1Json.get("slkid"));
 					FatherJson.put("sid1", sid1);
 					FatherJson.put("zcno", zcno);
 					FatherJson.put("lotno", lotno != null ? lotno : "");

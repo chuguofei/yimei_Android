@@ -8,6 +8,7 @@ import com.yimei.activity.BianDaiActivity;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
+import com.yimei.activity.JieBangMboxActivity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.KuaiSuGuoZhanActivity;
 import com.yimei.activity.MainActivity;
@@ -32,6 +33,7 @@ import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.activity.ipqc.ORT_quyang;
 import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
+import com.yimei.shebei.shebeiweixiuActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -94,7 +96,7 @@ public class MainMyAdapter extends BaseAdapter {
 		}*/
         setImg(mainMap,img);
         if(mainMap.getKey().equals("D0050")){        	
-        	tv.setText("烤箱管理");
+        	tv.setText("料盒解绑");
         }else{
         	tv.setText(mainMap.getValue());
         }
@@ -117,12 +119,13 @@ public class MainMyAdapter extends BaseAdapter {
 					Intent intent = new Intent(context,
 							HanXianActivity.class);
 					v.getContext().startActivity(intent);
-				}else if(mainMap.getKey().equals("D0050")){
+				}
+				/*else if(mainMap.getKey().equals("D0050")){
 					//烤箱管理
 					Intent intent = new Intent(context,
 							KaoXiangActivity.class);
 					v.getContext().startActivity(intent);
-				}
+				}*/
 				if (mainMap.getKey().equals("D0001")) { //通用工站
 					Intent intent = new Intent(context,
 							TongYongActivity.class);
@@ -204,6 +207,14 @@ public class MainMyAdapter extends BaseAdapter {
 				}
 				if (mainMap.getKey().equals("K0")) { //取样
 					Intent intent = new Intent(context,ORT_quyang.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("D0050")) { //料盒解绑
+					Intent intent = new Intent(context,JieBangMboxActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				if (mainMap.getKey().equals("E6001")) { //维修申请
+					Intent intent = new Intent(context,shebeiweixiuActivity.class);
 					v.getContext().startActivity(intent);
 				}
 			}

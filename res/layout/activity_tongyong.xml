@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingLeft="13dp"
     android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context="com.example.yimei_v01.TongYongActivity" >
 
@@ -43,14 +43,15 @@
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
                 android:ems="10"
-                android:maxLength="12"
                 android:enabled="true"
                 android:imeOptions="actionDone"
-                android:tag="通用作业员"
                 android:inputType="text"
                 android:labelFor="@+id/yimei_user_edt"
-                android:paddingLeft="10dp" />
+                android:maxLength="12"
+                android:paddingLeft="10dp"
+                android:tag="通用作业员" />
         </TableRow>
+
         <TableRow android:paddingTop="20dp" >
 
             <TextView
@@ -67,10 +68,55 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="通用设备号"
                 android:labelFor="@+id/yimei_equipment_edt"
-                android:paddingLeft="10dp" />
+                android:paddingLeft="10dp"
+                android:tag="通用设备号" />
         </TableRow>
+
+        <LinearLayout
+            android:id="@+id/mboxTab"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+		  
+            <TextView
+                android:id="@+id/oldMboxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#032eff" />
+            
+            <EditText
+                android:id="@+id/yimei_tongyong_oldMbox"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_edittext"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_tongyong_oldMbox"
+                android:paddingLeft="6dp"
+                android:tag="旧料盒号" />
+
+            
+            <TextView
+                android:id="@+id/newMboxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#032eff" />
+            <EditText
+                android:id="@+id/yimei_tongyong_newMbox"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:paddingLeft="6dp"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_tongyong_newMbox"
+                android:tag="新料盒号" />
+        </LinearLayout>
 
         <TableRow android:paddingTop="20dp" >
 
@@ -88,10 +134,10 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="通用批次号"
                 android:labelFor="@+id/yimei_proNum_edt"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:tag="通用批次号" />
         </TableRow>
 
         <LinearLayout
@@ -192,6 +238,7 @@
                     android:gravity="center"
                     android:text="@string/Data5"
                     android:textColor="#850" />
+
                 <TextView
                     android:layout_width="100dip"
                     android:layout_height="fill_parent"

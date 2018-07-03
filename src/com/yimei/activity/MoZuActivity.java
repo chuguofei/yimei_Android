@@ -684,11 +684,11 @@ public class MoZuActivity extends Activity {
 						if (mListView != null) {
 							mListView.setAdapter(null);
 							ToastUtil.showToast(getApplicationContext(),
-									"请检查设备号和制程是否正确!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						} else {
 							ToastUtil.showToast(getApplicationContext(),
-									"请检查设备号和制程是否正确!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 
 							MyApplication.nextEditFocus(yimei_mozu_sbid_edt);
 						}

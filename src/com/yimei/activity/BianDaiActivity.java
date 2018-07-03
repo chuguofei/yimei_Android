@@ -557,11 +557,11 @@ public class BianDaiActivity extends Activity {
 								BianDaiAdapter.notifyDataSetChanged();
 							}
 							ToastUtil.showToast(getApplicationContext(),
-									"没有该设备号!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						} else {
 							ToastUtil.showToast(getApplicationContext(),
-									"没有该设备号!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						}
 					} else {
@@ -589,11 +589,11 @@ public class BianDaiActivity extends Activity {
 								BianDaiAdapter.notifyDataSetChanged();
 							}
 							ToastUtil.showToast(getApplicationContext(),
-									"没有该设备号!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						} else {
 							ToastUtil.showToast(getApplicationContext(),
-									"没有该设备号!", 0);
+									"设备与制程不匹或该设备处于维修状态!", 0);
 							MyApplication.nextEditFocus(yimei_biandai_sbid_edt);
 						}
 						return;

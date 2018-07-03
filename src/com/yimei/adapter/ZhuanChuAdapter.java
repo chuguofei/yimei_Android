@@ -56,8 +56,6 @@ public class ZhuanChuAdapter extends BaseAdapter {
 					.findViewById(R.id.yimei_zhuanchu_sid);
 			viewHolder.yimei_zhuanchu_zcno1 = (TextView) convertView
 					.findViewById(R.id.yimei_zhuanchu_zcno1);
-			viewHolder.yimei_zhuanchu_slkid = (TextView) convertView
-					.findViewById(R.id.yimei_zhuanchu_slkid);
 			viewHolder.yimei_zhuanchu_prd_name = (TextView) convertView
 					.findViewById(R.id.yimei_zhuanchu_prd_name);
 			viewHolder.yimei_zhuanchu_qty = (TextView) convertView
@@ -71,7 +69,6 @@ public class ZhuanChuAdapter extends BaseAdapter {
 		viewHolder.yimei_zhuanchu_zcno.setText((String) map.get("zcno"));
 		viewHolder.yimei_zhuanchu_sid.setText((String) map.get("sid"));
 		viewHolder.yimei_zhuanchu_zcno1.setText((String) map.get("zcno1"));
-		viewHolder.yimei_zhuanchu_slkid.setText((String) map.get("slkid"));
 		viewHolder.yimei_zhuanchu_prd_name.setText((String) map.get("prd_name"));
 		viewHolder.yimei_zhuanchu_qty.setText((String) map.get("qty"));
 		return convertView;

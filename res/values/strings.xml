@@ -8,6 +8,7 @@
     <string name="yimei_gujing_user">作业员</string>
     <string name="yimei_gujing_equipment">设　备</string>
     <string name="yimei_gujing_proNum">生产批号</string>
+    <string name="yimei_gujing_oldmbox">料盒号</string>
     <!-- 烤箱 -->
     <string name="yimei_kaoxiang_user">作业员</string>
     <string name="yimei_kaoxiang_num">烤箱号</string>
@@ -299,6 +300,10 @@
     <string name="pinzhiTitle">品质管理</string>
     <string name="xunjian_error_Title">异常通知单</string>
     <string name="ort_quyang_Title">ORT取样</string>
+    <string name="yimei_weixiuTitle">维修申请</string>
+    <!-- 料盒 -->
+    <string name="yimei_mbox_jiebang">料盒</string>
+    <string name="weixiuyuanyin">维修原因</string>
     
     
     <string name="action_settings">Settings</string>

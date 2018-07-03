@@ -14,6 +14,7 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fast
 import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
+import com.yimei.shebei.shebeiweixiuActivity;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.OkHttpUtils;
@@ -289,6 +290,15 @@ public class LoadingActivity extends Activity {
 							Intent intent = new Intent(LoadingActivity.this,PinZhiGuanLi_Activity.class);
 							startActivity(intent);
 						}
+						if (caidan.equals("D0050")) { //解绑料盒
+							Intent intent = new Intent(LoadingActivity.this,JieBangMboxActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("E6001")) { //维修申请
+							Intent intent = new Intent(LoadingActivity.this,shebeiweixiuActivity.class);
+							startActivity(intent);
+						}
+						
 						break;
 					case 0:
 						Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

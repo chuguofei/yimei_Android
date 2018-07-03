@@ -18,21 +18,21 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/yimei_zhijulingchu_sid1"
+                android:id="@+id/yimei_zhijulingchu_zcno"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#850" />
 
             <TextView
-                android:id="@+id/yimei_zhijulingchu_sbid"
+                android:id="@+id/yimei_zhijulingchu_sid"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#850" />
 
             <TextView
-                android:id="@+id/yimei_zhijulingchu_slkid"
+                android:id="@+id/yimei_zhijulingchu_zcno1"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
@@ -46,7 +46,7 @@
                 android:textColor="#850" />
 
             <TextView
-                android:id="@+id/yimei_zhijulingchu_mkdate"
+                android:id="@+id/yimei_zhijulingchu_qty"
                 android:layout_width="100dip"
                 android:layout_height="fill_parent"
                 android:gravity="center"
