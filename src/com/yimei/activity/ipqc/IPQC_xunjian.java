@@ -126,7 +126,7 @@ public class IPQC_xunjian extends Activity {
 					if (yimei_xunjian_sbid.getText().toString().trim()
 							.equals("")
 							|| yimei_xunjian_sbid.getText().toString().trim() == null) {
-						ToastUtil.showToast(getApplicationContext(), "作业员不能为空",
+						ToastUtil.showToast(getApplicationContext(), "设备号不能为空",
 								0);
 						yimei_xunjian_sbid.selectAll();
 						return;

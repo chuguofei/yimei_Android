@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView.OnEditorActionListener;
@@ -175,8 +176,14 @@ public class ZhiJuLingChuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_zhijulingchu);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		String cont;
+		if(MyApplication.user.equals("admin")){
+			cont="";
+		}else{
+			cont =  "~sorg='"+MyApplication.sorg+"'";
+		}
 		OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-				MyApplication.QueryBatNo("M_PROCESS", "~sorg='"+MyApplication.sorg+"'"), null, mHander, true,
+				MyApplication.QueryBatNo("M_PROCESS",cont), null, mHander, true,
 				"SpinnerValue");
 
 		selectValue = (Spinner) findViewById(R.id.zhijulingchu_selectValue);
@@ -399,16 +406,20 @@ public class ZhiJuLingChuActivity extends Activity {
 						if(string.equals("Query_shiyongNun")){ //查询治具使用次数
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
-							JSONObject json =  (JSONObject) ((JSONArray)jsonObject.get("values")).get(0);
-							int totalqty = 0;
-							int unprtnum = Integer.parseInt(json.get("unprtnum").toString());
-							if(!json.containsKey("totalqty")){
-								totalqty = 160;
+							if(Integer.parseInt(jsonObject.get("code").toString())==0){
+								
 							}else{
-								totalqty = Integer.parseInt(json.get("totalqty").toString());
+								JSONObject json =  (JSONObject) ((JSONArray)jsonObject.get("values")).get(0);
+								int totalqty = 0;
+								int unprtnum = Integer.parseInt(json.get("unprtnum").toString());
+								if(!json.containsKey("totalqty")){
+									totalqty = 160;
+								}else{
+									totalqty = Integer.parseInt(json.get("totalqty").toString());
+								}
+								shiyongNum = totalqty/unprtnum;
+								ToastUtil.showToast(ZhiJuLingChuActivity.this,String.valueOf(shiyongNum),0);
 							}
-							shiyongNum = totalqty/unprtnum;
-							ToastUtil.showToast(ZhiJuLingChuActivity.this,String.valueOf(shiyongNum),0);
 						}
 						if (string.equals("MOZRegisterQuery")) { // 模具登记查询（prd_no+id）
 							JSONObject jsonObject = JSON.parseObject(b
@@ -550,14 +561,12 @@ public class ZhiJuLingChuActivity extends Activity {
 									List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
 									// 给适配器添加数据
 									Map<String, String> map = new HashMap<String, String>();
-									map.put("sid1", piciJsonObject.get("sid1")
-											.toString());
+									map.put("sid1",yimei_zhijulingchu_proNum_edt.getText().toString());
 									map.put("sbid", mojuId);
 									map.put("slkid", piciJsonObject.get("sid").toString());
-									map.put("prd_no",
-											piciJsonObject.getString("prd_no"));
-									map.put("mkdate",
-											MyApplication.GetServerNowTime());
+									map.put("prd_no",piciJsonObject.getString("prd_no"));
+									map.put("zcno",zcno);
+									map.put("mkdate",MyApplication.GetServerNowTime());
 									mList.add(map);
 									if (ZhiJuLingChuAdapter == null) {
 										ZhiJuLingChuAdapter = new ZhiJuLingChuAdapter(
@@ -572,6 +581,7 @@ public class ZhiJuLingChuActivity extends Activity {
 										ZhiJuLingChuAdapter
 												.notifyDataSetChanged();
 									}
+									InputHidden();
 									yimei_zhijulingchu_mojuId.selectAll();
 								}
 							}
@@ -607,6 +617,15 @@ public class ZhiJuLingChuActivity extends Activity {
 			}
 		}
 	};
+	
+	/**
+	 * 隐藏键盘
+	 */
+	private void InputHidden() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 如果软键盘已经显示，则隐藏，反之则显示
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+	}
 	
 	private void showNormalDialog(String msg) {
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhiJuLingChuActivity.this);

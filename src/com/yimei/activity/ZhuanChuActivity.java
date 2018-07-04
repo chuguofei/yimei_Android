@@ -316,7 +316,7 @@ public class ZhuanChuActivity extends Activity {
 									showJson.put("sid", "");
 									showJson.put("sorg",MyApplication.sorg);
 									showJson.put("erid","0");
-									showJson.put("state","04");
+									showJson.put("state1","04");
 									showJson.put("op_c",yimei_zhuanchu_user.getText().toString().toUpperCase().trim());
 									showJson.put("state","0");
 									showJson.put("dcid",GetAndroidMacUtil.getMac());

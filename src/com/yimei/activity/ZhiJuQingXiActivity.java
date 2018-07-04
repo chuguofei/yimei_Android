@@ -398,7 +398,9 @@ public class ZhiJuQingXiActivity extends Activity {
 							if(Integer.parseInt(jsonObject.getString("code").toString()) == 0){
 								ToastUtil.showToast(getApplicationContext(),"没有该模具编号或制程！",0);
 								InputHidden(); 
-								zhangliEditClear();
+								if(A!=null){
+									zhangliEditClear();
+								}
 								if (mListView != null) {
 									mListView.setAdapter(null);
 									if (ZhiJuQingXiAdapter != null) {
@@ -496,7 +498,9 @@ public class ZhiJuQingXiActivity extends Activity {
 									mListView.setAdapter(ZhiJuQingXiAdapter);
 									InputHidden();
 									yimei_zhijuqingxi_mojuId.selectAll();
-									zhangliEditClear();
+									if(A!=null){										
+										zhangliEditClear();
+									}
 								}else{
 									ZhiJuQingXiAdapter.listData.add(map);
 									mListView.setAdapter(ZhiJuQingXiAdapter);

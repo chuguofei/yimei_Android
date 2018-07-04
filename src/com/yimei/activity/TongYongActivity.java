@@ -59,6 +59,12 @@ import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
 
+/**
+ * 200修改mes_precord
+ * 202修改mes_lot_plana
+ * @author Administrator
+ *
+ */
 public class TongYongActivity extends Activity {
 
 	static MyApplication myapp;
@@ -581,6 +587,37 @@ public class TongYongActivity extends Activity {
 					}
 				}
 				String string = b.getString("type");
+				if(string.equals("Query_Precord_chuzhan")){ //出站查询批次是否异常OA
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有料盒号
+						ToastUtil.showToast(gujingActivity,"查询异常没有该批次",0);
+					}else{
+						JSONObject json = (JSONObject) (((JSONArray) jsonObject
+								.get("values")).get(0));
+						if (json.get("state1").toString().equals("03")) {
+							if (!zcno.equals("41")) { // 烘烤站批量提交
+								Map<String, String> updateTimeMethod = MyApplication.updateServerTimeMethod(
+												MyApplication.DBID,MyApplication.user,
+												"03", "04",json.get("sid").toString(),
+												zuoyeyuan, zcno, "202");  //传主键
+								httpRequestQueryRecord(MyApplication.MESURL,updateTimeMethod,"chuzhanUpdata"); //出站修改状态
+							}
+						} else if (json.get("state1").toString().equals("02")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次【上料】不能出站！", 0);
+						} else if (json.get("state1").toString().equals("01")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次【入站】不能出站！", 0);
+						}else if (json.get("state1").toString().equals("0A")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次状态【异常】不能出站！", 0);
+						}else if (json.get("state1").toString().equals("0B")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次状态【暂停】不能出站！", 0);
+						}else if (json.get("state1").toString().equals("0C")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次状态【中止】不能出站！", 0);
+						}else if (json.get("state1").toString().equals("0D")) {
+							ToastUtil.showToast(getApplicationContext(),"选中的【"+json.get("sid1").toString()+"】批次状态【受控】不能出站！", 0);
+						}
+					}
+				}
 				if (string.equals("TimeOutLogin")) { // 超时登录
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
@@ -819,42 +856,34 @@ public class TongYongActivity extends Activity {
 						}
 						
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
-							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",
-									0);
+							ToastUtil.showToast(gujingActivity, "该批号不具备入站条件!",0);
 							MyApplication.nextEditFocus(yimei_proNum_edt);
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString()
-								.equals("02")
-								|| jsonValue.get("state").toString()
-										.equals("03")) {
+						} else if (jsonValue.get("state").toString().equals("02")
+								|| jsonValue.get("state").toString().equals("03")) {
 							ToastUtil.showToast(gujingActivity, "该批号状态为【入站】!",
 									0);
 							MyApplication.nextEditFocus(yimei_proNum_edt);
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString()
-								.equals("04")) {
-							ToastUtil.showToast(gujingActivity, "该批号状态为【出站】!",
-									0);
+						} else if (jsonValue.get("state").toString().equals("04")) {
+							ToastUtil.showToast(gujingActivity, "该批号状态为【出站】!",0);
 							MyApplication.nextEditFocus(yimei_proNum_edt);
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString()
-								.equals("07")) {
+						} else if (jsonValue.get("state").toString().equals("07")) {
 							ToastUtil.showToast(gujingActivity,
 									"该批号状态为【出站待检】!", 0);
 							MyApplication.nextEditFocus(yimei_proNum_edt);
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString()
-								.equals("0A")) {
-							ToastUtil.showToast(gujingActivity,
-									"该批号状态为【异常状态】!", 0);
+						} else if (jsonValue.get("state").toString().equals("0A")) {
+							ToastUtil.showToast(gujingActivity,"该批号状态为【异常状态】!", 0);
 							MyApplication.nextEditFocus(yimei_proNum_edt);
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
@@ -1199,6 +1228,8 @@ public class TongYongActivity extends Activity {
 							SlkidMapJudge.clear();
 						}
 					}
+					//删除数据
+					new mesAllMethod(TongYongActivity.this).delteAll();
 					currSlkid = null;
 					// 判断设备号在服务器中是否存在
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
@@ -1223,7 +1254,7 @@ public class TongYongActivity extends Activity {
 							new_mes.setFircheck(jsonValue.get("fircheck")
 									.toString());
 							if (!gujing_list.IsSid1AndZncoAndSbid(
-									new_mes.getSid1(), new_mes.getZcno(),4
+									new_mes.getSid1(), new_mes.getZcno(),
 									new_mes.getSbid())) {
 								// 向本地库添加批次号（多条）
 								if (gujing_list.addSbidData(new_mes)) {
@@ -1352,8 +1383,7 @@ public class TongYongActivity extends Activity {
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("id").toString()) == 0
-							|| Integer
-									.parseInt(jsonObject.get("id").toString()) == 1) {
+							|| Integer.parseInt(jsonObject.get("id").toString()) == 1) {
 						for (int i = 0; i < updatekaigongSid1.size(); i++) {
 							mesPrecord m = updatekaigongSid1.get(i);
 							Log.i("mes", m.toString());
@@ -1550,6 +1580,9 @@ public class TongYongActivity extends Activity {
 				ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
 			} else {
 				int count = 0;
+				if (updatekaigongSid1 != null) {
+					updatekaigongSid1.clear();
+				}
 				for (int j = 0; j < scrollAdapter.getCount(); j++) {
 					if (state.get(j)) {
 						if (state.get(j) != null) {
@@ -1564,7 +1597,7 @@ public class TongYongActivity extends Activity {
 							updatekaigongSid1.add(m);
 							count++;
 						}
-					}
+					} 
 				}
 				String ShowstateName = null;
 				if ("kaigongUpdata".equals(publicState)) {
@@ -1628,8 +1661,6 @@ public class TongYongActivity extends Activity {
 								// ===========================判断是否做了首检===============================================
 								// 打了首检标示（fircheck：首件检）
 								if (json.get("fircheck").toString().equals("1")) {
-									String a = json.get("prd_no").toString();
-									String a1 = EQIRP_prdno;
 									if (!json.get("prd_no").toString()
 											.equals(EQIRP_prdno)) { // 判断当前机型和设备中的机型是否匹配
 										ToastUtil.showToast(gujingActivity, "【"
@@ -1791,72 +1822,63 @@ public class TongYongActivity extends Activity {
 											MyApplication.MESURL,
 											updateTimeMethod, publicState);
 								}
-							} else if (json.get("state1").toString()
-									.equals("03")) {
+							} else if (json.get("state1").toString().equals("03")) {
 								ToastUtil.showToast(getApplicationContext(),
-										"选中的批次已是开工状态！", 0);
+										"选中的【"+json.get("sid1").toString()+"】批次已是开工状态！", 0);
+								updatekaigongSid1.clear(); // 清空需要修改的列表
+							}else if (json.get("state1").toString().equals("0A")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的【"+json.get("sid1").toString()+"】批次状态【异常】不能开工！", 0);
+								updatekaigongSid1.clear(); // 清空需要修改的列表
+							}else if (json.get("state1").toString().equals("0B")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的【"+json.get("sid1").toString()+"】批次状态【暂停】不能开工！", 0);
+								updatekaigongSid1.clear(); // 清空需要修改的列表
+							}else if (json.get("state1").toString().equals("0C")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的【"+json.get("sid1").toString()+"】批次状态【中止】不能开工！", 0);
+								updatekaigongSid1.clear(); // 清空需要修改的列表
+							}else if (json.get("state1").toString().equals("0D")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的【"+json.get("sid1").toString()+"】批次状态【受控】不能开工！", 0);
+								updatekaigongSid1.clear(); // 清空需要修改的列表
 							}
 						} else if (publicState.equals("chuzhanUpdata")) {
-							if (json.get("state1").toString().equals("03")) {
-								int chooseTime = MyApplication
-										.ChooseTime(mes_precord.getHpdate());
-								// int a = Integer.parseInt(ptime.get(zcno));
-								if (chooseTime >= Integer.parseInt(ptime
-										.get(zcno)) || ptime == null) {
-									if (!zcno.equals("41")) { // 烘烤站批量提交
-										Map<String, String> updateTimeMethod = MyApplication
-												.updateServerTimeMethod(
-														MyApplication.DBID,
-														MyApplication.user,
-														"03", "04",
-														mes_precord.getSid(),
-														zuoyeyuan, zcno, "202");
-										httpRequestQueryRecord(
-												MyApplication.MESURL,
-												updateTimeMethod, publicState);
-									} else {
-										JSONObject jsonobj_200 = new JSONObject(); // 200批量提交
-										jsonobj_200.put("oldstate",
-												json.get("state1").toString());
-										jsonobj_200.put("newstate", "04");
-										jsonobj_200.put("sid", json.get("sid1")
-												.toString());
-										jsonobj_200.put("slkid",
-												json.get("slkid").toString());
-										jsonobj_200.put("zcno", zcno);
-										jsonArr_200.add(jsonobj_200);
-
-										JSONObject jsonobj_202 = new JSONObject();
-										jsonobj_202.put("oldstate",
-												json.get("state1").toString());
-										jsonobj_202.put("newstate", "04");
-										jsonobj_202.put("sid",
-												mes_precord.getSid());
-										jsonobj_202.put("op", zuoyeyuan);
-										jsonobj_202.put("zcno", zcno);
-										jsonArr_202.add(jsonobj_202);
-
-										gujing_list
-												.delSid(mes_precord.getSid());
-									}
-								} else {
-									ToastUtil
-											.showToast(
-													getApplicationContext(),
-													"选中的批次不能出站,已开工"
-															+ chooseTime + "分！",
-													0);
+							int chooseTime = MyApplication.ChooseTime(mes_precord.getHpdate());
+							// int a = Integer.parseInt(ptime.get(zcno));
+							if (chooseTime >= Integer.parseInt(ptime
+									.get(zcno)) || ptime == null) {
+								if(zcno.equals("41")) {
+									JSONObject jsonobj_200 = new JSONObject(); // 200批量提交
+									jsonobj_200.put("oldstate",
+											json.get("state1").toString());
+									jsonobj_200.put("newstate", "04");
+									jsonobj_200.put("sid", json.get("sid1")
+											.toString());
+									jsonobj_200.put("slkid",
+											json.get("slkid").toString());
+									jsonobj_200.put("zcno", zcno);
+									jsonArr_200.add(jsonobj_200);
+	
+									JSONObject jsonobj_202 = new JSONObject();
+									jsonobj_202.put("oldstate",
+											json.get("state1").toString());
+									jsonobj_202.put("newstate", "04");
+									jsonobj_202.put("sid",
+											mes_precord.getSid());
+									jsonobj_202.put("op", zuoyeyuan);
+									jsonobj_202.put("zcno", zcno);
+									jsonArr_202.add(jsonobj_202);
+	
+									gujing_list.delSid(mes_precord.getSid());
+								}else{								
+									Map<String, String> Query_Precord = MyApplication.QueryBatNo("MSBMOLIST","~sid1='"+json.get("sid1")+"'"
+											+ " and sbid='"+shebeihao+"' and zcno='"+zcno+"'");
+									httpRequestQueryRecord(MyApplication.MESURL, Query_Precord,"Query_Precord_chuzhan");
 								}
-							} else if (json.get("state1").toString()
-									.equals("02")) {
-								ToastUtil.showToast(getApplicationContext(),
-										"选中的批次不能出站！", 0);
-							} else if (json.get("state1").toString()
-									.equals("01")) {
-								ToastUtil.showToast(getApplicationContext(),
-										"选中的批次不能出站！", 0);
+							}else {
+								ToastUtil.showToast(getApplicationContext(),"选中的批次不能出站,已开工"+ chooseTime + "分！",0);
 							}
-
 						}
 					}
 					if (jsonArr_200.size() != 0) { // 烘烤站批量提交
@@ -1900,6 +1922,13 @@ public class TongYongActivity extends Activity {
 		}
 	}
 
+	/**
+	 * 查询记录表是否异常
+	 */
+	private void QueryJiluIs_catch(){
+		
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuItem item = menu.add(0, 0, 0, "");
