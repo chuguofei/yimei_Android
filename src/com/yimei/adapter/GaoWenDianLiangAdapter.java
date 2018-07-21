@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.yimei.activity.R;
+import com.yimei.activity.TongYongGuoZhanActivity;
 import com.yimei.activity.kuaiguozhan.DiDianLiuActivity;
 import com.yimei.activity.kuaiguozhan.GaoWenDianLiangActivity;
 import com.yimei.activity.kuaiguozhan.KanDaiActivity;
 import com.yimei.activity.kuaiguozhan.TieBeiJiaoActivity;
 import com.yimei.activity.kuaiguozhan.WaiGuanActivity;
+import com.yimei.activity.kuaiguozhan.plasmaActivity;
 import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.ToastUtil;
 
@@ -74,6 +76,14 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 				KanDaiActivity.addHViews((GeneralCHScrollView) convertView
 						.findViewById(R.id.gaowendianliang_item_scroll));
 			}
+			if(title.equals("plasma过站")){
+				plasmaActivity.addHViews((GeneralCHScrollView) convertView
+						.findViewById(R.id.gaowendianliang_item_scroll));
+			}
+			if(title.equals("通用过站")){
+				TongYongGuoZhanActivity.addHViews((GeneralCHScrollView) convertView
+						.findViewById(R.id.gaowendianliang_item_scroll));
+			}
 			viewHolder.gaowendianliang_op  = (TextView) convertView
 					.findViewById(R.id.gaowendianliang_op);
 			viewHolder.gaowendianliang_sid1 = (TextView) convertView
@@ -86,8 +96,6 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 					.findViewById(R.id.gaowendianliang_qty);
 			viewHolder.gaowendianliang_zcno = (TextView) convertView
 					.findViewById(R.id.gaowendianliang_zcno);
-			viewHolder.gaowendianliang_zcno1 = (TextView) convertView
-					.findViewById(R.id.gaowendianliang_zcno1);
 			convertView.setTag(viewHolder);
 		} else {// 如果缓存池中有对应的view缓存，则直接通过getTag取出viewHolder
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -100,7 +108,6 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 		viewHolder.gaowendianliang_prd_no.setText((String) map.get("prd_no"));
 		viewHolder.gaowendianliang_qty.setText((String) map.get("qty"));
 		viewHolder.gaowendianliang_zcno.setText((String) map.get("zcno"));
-		viewHolder.gaowendianliang_zcno1.setText((String) map.get("zcno1"));
 		return convertView;
 	}
 
@@ -111,6 +118,5 @@ public class GaoWenDianLiangAdapter extends BaseAdapter {
 		public TextView gaowendianliang_prd_no;
 		public TextView gaowendianliang_qty;
 		public TextView gaowendianliang_zcno;
-		public TextView gaowendianliang_zcno1;
 	}
 }

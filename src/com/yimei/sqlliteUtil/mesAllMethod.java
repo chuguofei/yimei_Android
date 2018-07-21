@@ -32,9 +32,9 @@ public class mesAllMethod {
 		sqlitedb = dbhelp.getWritableDatabase();
 		try {
 			sqlitedb.execSQL(
-					"insert into mes_precord (fircheck,dcid,sbid,op,mkdate,smake,sbuid,prd_name,zcno,sid1,slkid,sid,prd_no,qty,zcno1,state,remark,bfirst,state1"
-							+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-					new Object[] {mes.getFircheck(),mes.getDcid(),mes.getSbid(),mes.getOp(),mes.getMkdate(),mes.getSmake(),mes.getSbuid(),mes.getPrd_name(), mes.getZcno(),
+					"insert into mes_precord (mbox,fircheck,dcid,sbid,op,mkdate,smake,sbuid,prd_name,zcno,sid1,slkid,sid,prd_no,qty,zcno1,state,remark,bfirst,state1"
+							+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] {mes.getMbox(),mes.getFircheck(),mes.getDcid(),mes.getSbid(),mes.getOp(),mes.getMkdate(),mes.getSmake(),mes.getSbuid(),mes.getPrd_name(), mes.getZcno(),
 							mes.getSid1(), mes.getSlkid(), mes.getSid(),
 							mes.getPrd_no(), mes.getQty(), mes.getZcno1(),
 							mes.getState(),mes.getRemark(),
@@ -62,14 +62,14 @@ public class mesAllMethod {
 		sqlitedb = dbhelp.getWritableDatabase();
 		try {
 			sqlitedb.execSQL(
-					"insert into mes_precord (fircheck,sid,sid1,sbuid,zcno,op,sbid,slkid,"
-							+ "prd_no,qty,bok,zcno1,state1,state,hpdate,dcid,smake,mkdate,remark,bfirst) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-					new Object[] {mes.getFircheck(),mes.getSid(),mes.getSid1(), mes.getSbuid(),
+					"insert into mes_precord (mbox,fircheck,sid,sid1,sbuid,zcno,op,sbid,slkid,"
+							+ "prd_no,qty,bok,zcno1,state1,state,hpdate,dcid,smake,mkdate,remark,bfirst) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] {mes.getMbox(),mes.getFircheck(),mes.getSid(),mes.getSid1(), mes.getSbuid(),
 							mes.getZcno(), mes.getOp(), mes.getSbid(),
 							mes.getSlkid(), mes.getPrd_no(), mes.getQty(),
 							mes.getBok(), mes.getZcno1(), mes.getState1(),
 							mes.getState(), mes.getHpdate(), mes.getDcid(),
-							mes.getSmake(), mes.getRemark(),
+							mes.getSmake(), mes.getMkdate() ,mes.getRemark(),
 							mes.getBfirst() });
 		} catch (SQLException e) {
 			Log.e("addNewIdData", e.toString());
@@ -220,7 +220,7 @@ public class mesAllMethod {
 		sqlitedb = dbhelp.getWritableDatabase();
 		Cursor cursor = sqlitedb
 				.rawQuery(
-						"select fircheck,prd_name,zcno,op,sbid,sid1,aa,ab,ac,slkid,sid,sbuid,prd_no,qty,bok,clid,unit,"
+						"select mbox,fircheck,prd_name,zcno,op,sbid,sid1,aa,ab,ac,slkid,sid,sbuid,prd_no,qty,bok,clid,unit,"
 								+ "zcno1,state1,state,creftimes,erid,hpdate,dcid,smake,mkdate,iid,"
 								+ "remark,bfirst from mes_precord where sbid=? and zcno=?",
 						new String[]{sbid.toString().toUpperCase(),zcno});
@@ -230,9 +230,9 @@ public class mesAllMethod {
 			list = new ArrayList<mesPrecord>();
 			while (cursor.moveToNext()) {
 				mesPrecord m = new mesPrecord();
+				m.setMbox(cursor.getString(cursor.getColumnIndex("mbox")));
 				m.setFircheck(cursor.getString(cursor.getColumnIndex("fircheck")));
-				m.setPrd_name(cursor.getString(cursor
-						.getColumnIndex("prd_name")));
+				m.setPrd_name(cursor.getString(cursor.getColumnIndex("prd_name")));
 				m.setZcno(cursor.getString(cursor.getColumnIndex("zcno")));
 				m.setOp(cursor.getString(cursor.getColumnIndex("op")));
 				m.setSbid(cursor.getString(cursor.getColumnIndex("sbid")));

@@ -64,7 +64,15 @@ public class mesPrecord implements Serializable {
 	private int cref3;
 	private String fircheck; //首检检验
 	private String textcolor; //是否进行首检
-	
+	private String mbox;
+
+	public String getMbox() {
+		return mbox;
+	}
+
+	public void setMbox(String mbox) {
+		this.mbox = mbox;
+	}
 
 	public String getTextcolor() {
 		return textcolor;

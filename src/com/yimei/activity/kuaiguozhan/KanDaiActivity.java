@@ -5,20 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.R.color;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
@@ -49,7 +57,10 @@ public class KanDaiActivity extends Activity {
 	private EditText gaowen_user, gaowen_sid1;
 	private String op, sid1;
 	private GaoWenDianLiangAdapter gaowendianliangApapter;
-
+	private JSONObject BadJson;
+	private EditText bad_fracture,bad_crushed,bad_poinrem,bad_broken,bad_pressing,bad_overflow;
+	private String bad_sid;
+	private Button BadRecord;
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -122,6 +133,9 @@ public class KanDaiActivity extends Activity {
 		GeneralCHScrollView headerScroll = (GeneralCHScrollView) findViewById(R.id.gaowendianliang_scroll_title);
 		GeneralCHScrollView.add(headerScroll);
 		mListView = (ListView) findViewById(R.id.gaowendianliang_scroll_list);
+		BadRecord = (Button) findViewById(R.id.BadRecord);
+		BadRecord.setEnabled(false);
+		BadRecord.setTextColor(Color.GRAY);
 	}
 
 	@Override
@@ -131,7 +145,14 @@ public class KanDaiActivity extends Activity {
 		super.onResume();
 		gaowen_user = (EditText) findViewById(R.id.gaowen_user);
 		gaowen_sid1 = (EditText) findViewById(R.id.gaowen_sid1);
-
+		
+		BadRecord.setOnClickListener(new Button.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showNormalDialog();
+			}
+		});
 		gaowen_user.setOnEditorActionListener(EditListener);
 		gaowen_sid1.setOnEditorActionListener(EditListener);
 
@@ -228,6 +249,22 @@ public class KanDaiActivity extends Activity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
+						// {"message":"请重新登录","id":-1}
+						JSONObject LoginTimeMess = JSON.parseObject(b.getString(
+								"jsonObj").toString());
+						if (LoginTimeMess.containsKey("message")) {
+							if (LoginTimeMess.get("message").equals("请重新登录")) { // 超时登录
+								LoginTimeout_dig("超时登录", "请重新登录!");
+								return;
+							}
+						}
+						if (string.equals("TimeOutLogin")) { // 超时登录
+							JSONObject jsonObject = JSON.parseObject(b.getString(
+									"jsonObj").toString());
+							if (jsonObject.getInteger("id") != 0) {
+								LoginTimeout_dig("密码错误", "");
+							}
+						}
 						if (string.equals("QuertSid1")) { 
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
@@ -241,7 +278,10 @@ public class KanDaiActivity extends Activity {
 							} else {
 								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
 										.get("values")).get(0);
-								// 0.测试站 1.编带站 2.看带站
+								if(Integer.parseInt(jsonValue.get("holdid").toString()) == 1){
+									ToastUtil.showToast(KanDaiActivity.this,"该lot号已被【HOLD】",0);
+								}
+								// 0.测试站 1.编带站 2.看带站 3.已检验
 								if (Integer.parseInt(jsonValue.get("lotstate")
 										.toString()) == 0) {
 									ToastUtil.showToast(KanDaiActivity.this,
@@ -283,29 +323,23 @@ public class KanDaiActivity extends Activity {
 								gaowen_sid1.selectAll();
 								return;
 							} else {
-								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject
-										.get("values")).get(0);
-								jsonValue.put("sbuid", "D0071");
-								jsonValue.put("dcid",
-										GetAndroidMacUtil.getMac());
-								jsonValue.put("hpdate",
-										MyApplication.GetServerNowTime());
+								JSONObject jsonValue = (JSONObject) ((JSONArray) jsonObject.get("values")).get(0);
+								jsonValue.put("sbuid", "D0001");
+								jsonValue.put("dcid",GetAndroidMacUtil.getMac());
+								jsonValue.put("hpdate",MyApplication.GetServerNowTime());
 								jsonValue.put("smake", MyApplication.user);
 								jsonValue.put("lotno", sid1);
 								jsonValue.put("bok","1");
-								jsonValue.put("mkdate",
-										MyApplication.GetServerNowTime());
+								jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 								jsonValue.put("op", op);
 								jsonValue.put("op_b", op);
 								jsonValue.put("op_o", op);
 								jsonValue.put("state1", "04");
-								jsonValue.put("prd_name",
-										jsonValue.get("prd_name"));
-								jsonValue.put("outdate",
-										MyApplication.GetServerNowTime());
+								jsonValue.put("prd_name",jsonValue.get("prd_name"));
+								jsonValue.put("outdate",MyApplication.GetServerNowTime());
 								jsonValue.put("slkid", jsonValue.get("sid"));
-								jsonValue
-										.put("zcno", MyApplication.KANDAI_ZCNO);
+								jsonValue.put("zcno", MyApplication.KANDAI_ZCNO);
+								BadJson = jsonValue; 
 								// savedate--------------------------------------------
 								Map<String, String> mesIdMap = MyApplication
 										.httpMapKeyValueMethod(
@@ -372,6 +406,21 @@ public class KanDaiActivity extends Activity {
 						if (string.equals("savedata")) {
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
+							if(Integer.parseInt(jsonObject.get("id").toString())==0){
+								BadRecord.setEnabled(true);
+								BadRecord.setTextColor(Color.RED);
+ 								JSONObject data = (JSONObject) jsonObject.get("data");
+ 								bad_sid = data.get("sid").toString();
+							}
+							System.out.println(jsonObject);
+						}
+						if (string.equals("bad_savedata")) {
+							JSONObject jsonObject = JSON.parseObject(b
+									.getString("jsonObj").toString());
+							if(Integer.parseInt(jsonObject.get("id").toString())==0){
+								BadRecord.setEnabled(false);
+								BadRecord.setTextColor(Color.GRAY);
+							}
 							System.out.println(jsonObject);
 						}
 						if (string.equals("updateTableState")) {
@@ -387,6 +436,115 @@ public class KanDaiActivity extends Activity {
 			}
 		}
 	};
+	
+	/**
+	 * 不良记录
+	 */
+	private void showNormalDialog() {
+
+		LayoutInflater inflater = getLayoutInflater();
+		View dialog = inflater.inflate(R.layout.activity_badprecord_dig,
+				(ViewGroup) findViewById(R.id.kandai_bad));
+		bad_fracture = (EditText) dialog.findViewById(R.id.bad_fracture);
+		bad_crushed = (EditText) dialog.findViewById(R.id.bad_crushed);
+		bad_poinrem = (EditText) dialog.findViewById(R.id.bad_poinrem);
+		bad_broken = (EditText) dialog.findViewById(R.id.bad_broken);
+		bad_pressing = (EditText) dialog.findViewById(R.id.bad_pressing);
+		bad_overflow = (EditText) dialog.findViewById(R.id.bad_overflow);
+		EditText bad_lotno = (EditText) dialog.findViewById(R.id.bad_lotno);
+		bad_lotno.setKeyListener(null);
+		bad_lotno.setText(BadJson.get("lotno").toString());
+		try {
+			final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+					KanDaiActivity.this);
+			normalDialog.setTitle("不良记录");
+			normalDialog.setView(dialog);
+			normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+			normalDialog.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							JSONObject json_bad = new JSONObject();
+							json_bad.put("sid",bad_sid);
+							json_bad.put("slkid",BadJson.get("slkid")==null?"":BadJson.get("slkid"));
+							json_bad.put("sid1",BadJson.get("sid1")==null?"":BadJson.get("sid1"));
+							json_bad.put("lotno",BadJson.get("lotno").toString());
+							json_bad.put("prd_no",BadJson.get("prd_no")==null?"":BadJson.get("prd_no"));
+							json_bad.put("mkdate",MyApplication.GetServerNowTime());
+							json_bad.put("fracture",bad_fracture.getText().toString().trim().equals("")?0:bad_fracture.getText().toString().trim());
+							json_bad.put("crushed",bad_crushed.getText().toString().trim().equals("")?0:bad_crushed.getText().toString().trim());
+							json_bad.put("poinrem",bad_poinrem.getText().toString().trim().equals("")?0:bad_poinrem.getText().toString().trim());
+							json_bad.put("broken",bad_broken.getText().toString().trim().equals("")?0:bad_broken.getText().toString().trim());
+							json_bad.put("pressing",bad_pressing.getText().toString().trim().equals("")?0:bad_pressing.getText().toString().trim());
+							json_bad.put("overflow",bad_overflow.getText().toString().trim().equals("")?0:bad_overflow.getText().toString().trim());
+						
+							// savedate--------------------------------------------
+							Map<String, String> mesIdMap = MyApplication
+									.httpMapKeyValueMethod(
+											MyApplication.DBID, "savedata",
+											MyApplication.user,
+											json_bad.toJSONString(),
+											"D0071A", "1");
+							OkHttpUtils.getInstance().getServerExecute(
+									MyApplication.MESURL, null, mesIdMap,
+									null, mHander, true, "bad_savedata");
+						}
+					});
+			normalDialog.setNegativeButton("取消", null);
+			// 显示
+			normalDialog.show();
+		} catch (Exception e1) {
+			ToastUtil.showToast(KanDaiActivity.this, e1.toString(), 0);
+		}
+	}
+	
+	/**
+	 * 超时登录
+	 * 
+	 * @param Title
+	 * @param msg
+	 */
+	private void LoginTimeout_dig(String Title, String msg) {
+		LayoutInflater inflater = getLayoutInflater();
+		View dialog = inflater.inflate(R.layout.activity_mesurl_dig,
+				(ViewGroup) findViewById(R.id.dialogurl));
+		final EditText usertext = (EditText) dialog.findViewById(R.id.mesurl);
+		final EditText userpwd = (EditText) dialog.findViewById(R.id.mesdbid);
+		final TextView logintime_usertext = (TextView) dialog
+				.findViewById(R.id.logintime_user);
+		final TextView logintime_pwdtext = (TextView) dialog
+				.findViewById(R.id.logintime_pwd);
+		logintime_usertext.setText("用户名");
+		logintime_pwdtext.setText("密码");
+		userpwd.setInputType(InputType.TYPE_CLASS_TEXT
+				| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		usertext.setText(MyApplication.user);
+		usertext.setKeyListener(null);
+
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				KanDaiActivity.this);
+		normalDialog.setTitle(Title);
+		normalDialog.setView(dialog);
+		// normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+		// + "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", usertext.getText().toString());
+						map.put("apiId", "login");
+						map.put("pwd", MyApplication.Base64pwd(userpwd
+								.getText().toString()));
+						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
+								null, map, null, mHander, true, "TimeOutLogin");
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
 		if (!GeneralCHScrollView.isEmpty()) {

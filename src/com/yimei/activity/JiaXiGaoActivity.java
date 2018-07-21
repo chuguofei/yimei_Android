@@ -404,7 +404,7 @@ public class JiaXiGaoActivity extends Activity {
 										savadateJson = jsonValue;
 										jsonValue.put("dcid",GetAndroidMacUtil.getMac());
 										jsonValue.put("prtno",jsonValue.get("sph"));
-										jsonValue.put("sbuid","D6004");
+										jsonValue.put("sbuid","D0001");
 										jsonValue.put("smake",MyApplication.user);
 										jsonValue.put("sys_stated", "3");
 										jsonValue.put("sbid", sbid);

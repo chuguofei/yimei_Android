@@ -222,6 +222,7 @@ public class JieShouActivity extends Activity {
 									updateCref3.put("ckdate",MyApplication.GetServerNowTime());
 		 							updateCref3.put("op_c",op);
 		 							updateCref3.put("cref3","1");
+		 							updateCref3.put("sbuid","D0031");
 		 							updateCref3.put("sys_stated", "2");
 		 							Map<String, String> mesIdMap = MyApplication
 											.httpMapKeyValueMethod(MyApplication.DBID,

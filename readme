@@ -35,4 +35,21 @@
 	// 如果软键盘已经显示，则隐藏，反之则显示
 	imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
 
+D0012菜单为plasma工序
+
 18/6/27修改了202|200线程提交，批量提交走一个线程，208，209
+
+0.测试站 1.编带站 2.看带站 
+
+2018-7-7增加换料盒功能
+
+
+器件通用工站（辅助）：
+    MESEQUTM //查询制程（mes_equipment）
+	MSBMOLIST //查询任务（mes_precord）
+	QJBOXWEB //查询批次号（mes_lot_plana + mes_mo_lot + tf_mo ）
+
+2018-7-11增加 
+	固晶2 固晶2 固晶烘烤1 固晶烘烤2 焊接前1P 工序,
+	增加固晶和点胶烤箱绑定支架和胶功能,
+	修改快速过站为通用过站功能。

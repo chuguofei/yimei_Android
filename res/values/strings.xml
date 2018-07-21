@@ -32,8 +32,8 @@
     <string name="Data2">当前状态</string>
     <string name="Data3">机种</string>
     <string name="Data4">数量</string>
-    <string name="Data5">备注</string>
-    <string name="fircheck">是否首检</string>
+    <string name="Data5">料盒</string>
+    <string name="fircheck">是否需要首检</string>
     <string name="mainTitle">主页面</string>
     <string name="gujing_type">制　程</string>
     <string name="main_gujin">固晶工站</string>
@@ -198,6 +198,7 @@
     <string name="jieshou">接收</string>
     <string name="jieshou_tuihui">退回</string>
     <string name="yimei_jieshou_op">接收人</string>
+    <string name="yimei_jieshou1_zcno">接受制程</string>
     <string name="yimei_jieshou_state">接收状态</string>
     <string name="yimei_jieshou_time">接收时间</string>
     <string name="yimei_jieshou_sid1">生产批次</string>
@@ -211,7 +212,8 @@
     <string name="waiguan">外观</string>
     <string name="tiebeijiao">贴背胶</string>
     <string name="didianliu">低电流</string>
-    <string name="kandai">看带`</string>
+    <string name="kandai">看带</string>
+    <string name="plasma">plasma清洗</string>
     
     <!-- 品质管理 -->
     <string name="pinzhi_shoujian">首检检验记录</string>
@@ -294,13 +296,18 @@
     <string name="waiguanTitle">外观过站</string>
     <string name="tiebeidiaoTitle">贴背胶过站</string>
     <string name="didianliuTitle">低电流过站</string>
+    
     <string name="kandaiTitle">看带过站</string>
+    <string name="plasmaTitle">plasma过站</string>
+    
     <string name="shoujianTitle">首件检验记录</string>
     <string name="xunjianTitle">巡检记录</string>
     <string name="pinzhiTitle">品质管理</string>
     <string name="xunjian_error_Title">异常通知单</string>
     <string name="ort_quyang_Title">ORT取样</string>
     <string name="yimei_weixiuTitle">维修申请</string>
+    <string name="tongyongguozhanTitle">通用过站</string>
+   
     <!-- 料盒 -->
     <string name="yimei_mbox_jiebang">料盒</string>
     <string name="weixiuyuanyin">维修原因</string>

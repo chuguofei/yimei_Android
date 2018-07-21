@@ -177,6 +177,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/gray"
                             android:text="@string/zhuangxiang_canpinxinghao" />
 
                         <EditText
@@ -186,6 +187,7 @@
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
                             android:enabled="true"
+                            android:textColor="@color/gray"
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_canpinxinghao"
@@ -198,11 +200,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/gray"
                             android:text="@string/zhuangxiang_canpindaihao" />
 
                         <EditText
                             android:id="@+id/yimei_zhuangxiang_canpindaihao"
                             android:layout_width="250dp"
+                            android:textColor="@color/gray"
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
@@ -219,11 +223,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/gray"
                             android:text="@string/zhuangxiang_chukuNum" />
 
                         <EditText
                             android:id="@+id/yimei_zhuangxiang_chukuNum"
                             android:layout_width="250dp"
+                            android:textColor="@color/gray"
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
@@ -297,7 +303,7 @@
                             android:orientation="horizontal" >
 
                             <TextView
-                                android:layout_width="100dip"
+                                android:layout_width="40dip"
                                 android:layout_height="fill_parent"
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_cid"
@@ -317,12 +323,12 @@
                                 android:text="@string/zhuangxiang_canpindaihao"
                                 android:textColor="#850" />
                             
-                            <TextView
+                            <!-- <TextView
                                 android:layout_width="100dip"
                                 android:layout_height="fill_parent"
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_canpinxinghao"
-                                android:textColor="#850" />
+                                android:textColor="#850" /> -->
 
                             <TextView
                                 android:layout_width="100dip"

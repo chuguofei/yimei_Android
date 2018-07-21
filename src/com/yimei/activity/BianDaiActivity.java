@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.activity.ipqc.IPQC_shoujian;
+import com.yimei.activity.kuaiguozhan.KanDaiActivity;
 import com.yimei.adapter.BianDaiAdapter;
 import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.BianDaiCHScrollView;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,11 +30,14 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.Html;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
@@ -49,7 +55,6 @@ import android.widget.TextView.OnEditorActionListener;
  * @author Administrator
  * 辅助:TESTLOTQUERY //查询lot号
  * 对象: D0001WEB //savedata添加
- * 服务器方法: 200 //修改状态  201//上料准备
  */
 public class BianDaiActivity extends Activity {
 
@@ -544,8 +549,24 @@ public class BianDaiActivity extends Activity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			Bundle b = msg.getData();
-			String string = b.getString("type");
 			try {
+				// {"message":"请重新登录","id":-1}
+				JSONObject LoginTimeMess = JSON.parseObject(b.getString(
+						"jsonObj").toString());
+				if (LoginTimeMess.containsKey("message")) {
+					if (LoginTimeMess.get("message").equals("请重新登录")) { // 超时登录
+						LoginTimeout_dig("超时登录", "请重新登录!");
+						return;
+					}
+				}
+				String string = b.getString("type");
+				if (string.equals("TimeOutLogin")) { // 超时登录
+					JSONObject jsonObject = JSON.parseObject(b.getString(
+							"jsonObj").toString());
+					if (jsonObject.getInteger("id") != 0) {
+						LoginTimeout_dig("密码错误", "");
+					}
+				}
 				if (string.equals("IsSbidQuery")) {  //设备号查询
 					JSONObject jsonObject = JSON.parseObject(b.getString(
 							"jsonObj").toString());
@@ -843,6 +864,9 @@ public class BianDaiActivity extends Activity {
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 								.get("values")).get(0));
+						if(Integer.parseInt(jsonValue.get("holdid").toString()) == 1){
+							ToastUtil.showToast(biandaiActivity,"该lot号已被【HOLD】",0);
+						}
 						if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 							ToastUtil.showToast(BianDaiActivity.this, "该批号不具备入站条件!",0);
 							MyApplication.nextEditFocus(yimei_biandai_proNum_edt);
@@ -1205,6 +1229,55 @@ public class BianDaiActivity extends Activity {
 		BianDaiScrollViews.add(hScrollView);
 	}
 
+	/**
+	 * 超时登录
+	 * 
+	 * @param Title
+	 * @param msg
+	 */
+	private void LoginTimeout_dig(String Title, String msg) {
+		LayoutInflater inflater = getLayoutInflater();
+		View dialog = inflater.inflate(R.layout.activity_mesurl_dig,
+				(ViewGroup) findViewById(R.id.dialogurl));
+		final EditText usertext = (EditText) dialog.findViewById(R.id.mesurl);
+		final EditText userpwd = (EditText) dialog.findViewById(R.id.mesdbid);
+		final TextView logintime_usertext = (TextView) dialog
+				.findViewById(R.id.logintime_user);
+		final TextView logintime_pwdtext = (TextView) dialog
+				.findViewById(R.id.logintime_pwd);
+		logintime_usertext.setText("用户名");
+		logintime_pwdtext.setText("密码");
+		userpwd.setInputType(InputType.TYPE_CLASS_TEXT
+				| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		usertext.setText(MyApplication.user);
+		usertext.setKeyListener(null);
+
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				BianDaiActivity.this);
+		normalDialog.setTitle(Title);
+		normalDialog.setView(dialog);
+		// normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+		// + "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", usertext.getText().toString());
+						map.put("apiId", "login");
+						map.put("pwd", MyApplication.Base64pwd(userpwd
+								.getText().toString()));
+						httpRequestQueryRecord(MyApplication.MESURL, map,
+								"TimeOutLogin");
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}
+	
+	
 	public void onScrollChanged(int l, int t, int oldl, int oldt) {
 		for (BianDaiCHScrollView scrollView : BianDaiScrollViews) {
 			if (mTouchView != scrollView)

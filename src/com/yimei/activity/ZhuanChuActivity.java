@@ -256,7 +256,7 @@ public class ZhuanChuActivity extends Activity {
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
 								OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"'"), null, mHander, true,
+										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"' and sid='MOA18060090' and  bok='1' and edate is null"), null, mHander, true,
 										"QuerySid");
 							}else{
 								ToastUtil.showToast(ZhuanChuActivity.this, "该批次已经做过转序!",0);
@@ -272,8 +272,13 @@ public class ZhuanChuActivity extends Activity {
 								InputHidden();
 								return;
 							} else {
-								JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
-										.get("values")).get(0));
+								for (int i = 0; i <((JSONArray) jsonObject
+										.get("values")).size(); i++) {
+									JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
+											.get("values")).get(i));
+									
+								
+								
 								
 								if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 									ToastUtil.showToast(ZhuanChuActivity.this, "该批次不具备转序条件!",0);
@@ -289,28 +294,11 @@ public class ZhuanChuActivity extends Activity {
 									InputHidden();
 									yimei_zhuanchu_sid.selectAll();
 									return;
-								} 
-								/*else if (jsonValue.get("state").toString().equals("04")) {
-									ToastUtil.showToast(ZhuanChuActivity.this, "该批号的状态为【出站】!", 0);
-									yimei_zhuanchu_sid.selectAll();
-									return;
-								}*/ 
+								}
 								else{
-									/*if(zhuanchuAdapter!=null){
-										for (int i = 0; i < ((JSONArray) jsonObject.get("values")).size(); i++) {
-											JSONObject json = (JSONObject) ((JSONArray) jsonObject.get("values")).get(i);
-											if(json.get("sid1").equals(sid)){
-												ToastUtil.showToast(ZhuanChuActivity.this, "该批次已转序!",0);
-												yimei_zhuanchu_sid.selectAll();
-												return;
-											}
-										}
-									};*/
 									showJson = jsonValue;
 									zcno1 = jsonValue.get("zcno1").toString();
-									/*showNormalDialog("当前选中的制程为【"+zcnoMap.get(zcno)+"】,要转出的制程是【"+
-											zcnoMap.get(zcno1)+ "】确定转出吗？");*/
-									showJson.put("op",zuoyeyuan);
+									showJson.put("op","A0209");
 									showJson.put("slkid",showJson.get("sid"));
 									showJson.put("sbuid","D0030");
 									showJson.put("sid", "");
@@ -340,6 +328,7 @@ public class ZhuanChuActivity extends Activity {
 													showJson.get("sid1").toString(),showJson.get("slkid").toString(),
 													zcno, "200");
 									OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,null,updateServerTable,null, mHander, true,"updateTableState");
+								}
 								}
 							}
 						}

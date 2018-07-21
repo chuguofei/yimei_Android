@@ -61,14 +61,6 @@
                 android:gravity="center"
                 android:textColor="#850"
                  />
-            
-            <TextView
-                android:id="@+id/gaowendianliang_zcno1"
-                android:layout_width="100dip"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:textColor="#850"
-                 />
         </LinearLayout>
     </com.yimei.scrollview.GeneralCHScrollView>
 

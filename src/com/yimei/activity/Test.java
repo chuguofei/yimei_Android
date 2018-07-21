@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.entity.mesPrecord;
 import com.yimei.sqlliteUtil.DBHelper;
 import com.yimei.sqlliteUtil.mesAllMethod;

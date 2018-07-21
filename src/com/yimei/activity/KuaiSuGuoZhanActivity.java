@@ -5,6 +5,7 @@ import com.yimei.activity.kuaiguozhan.GaoWenDianLiangActivity;
 import com.yimei.activity.kuaiguozhan.KanDaiActivity;
 import com.yimei.activity.kuaiguozhan.TieBeiJiaoActivity;
 import com.yimei.activity.kuaiguozhan.WaiGuanActivity;
+import com.yimei.activity.kuaiguozhan.plasmaActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,32 +18,32 @@ import android.widget.Button;
 
 public class KuaiSuGuoZhanActivity extends Activity {
 	
-	private Button gaowen,waiguan,tiebeijiao,didianliu,kandai;
+	private Button gaowen,waiguan,tiebeijiao,didianliu,kandai,plasma;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_kuaisuguozhan);
-		
-		
-	
 	    gaowen = (Button) findViewById(R.id.gaowendianliang);
 	    waiguan = (Button) findViewById(R.id.waiguan);
 	    tiebeijiao = (Button) findViewById(R.id.tiebeijiao);
 	    didianliu = (Button) findViewById(R.id.didianliu);
 	    kandai = (Button) findViewById(R.id.kandai);
+	    plasma= (Button) findViewById(R.id.plasma);
 	    gaowen.setOnClickListener(OnClick);
 	    waiguan.setOnClickListener(OnClick);
 	    tiebeijiao.setOnClickListener(OnClick);
 	    didianliu.setOnClickListener(OnClick);
 	    kandai.setOnClickListener(OnClick);
-		if(MyApplication.sorg.equals(MyApplication.QIJIANSORG)){ //看带过站
+	    plasma.setOnClickListener(OnClick);
+		if(MyApplication.sorg.equals(MyApplication.QIJIANSORG)){ //器件隐藏模组
 			gaowen.setVisibility(View.GONE);
 			waiguan.setVisibility(View.GONE);
 			tiebeijiao.setVisibility(View.GONE);
 			didianliu.setVisibility(View.GONE);
-		}else if(MyApplication.sorg.equals(MyApplication.MOZUSORG)){ //看带过站
+		}else if(MyApplication.sorg.equals(MyApplication.MOZUSORG)){ //模组隐藏器件
 			kandai.setVisibility(View.GONE);
+			plasma.setVisibility(View.GONE);
 		}
 	}
 	
@@ -64,6 +65,9 @@ public class KuaiSuGuoZhanActivity extends Activity {
 			}
 			if (v.getId() == R.id.kandai) {
 				startActivity(new Intent(KuaiSuGuoZhanActivity.this,KanDaiActivity.class));
+			}
+			if (v.getId() == R.id.plasma) {
+				startActivity(new Intent(KuaiSuGuoZhanActivity.this,plasmaActivity.class));
 			}
 		}
 	};

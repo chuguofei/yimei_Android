@@ -81,6 +81,11 @@
             android:name=".LoadingActivity"
             android:theme="@style/MyDialogStyle" >
         </activity>
+        <!-- 加载页面 -->
+        <activity
+            android:name=".Loading1Activity"
+            android:theme="@style/MyDialogStyle" >
+        </activity>
         <!-- 服务器出错 -->
         <activity android:name=".ServerError" >
         </activity>
@@ -149,6 +154,11 @@
             android:name=".JieShouActivity"
             android:label="@string/JieShouTitle" >
         </activity>
+         <!-- 接收 -->
+        <activity
+            android:name=".JieShou1Activity"
+            android:label="@string/JieShouTitle" >
+        </activity>
         <!-- 快速过站 -->
         <activity
             android:name=".KuaiSuGuoZhanActivity"
@@ -178,6 +188,11 @@
         <activity
             android:name="com.yimei.activity.kuaiguozhan.KanDaiActivity"
             android:label="@string/kandaiTitle" >
+        </activity>
+        <!-- plasma -->
+        <activity
+            android:name="com.yimei.activity.kuaiguozhan.plasmaActivity"
+            android:label="@string/plasmaTitle" >
         </activity>
         <!-- 品质管理 -->
         <activity
@@ -213,6 +228,11 @@
         <activity
             android:name="com.yimei.shebei.shebeiweixiuActivity"
             android:label="@string/yimei_weixiuTitle" >
+        </activity>
+        <!-- 维修 -->
+        <activity
+            android:name="com.yimei.activity.TongYongGuoZhanActivity"
+            android:label="@string/tongyongguozhanTitle" >
         </activity>
     </application>
 

@@ -10,9 +10,11 @@ import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.JieBangMboxActivity;
+import com.yimei.activity.JieShou1Activity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.RuKuActivity;
 import com.yimei.activity.SCFLActivity;
+import com.yimei.activity.TongYongGuoZhanActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.activity.ZhiJuQingXiActivity;
 import com.yimei.activity.ZhiJuRukKuActivity;
@@ -26,6 +28,7 @@ import com.yimei.activity.kuaiguozhan.GaoWenDianLiangActivity;
 import com.yimei.activity.kuaiguozhan.KanDaiActivity;
 import com.yimei.activity.kuaiguozhan.TieBeiJiaoActivity;
 import com.yimei.activity.kuaiguozhan.WaiGuanActivity;
+import com.yimei.activity.kuaiguozhan.plasmaActivity;
 
 public class GeneralCHScrollView extends HorizontalScrollView {
 
@@ -74,7 +77,7 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 			activity = (ZhuanChuActivity) context;
 		}
 		if (title.equals("接收登记")) {
-			activity = (JieShouActivity) context;
+			activity = (JieShou1Activity) context;
 		}
 		if (title.equals("高温点亮过站")) {
 			activity = (GaoWenDianLiangActivity) context;
@@ -91,6 +94,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("看带过站")) {
 			activity = (KanDaiActivity) context;
 		}
+		if (title.equals("plasma过站")) {
+			activity = (plasmaActivity) context;
+		}
 		if (title.equals("首件检验记录")) {
 			activity = (IPQC_shoujian) context;
 		}
@@ -102,6 +108,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (title.equals("料盒")) {
 			activity = (JieBangMboxActivity) context;
+		}
+		if (title.equals("通用过站")) {
+			activity = (TongYongGuoZhanActivity) context;
 		}
 	}
 
@@ -142,11 +151,14 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof ZhuanChuActivity) {
 			((ZhuanChuActivity) activity).mTouchView = this;
 		}
-		if (activity instanceof JieShouActivity) {
-			((JieShouActivity) activity).mTouchView = this;
+		if (activity instanceof JieShou1Activity) {
+			((JieShou1Activity) activity).mTouchView = this;
 		}
 		if (activity instanceof GaoWenDianLiangActivity) {
 			((GaoWenDianLiangActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof plasmaActivity) {
+			((plasmaActivity) activity).mTouchView = this;
 		}
 		if (activity instanceof WaiGuanActivity) {
 			((WaiGuanActivity) activity).mTouchView = this;
@@ -171,6 +183,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof JieBangMboxActivity) {
 			((JieBangMboxActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof TongYongGuoZhanActivity) {
+			((TongYongGuoZhanActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -248,9 +263,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
 		}
-		if (activity instanceof JieShouActivity) {
-			if (((JieShouActivity) activity).mTouchView == this) {
-				((JieShouActivity) activity).onScrollChanged(l, t, oldl, oldt);
+		if (activity instanceof JieShou1Activity) {
+			if (((JieShou1Activity) activity).mTouchView == this) {
+				((JieShou1Activity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
@@ -279,6 +294,13 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof DiDianLiuActivity) {
 			if (((DiDianLiuActivity) activity).mTouchView == this) {
 				((DiDianLiuActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof plasmaActivity) {
+			if (((plasmaActivity) activity).mTouchView == this) {
+				((plasmaActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}
@@ -314,6 +336,13 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof JieBangMboxActivity) {
 			if (((JieBangMboxActivity) activity).mTouchView == this) {
 				((JieBangMboxActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof TongYongGuoZhanActivity) {
+			if (((TongYongGuoZhanActivity) activity).mTouchView == this) {
+				((TongYongGuoZhanActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}

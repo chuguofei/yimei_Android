@@ -13,6 +13,7 @@ import com.yimei.activity.LoadingActivity;
 import com.yimei.activity.LoginActivity;
 import com.yimei.activity.MyApplication;
 import com.yimei.activity.R;
+import com.yimei.activity.TongYongGuoZhanActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.adapter.IPQC_ShouJian_Adapter;
 import com.yimei.entity.Pair;
@@ -34,12 +35,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -172,8 +176,7 @@ public class IPQC_shoujian extends Activity {
 						yimei_shoujian_sid1.selectAll();
 						return;
 					}
-					sid1 = yimei_shoujian_sid1.getText().toString()
-							.toUpperCase().trim();
+					sid1 = yimei_shoujian_sid1.getText().toString().toUpperCase().trim();
 					lotno = null;
 					if (IsSorg.containsKey(zcno)) { // 查测试表
 						AccessServer("TESTQUERY", "~lotno='" + sid1 + "'",
@@ -383,7 +386,7 @@ public class IPQC_shoujian extends Activity {
 									: "1");
 					FatherJson.put("state", "0");
 					FatherJson.put("mkdate", MyApplication.GetServerNowTime());
-					FatherJson.put("op_c", MyApplication.user);
+					FatherJson.put("op_c", yimei_shoujian_user.getText().toString().trim());
 					FatherJson.put("dcid", GetAndroidMacUtil.getMac());
 					FatherJson.put(
 							"bat_no",
@@ -592,6 +595,20 @@ public class IPQC_shoujian extends Activity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
+						JSONObject LoginTimeMess = JSON.parseObject(b.getString(
+								"jsonObj").toString());
+						if (LoginTimeMess.containsKey("message")) {
+							if (LoginTimeMess.get("message").equals("请重新登录")) { // 超时登录
+								LoginTimeout_dig("超时登录", "请重新登录!");
+								return;
+							}
+						}
+						if (string.equals("TimeOutLogin")) { // 超时登录
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (jsonObject.getInteger("id") != 0) {
+								LoginTimeout_dig("密码错误", "");
+							}
+						}
 						if (string.equals("Save_Q00101")) { // 点击保存按钮
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
@@ -972,6 +989,54 @@ public class IPQC_shoujian extends Activity {
 		GeneralCHScrollView.add(hScrollView);
 	}
 
+	/**
+	 * 超时登录
+	 * 
+	 * @param Title
+	 * @param msg
+	 */
+	private void LoginTimeout_dig(String Title, String msg) {
+		LayoutInflater inflater = getLayoutInflater();
+		View dialog = inflater.inflate(R.layout.activity_mesurl_dig,
+				(ViewGroup) findViewById(R.id.dialogurl));
+		final EditText usertext = (EditText) dialog.findViewById(R.id.mesurl);
+		final EditText userpwd = (EditText) dialog.findViewById(R.id.mesdbid);
+		final TextView logintime_usertext = (TextView) dialog
+				.findViewById(R.id.logintime_user);
+		final TextView logintime_pwdtext = (TextView) dialog
+				.findViewById(R.id.logintime_pwd);
+		logintime_usertext.setText("用户名");
+		logintime_pwdtext.setText("密码");
+		userpwd.setInputType(InputType.TYPE_CLASS_TEXT
+				| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		usertext.setText(MyApplication.user);
+//		usertext.setKeyListener(null);
+
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				IPQC_shoujian.this);
+		normalDialog.setTitle(Title);
+		normalDialog.setView(dialog);
+		// normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+		// + "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", usertext.getText().toString());
+						map.put("apiId", "login");
+						map.put("pwd", MyApplication.Base64pwd(userpwd
+								.getText().toString()));
+						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
+								null, map, null, mHander, true, "TimeOutLogin");
+					}
+				});
+		// 显示
+		normalDialog.show();
+	}
+	
 	public void onScrollChanged(int l, int t, int oldl, int oldt) {
 		for (GeneralCHScrollView scrollView : GeneralCHScrollView) {
 			if (mTouchView != scrollView)

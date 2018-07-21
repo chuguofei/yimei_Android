@@ -44,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			+ "remark	VARCHAR(200),"
 			+ "fircheck	VARCHAR(20),"
 			+ "textcolor char(1),"
+			+ "mbox VARCHAR(50),"
 			+ "bfirst	CHAR(1))";
 
 	@Override

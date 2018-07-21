@@ -415,7 +415,7 @@ public class SCFLActivity extends TabActivity {
 						}
 						// ================主对象
 						JSONObject fatherJSON = new JSONObject();
-						fatherJSON.put("sbuid", "E0001");
+						fatherJSON.put("sbuid", "D0001");
 						fatherJSON.put("mono", mo_no);
 						fatherJSON.put("sopr", MyApplication.user);
 						fatherJSON.put("smake", zuoyeyuan);

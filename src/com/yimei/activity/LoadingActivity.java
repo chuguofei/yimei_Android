@@ -273,12 +273,12 @@ public class LoadingActivity extends Activity {
 						}
 						if (caidan.equals("D0031")) { //接收
 							Intent intent = new Intent(LoadingActivity.this,
-									JieShouActivity.class);
+									JieShou1Activity.class);
 							startActivity(intent);
 						}
 						if (caidan.equals("D5030")) { //快速过站
 							Intent intent = new Intent(LoadingActivity.this,
-									KuaiSuGuoZhanActivity.class);
+									TongYongGuoZhanActivity.class);
 							startActivity(intent);
 						}
 						if (caidan.equals("Q00101")) { //首检
@@ -298,7 +298,6 @@ public class LoadingActivity extends Activity {
 							Intent intent = new Intent(LoadingActivity.this,shebeiweixiuActivity.class);
 							startActivity(intent);
 						}
-						
 						break;
 					case 0:
 						Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

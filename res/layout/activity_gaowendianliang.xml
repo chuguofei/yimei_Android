@@ -14,8 +14,11 @@
         android:paddingRight="10dp"
         android:shrinkColumns="0,1,2" >
 
-        <TableRow
-            android:layout_marginTop="20dp">
+       <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -24,7 +27,7 @@
 
             <EditText
                 android:id="@+id/gaowen_user"
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_edittext"
                 android:ems="10"
@@ -35,7 +38,15 @@
                 android:maxLength="12"
                 android:paddingLeft="10dp"
                 android:tag="高温点亮作业员" />
-        </TableRow>
+            
+            <Button
+                android:id="@+id/BadRecord"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="不良记录"
+                android:textColor="#e80e0e" />
+        </LinearLayout>
         
          <TableRow
              android:layout_marginTop="20dp">

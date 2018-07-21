@@ -90,7 +90,7 @@ public class ScrollAdapter extends BaseAdapter {
 		remark.setText((String) listData.get(position).get("remark"));
 
 		TextView fircheck = (TextView) convertView.findViewById(R.id.fircheck);
-		fircheck.setText((String) listData.get(position).get("fircheck"));
+		fircheck.setText(((String) listData.get(position).get("fircheck")).equals("1")?"是":"否");
 		if(((String) listData.get(position).get("fircheck")).toString().equals("2")){
 			sid1.setTextColor(color.darkgoldenrod);
 			slkid.setTextColor(color.darkgoldenrod);

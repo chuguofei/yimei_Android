@@ -9,6 +9,7 @@ import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.JieBangMboxActivity;
+import com.yimei.activity.JieShou1Activity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.KuaiSuGuoZhanActivity;
 import com.yimei.activity.MainActivity;
@@ -21,6 +22,7 @@ import com.yimei.activity.LoadingActivity;
 import com.yimei.activity.LoginActivity;
 import com.yimei.activity.MoZuActivity;
 import com.yimei.activity.R;
+import com.yimei.activity.TongYongGuoZhanActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.activity.ZhiJuQingXiActivity;
 import com.yimei.activity.ZhiJuRukKuActivity;
@@ -191,14 +193,14 @@ public class MainMyAdapter extends BaseAdapter {
 							ZhuanChuActivity.class);
 					v.getContext().startActivity(intent);
 				}
-				if (mainMap.getKey().equals("D0031")) { //接受
+				if (mainMap.getKey().equals("D0031")) { //接收
 					Intent intent = new Intent(context,
-							JieShouActivity.class);
+							JieShou1Activity.class);
 					v.getContext().startActivity(intent);
 				}
 				if (mainMap.getKey().equals("D5030")) { //快速过站
 					Intent intent = new Intent(context,
-							KuaiSuGuoZhanActivity.class);
+							TongYongGuoZhanActivity.class);
 					v.getContext().startActivity(intent);
 				}
 				if (mainMap.getKey().equals("Q0")) { //品质管理

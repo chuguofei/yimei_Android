@@ -18,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,11 +37,20 @@ import android.widget.TextView.OnEditorActionListener;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.ZhuangXiangAdapter;
 import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
 
+/**
+ * 辅助：
+ *  PKLIST：装箱批次号查询
+ *  ERPCKNO:装箱CK单查询
+ *  
+ * @author Administrator
+ *
+ */
 public class ZhuangXiangActivity extends TabActivity {
 
 	//CK84280006   代号 F0200017
@@ -60,7 +70,7 @@ public class ZhuangXiangActivity extends TabActivity {
 	private String zuoyeyuan;
 	private String zhuangxiang_bat_no; // 装箱批次号
 	private Integer manxiangshuliang = 0; // 满箱数量 判断是否超出
-	private int cidgagarin = 100; // 项次号自增
+	private int cidgagarin = 1; // 项次号自增
 	private JSONObject cus_pnJsonObject; // 往适配器添加数据
 	private static ListView mListView;
 	private ZhuangXiangAdapter ZhuangXiangAdapter;
@@ -223,19 +233,55 @@ public class ZhuangXiangActivity extends TabActivity {
 
 			@Override
 			public void onClick(View v) {
-				clearEditText(); // 清空文本框
-				cidgagarin = 100;
 //				chukushenqingJson = null;
 //				QuerySpno(chukushen);
 				if(chukushenqingJson==null){
 					ToastUtil.showToastLocation(getApplicationContext(),"请选择出库号~",0);
 					return ;
 				}
-				show(chukushenqingJson);
+				AddDanHao("提交","确定要换新的单号吗？");
+//				show(chukushenqingJson);
 			}
 		});
 	}
 
+	/**
+	 * 换单号
+	 * @param msg
+	 */
+	private void AddDanHao(String title, String msg) {
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				ZhuangXiangActivity.this);
+		normalDialog.setTitle(title);
+		normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+				+ "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						yimei_zhuangxiang_chukushenqing.setText("");
+						yimei_zhuangxiang_manxiangNum.setText("");
+						yimei_zhuangxiang_bat_no.setText("");
+						yimei_zhuangxiang_bincode.setText("");
+						yimei_zhuangxiang_Num.setText("");
+						yimei_zhuangxiang_canpindaihao.setText("");
+						yimei_zhuangxiang_canpinxinghao.setText("");
+						yimei_zhuangxiang_chukuNum.setText("");
+						cidgagarin = 1;
+						if(ZhuangXiangAdapter!=null){
+							mListView.setAdapter(null);
+							ZhuangXiangAdapter.notifyDataSetChanged();
+						}
+						chukushenqingJson = null;
+						MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+					}
+				});
+		normalDialog.setNegativeButton("取消",null);
+		normalDialog.show();
+	}
+	
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -384,8 +430,9 @@ public class ZhuangXiangActivity extends TabActivity {
 					chukushenqingJson.put("cprn","1");
 					chukushenqingJson.put("wh","01");
 					chukushenqingJson.put("prtqty","1");
+					chukushenqingJson.put("sorg",MyApplication.sorg);
 					chukushenqingJson.put("pkid","0");
-					chukushenqingJson.put("pkqty",yimei_zhuangxiang_manxiangNum.getText());
+					chukushenqingJson.put("pkqty",yimei_zhuangxiang_manxiangNum.getText()); //满箱数量
 					
 					Map<String, String> mesIdMap = MyApplication
 							.httpMapKeyValueMethod(MyApplication.DBID,
@@ -489,8 +536,7 @@ public class ZhuangXiangActivity extends TabActivity {
 			if (v.getId() == R.id.yimei_zhuangxiang_bincode) { // bincode
 				if (yimei_zhuangxiang_chukushenqing.getText().toString().trim()
 						.equals("")) {
-					ToastUtil
-							.showToast(getApplicationContext(), "请输入出库申请单~", 0);
+					ToastUtil.showToast(getApplicationContext(), "请输入出库申请单~", 0);
 					MyApplication
 							.nextEditFocus(yimei_zhuangxiang_chukushenqing);
 					return false;
@@ -565,8 +611,10 @@ public class ZhuangXiangActivity extends TabActivity {
 			return false;
 		}
 		// 判断当前输入的数量是否超过满箱数量
-		panduan_manxiangNum(Integer.parseInt(yimei_zhuangxiang_Num.getText()
-				.toString().trim()));
+		if(!panduan_manxiangNum(Integer.parseInt(yimei_zhuangxiang_Num.getText().toString().trim()))){
+			ToastUtil.showToast(getApplicationContext(), "已超出满箱数量!", 0);
+			return false;
+		};
 		// 判断所有的数量加本次的数量是否超过出库数量
 		if (Integer.parseInt(yimei_zhuangxiang_Num.getText().toString().trim())
 				+ AllQty > Integer.parseInt(yimei_zhuangxiang_chukuNum
@@ -581,11 +629,13 @@ public class ZhuangXiangActivity extends TabActivity {
 			JSONObject jsonobj = new JSONObject();
 			jsonobj.put("cid", cidgagarin); // 项次
 			jsonobj.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim());// 批次号
-			jsonobj.put("bincode", yimei_zhuangxiang_bincode.getText().toString().trim()); // bincode
+			jsonobj.put("prd_mark", yimei_zhuangxiang_bincode.getText().toString().trim()); // bincode
 			jsonobj.put("qty", yimei_zhuangxiang_Num.getText().toString().trim()); // 新增
-			jsonobj.put("prd_name", canpinmingcheng); // 产品名称
+			jsonobj.put("prd_name", yimei_zhuangxiang_canpinxinghao.getText().toString().trim()); // 产品名称
 			jsonobj.put("prd_no", yimei_zhuangxiang_canpindaihao.getText().toString().trim()); // 产品代号
 			jsonobj.put("sys_stated", "3"); // 新增
+			jsonobj.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
+			jsonobj.put("unit", "1"); // unit
 			jsonobj.put("sid", sid); // 主表的sid
 			cidgagarin++;
 			Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(
@@ -598,20 +648,25 @@ public class ZhuangXiangActivity extends TabActivity {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("zhuangxiang_cid", jsonobj.get("cid").toString());
 			map.put("zhuangxiang_bat_no", jsonobj.get("bat_no").toString());
-			map.put("zhuangxiang_bincode", jsonobj.get("bincode").toString());
+			map.put("zhuangxiang_bincode", jsonobj.get("prd_mark").toString());
 			map.put("zhuangxiang_qty", jsonobj.get("qty").toString());
+			map.put("zhuangxiang_prd_no", jsonobj.getString("prd_no"));
 			mList.add(map);
 			if (ZhuangXiangAdapter == null) {
 				ZhuangXiangAdapter = new ZhuangXiangAdapter(zhuangxiangActivity, mList);
 				mListView.setAdapter(ZhuangXiangAdapter);
 				ZhuangXiangAdapter.notifyDataSetChanged();
 				MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
-				yimei_zhuangxiang_bat_no.selectAll();
+				yimei_zhuangxiang_bat_no.setText("");
+				yimei_zhuangxiang_bincode.setText("");
+				yimei_zhuangxiang_Num.setText("");
 			} else {
 				ZhuangXiangAdapter.listData.add(map);
 				ZhuangXiangAdapter.notifyDataSetChanged();
 				MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
-				yimei_zhuangxiang_bat_no.selectAll();
+				yimei_zhuangxiang_bat_no.setText("");
+				yimei_zhuangxiang_bincode.setText("");
+				yimei_zhuangxiang_Num.setText("");
 			}
 		}
 		return flag;
@@ -676,11 +731,15 @@ public class ZhuangXiangActivity extends TabActivity {
 							}
 						}
 						if ("cus_pnQuery".equals(string)) { // 批次号查询回来的数据
-							JSONObject jsonObject = JSON.parseObject(b.getString(
-									"jsonObj").toString());
-							if (!(Integer.parseInt(jsonObject.get("code")
-									.toString()) == 0)) { // 找到了批次号
-								String a1 =((JSONObject)((JSONArray) jsonObject.get("values")).get(0)).get("prd_no").toString();
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (!(Integer.parseInt(jsonObject.get("code").toString()) == 0)) { // 找到了批次号
+								String a1 = null;
+								try {
+									a1 = ((JSONObject)((JSONArray) jsonObject.get("values")).get(0)).get("prd_no").toString();
+								} catch (Exception e) {
+									ToastUtil.showToast(getApplicationContext(),"该批次没有机型号，无法匹配！",0);
+									return;
+								}
 								if(!a1.equals(chukushenqingJson.get("prd_no"))){
 									ToastUtil.showToast(getApplicationContext(),"该批次的产品出货机型不符~",0);
 									MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
@@ -688,8 +747,7 @@ public class ZhuangXiangActivity extends TabActivity {
 									return;
 								}
 								// 拿回来的数量
-								Integer num = Integer
-										.parseInt(((JSONObject) ((JSONArray) jsonObject
+								Integer num = Integer.parseInt(((JSONObject) ((JSONArray) jsonObject
 												.get("values")).get(0)).get("qty")
 												.toString());
 								// 批次号是否包装
@@ -927,7 +985,7 @@ public class ZhuangXiangActivity extends TabActivity {
 		}
 		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
 				zhuangxiangActivity);
-		normalDialog.setTitle("提示");
+		normalDialog.setTitle("选择CK单");
 		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
 		normalDialog.setSingleChoiceItems(
 			    str, checkNum,
@@ -962,7 +1020,10 @@ public class ZhuangXiangActivity extends TabActivity {
 					+ manxiangshuliang + "", 0);
 			return;
 		}
-		panduan_manxiangNum(Integer.parseInt(cus_pnJsonObject.get("qty").toString())); // 判断出库数据有没有超出
+		if(!panduan_manxiangNum(Integer.parseInt(cus_pnJsonObject.get("qty").toString()))){
+			ToastUtil.showToast(getApplicationContext(), "已超出满箱数量!", 0);
+			return;
+		}; // 判断出库数据有没有超出
 		if (cus_pnJsonObject.containsKey("qty")
 				|| cus_pnJsonObject.containsKey("prd_no")
 				|| cus_pnJsonObject.containsKey("bincode")) {
@@ -984,7 +1045,7 @@ public class ZhuangXiangActivity extends TabActivity {
 	/**
 	 * 判断列表中加起来的数量是否超出满箱数量
 	 */
-	private void panduan_manxiangNum(Integer num) {
+	private boolean panduan_manxiangNum(Integer num) {
 		int listNum = 0;
 		if (ZhuangXiangAdapter != null) {
 			for (int i = 0; i < ZhuangXiangAdapter.getCount(); i++) {
@@ -995,9 +1056,10 @@ public class ZhuangXiangActivity extends TabActivity {
 			if (listNum + num > manxiangshuliang) {
 				ToastUtil.showToast(getApplicationContext(), "满箱数量已超出,最多可以扫："
 						+ manxiangshuliang + "", 0);
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 
 	public static void addHViews(final GeneralCHScrollView hScrollView) {
