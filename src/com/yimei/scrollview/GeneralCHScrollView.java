@@ -14,6 +14,7 @@ import com.yimei.activity.JieShou1Activity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.RuKuActivity;
 import com.yimei.activity.SCFLActivity;
+import com.yimei.activity.SlkMboxActivity;
 import com.yimei.activity.TongYongGuoZhanActivity;
 import com.yimei.activity.ZhiJuLingChuActivity;
 import com.yimei.activity.ZhiJuQingXiActivity;
@@ -112,6 +113,10 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("通用过站")) {
 			activity = (TongYongGuoZhanActivity) context;
 		}
+		if (title.equals("工单绑料盒")) {
+			activity = (SlkMboxActivity) context;
+		}
+		
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -186,6 +191,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof TongYongGuoZhanActivity) {
 			((TongYongGuoZhanActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof SlkMboxActivity) {
+			((SlkMboxActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -343,6 +351,13 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof TongYongGuoZhanActivity) {
 			if (((TongYongGuoZhanActivity) activity).mTouchView == this) {
 				((TongYongGuoZhanActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof SlkMboxActivity) {
+			if (((SlkMboxActivity) activity).mTouchView == this) {
+				((SlkMboxActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}

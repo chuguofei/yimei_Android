@@ -3,8 +3,6 @@ package com.yimei.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yimei.scrollview.BianDaiCHScrollView;
-import com.yimei.scrollview.CHScrollView;
 import com.yimei.scrollview.KaoXiangCHScrollView;
 
 import android.app.Activity;

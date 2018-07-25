@@ -234,6 +234,11 @@
             android:name="com.yimei.activity.TongYongGuoZhanActivity"
             android:label="@string/tongyongguozhanTitle" >
         </activity>
+        <!-- 工单绑料盒 -->
+        <activity
+            android:name="com.yimei.activity.SlkMboxActivity"
+            android:label="@string/SlkMboxTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

@@ -41,6 +41,7 @@
     <string name="main_hanxian">焊线</string>
     <string name="main_biandai">编带</string>
     <string name="main_kaoxiang">烤箱</string>
+    <string name="slkid">工单</string>
 
     <!-- 上料页面 -->
     <string name="yimei_shangliao_materialCode">材料代码</string>
@@ -307,6 +308,7 @@
     <string name="ort_quyang_Title">ORT取样</string>
     <string name="yimei_weixiuTitle">维修申请</string>
     <string name="tongyongguozhanTitle">通用过站</string>
+    <string name="SlkMboxTitle">工单绑料盒</string>
    
     <!-- 料盒 -->
     <string name="yimei_mbox_jiebang">料盒</string>

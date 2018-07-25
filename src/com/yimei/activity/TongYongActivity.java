@@ -67,6 +67,7 @@ import com.yimei.util.ToastUtil;
  * 200修改mes_precord
  * 202修改mes_lot_plana
  * QJ_ZCNO（器件的制程）: 查询器件的制程
+ *QJ_Q_SLKMOBX //查询工单中绑定这个料没
  * @author Administrator
  * PPA和EMC3030
  * MES再添加一个3030制程的流程，具体流程：plasma、固晶、烘烤、plasma、焊线、plasma、点胶、烘烤、外观、测试、编带、看带、包装
@@ -320,11 +321,11 @@ public class TongYongActivity extends Activity {
 		gujingActivity = this;
 		myapp.removeActivity_(LoginActivity.loginActivity);// 销毁登录
 		selectValue = (Spinner) findViewById(R.id.selectValue); // 下拉框id
-//		selectValue.setOnItemSelectedListener(SelectValueListener); // 下拉框改变更新值
+		selectValue.setOnItemSelectedListener(SelectValueListener); // 下拉框改变更新值
 		quanxuan = (CheckBox) findViewById(R.id.quanxuan); // 全选按钮
 		
-		Map<String, String> map1 = MyApplication.QueryBatNo("QJ_ZCNO", "");
-		httpRequestQueryRecord(MyApplication.MESURL, map1, "SpinnerValue");
+		/*Map<String, String> map1 = MyApplication.QueryBatNo("QJ_ZCNO", "");
+		httpRequestQueryRecord(MyApplication.MESURL, map1, "SpinnerValue");*/
 		
 		
 		listenerQuanXuan(); // 全选事件
@@ -978,6 +979,14 @@ public class TongYongActivity extends Activity {
 							InputHidden(); // 隐藏键盘
 							return;
 						} else {
+							
+							if(zcno.equals("11")){ //判断工单中料盒
+								newJson = jsonValue;
+								Map<String, String> map = MyApplication.QueryBatNo("QJ_Q_SLKMOBX", "~slkid='"+jsonValue.getString("sid")+"' and mbox='"+yimei_tongyong_oldMbox.getText().toString().toUpperCase().trim()+"'");
+								httpRequestQueryRecord(MyApplication.MESURL, map, "QuerySlkMox");
+								return;
+							}
+							
 							// 判断料盒
 							if (zcno.equals("21") || zcno.equals("31")) {
 								if(!yimei_tongyong_oldMbox.getText().toString().toUpperCase().trim().equals("A0000")){
@@ -1012,7 +1021,6 @@ public class TongYongActivity extends Activity {
 									}
 								}
 								
-								
 								if (zcno.equals("31")) { // 点胶提示
 									if (currSlkid != null) {
 										if (!currSlkid.toUpperCase().equals(
@@ -1026,22 +1034,7 @@ public class TongYongActivity extends Activity {
 									}
 								}
 							}
-							/*else { // 固晶
-								if (!jsonValue.get("mbox").toString()
-										.equals("")) {
-									ToastUtil.showToast(gujingActivity, "该批次【"
-											+ yimei_proNum_edt.getText()
-													.toString().trim()
-													.toUpperCase() + "】已绑定料盒【"
-											+ jsonValue.get("mbox").toString()
-											+ "】", 0);
-									MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
-									yimei_tongyong_oldMbox.selectAll();
-									InputHidden();
-									return;
-								}
-							}*/
-
+							
 							if (!zcno.equals("41") && !zcno.equals("31")) { // 烤箱只做记录
 								// 如果有首检标示
 								if (jsonValue.get("fircheck").toString()
@@ -1087,20 +1080,19 @@ public class TongYongActivity extends Activity {
 									}
 								}
 							}
+							
 							Intent intent = new Intent();
 							intent.setClass(TongYongActivity.this, Loading1Activity.class);// 跳转到加载界面
 							startActivity(intent);
 							
 							SlkidMapJudge.add(jsonValue.get("sid").toString());
-							Log.i("SlkidMapJudge",
-									"入站:" + SlkidMapJudge.toString());
+							Log.i("SlkidMapJudge","入站:" + SlkidMapJudge.toString());
 							currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
-							fircheck_PRDNO = jsonValue.get("prd_no").toString(); // 进行首检的机种
+							fircheck_PRDNO = jsonValue.get("prd_no").toString();// 进行首检的机种
 							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 							jsonValue.put("slkid", jsonValue.get("sid"));
 							jsonValue.put("sid", "");
-							jsonValue
-									.put("firstchk", jsonValue.get("fircheck"));
+							jsonValue.put("firstchk", jsonValue.get("fircheck"));
 							if (zcno.equals("41")||zcno.equals("1A")||zcno.equals("1B")) {
 								jsonValue.put("state1", "03");
 							} else {
@@ -1129,8 +1121,7 @@ public class TongYongActivity extends Activity {
 							jsonValue.put("sys_stated", "3");
 							jsonValue.put("sbid", shebeihao);
 							jsonValue.put("smake", MyApplication.user);
-							jsonValue.put("mkdate",
-									MyApplication.GetServerNowTime());
+							jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 							jsonValue.put("sbuid", "D0001");
 							newJson = jsonValue;
 							Map<String, String> mesIdMap = MyApplication
@@ -1141,6 +1132,86 @@ public class TongYongActivity extends Activity {
 							httpRequestQueryRecord(MyApplication.MESURL,
 									mesIdMap, "id");
 						}
+					}
+				}
+				if(string.equals("QuerySlkMox")){ //固晶查询工单料盒
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { //没查到
+						showNormalDialog("提示",yimei_tongyong_oldMbox.getText().toString()+"料盒不属于"+newJson.getString("sid")+"工单!");
+						yimei_proNum_edt.setText("");
+					}else{
+						if (!zcno.equals("41") && !zcno.equals("31")) { // 烤箱只做记录
+							// 如果有首检标示
+							if (newJson.get("fircheck").toString()
+									.equals("1")) { // 打了首检标示（fircheck：首件检）
+								if (!newJson.get("prd_no").toString()
+										.equals(EQIRP_prdno)) {
+									JumShouJianlDialog("首件检验", "【"
+											+ newJson.get("prd_no")
+													.toString()
+											+ "】机型没有做首检,请做首检!");
+								} else {
+									if (EQIRP_firstchk.equals("0")
+											|| EQIRP_firstchk.equals("")) {
+										JumShouJianlDialog("首件检验", "【"
+												+ newJson.get("prd_no")
+														.toString()
+												+ "】机型没有做首检,请做首检!");
+									}
+								}
+							}
+						}
+						
+						Intent intent = new Intent();
+						intent.setClass(TongYongActivity.this, Loading1Activity.class);// 跳转到加载界面
+						startActivity(intent);
+						
+						SlkidMapJudge.add(newJson.get("sid").toString());
+						Log.i("SlkidMapJudge","入站:" + SlkidMapJudge.toString());
+						currSlkid = newJson.get("sid").toString(); // 修改服务器表的slkid
+						fircheck_PRDNO = newJson.get("prd_no").toString();// 进行首检的机种
+						qtyv = newJson.get("qty").toString(); // (201)批次数量
+						newJson.put("slkid", newJson.get("sid"));
+						newJson.put("sid", "");
+						newJson.put("firstchk", newJson.get("fircheck"));
+						if (zcno.equals("41")||zcno.equals("1A")||zcno.equals("1B")) {
+							newJson.put("state1", "03");
+						} else {
+							newJson.put("state1", "01");
+						}
+						newJson.put("state", "0");
+						newJson.put("prd_name",newJson.containsKey("prd_name") ? newJson.get("prd_name") : "");
+						newJson.put("prd_no",newJson.containsKey("prd_no") ? newJson.get("prd_no") : "");
+						newJson.put("dcid", GetAndroidMacUtil.getMac());
+						if (zcno.equals("11")) {
+							newJson.put("mbox", yimei_tongyong_oldMbox.getText().toString().trim().toUpperCase());
+						} else if (zcno.equals("21") || zcno.equals("31")) {
+							newJson.put("mbox", yimei_tongyong_newMbox.getText().toString().trim().toUpperCase());
+						} else if (zcno.equals("41")) {
+							newJson.put("mbox", newJson.get("mbox"));
+						} else if(zcno.equals("12")){ //第二次固晶
+							newJson.put("mbox", newJson.get("mbox"));
+						} else if(zcno.equals("13")){ //第一次固晶
+							newJson.put("mbox", newJson.get("mbox"));
+						} else if(zcno.equals("1A")){ //第一次固晶
+							newJson.put("mbox", newJson.get("mbox"));
+						} else if(zcno.equals("1B")){ //第一次固晶
+							newJson.put("mbox", newJson.get("mbox"));
+						} 
+						newJson.put("op", zuoyeyuan);
+						newJson.put("sys_stated", "3");
+						newJson.put("sbid", shebeihao);
+						newJson.put("smake", MyApplication.user);
+						newJson.put("mkdate",MyApplication.GetServerNowTime());
+						newJson.put("sbuid", "D0001");
+						newJson = newJson;
+						Map<String, String> mesIdMap = MyApplication
+								.httpMapKeyValueMethod(MyApplication.DBID,
+										"savedata", MyApplication.user,
+										newJson.toJSONString(),
+										"D0001WEB", "1");
+						httpRequestQueryRecord(MyApplication.MESURL,
+								mesIdMap, "id");
 					}
 				}
 				if (string.equals("id")) {

@@ -298,6 +298,10 @@ public class LoadingActivity extends Activity {
 							Intent intent = new Intent(LoadingActivity.this,shebeiweixiuActivity.class);
 							startActivity(intent);
 						}
+						if (caidan.equals("D0097")) { //工单绑料盒
+							Intent intent = new Intent(LoadingActivity.this,SlkMboxActivity.class);
+							startActivity(intent);
+						}
 						break;
 					case 0:
 						Toast.makeText(LoadingActivity.this, "你没有权限登录", 0)

@@ -47,7 +47,7 @@ import com.yimei.util.ToastUtil;
  * 辅助：
  *  PKLIST：装箱批次号查询
  *  ERPCKNO:装箱CK单查询
- *  
+ *  TTM0： //查询入库批次号 checkid=1
  * @author Administrator
  *
  */
@@ -182,7 +182,7 @@ public class ZhuangXiangActivity extends TabActivity {
 					zhuangxiang_bat_no = yimei_zhuangxiang_bat_no.getText()
 							.toString().trim();
 					Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-							"PKLIST", "~cus_pn='" + zhuangxiang_bat_no + "'");
+							"TTM0", "~bat_no='" + zhuangxiang_bat_no + "'");
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, queryBatNo, null,
 							mHander, true, "cus_pnQuery"); // 批次号查询
@@ -473,7 +473,7 @@ public class ZhuangXiangActivity extends TabActivity {
 				zhuangxiang_bat_no = yimei_zhuangxiang_bat_no.getText()
 						.toString().trim();
 				Map<String, String> queryBatNo = MyApplication.QueryBatNo(
-						"PKLIST", "~cus_pn='" + zhuangxiang_bat_no + "'");
+						"TTM0", "~bat_no='" + zhuangxiang_bat_no + "'");
 				OkHttpUtils.getInstance().getServerExecute(
 						MyApplication.MESURL, null, queryBatNo, null, mHander,
 						true, "cus_pnQuery"); // 批次号查询
@@ -747,9 +747,8 @@ public class ZhuangXiangActivity extends TabActivity {
 									return;
 								}
 								// 拿回来的数量
-								Integer num = Integer.parseInt(((JSONObject) ((JSONArray) jsonObject
-												.get("values")).get(0)).get("qty")
-												.toString());
+								Integer num = (Integer) ((JSONObject) ((JSONArray) jsonObject
+												.get("values")).get(0)).get("qty");
 								// 批次号是否包装
 								if (num + AllQty > Integer
 										.parseInt(yimei_zhuangxiang_chukuNum
@@ -787,6 +786,7 @@ public class ZhuangXiangActivity extends TabActivity {
 								// 包装过
 								ToastUtil.showToast(getApplicationContext(), "《"
 										+ zhuangxiang_bat_no + "》已包装过~", 0);
+								yimei_zhuangxiang_bat_no.selectAll();
 								return;
 							} else {
 								// 没有包装
@@ -819,8 +819,7 @@ public class ZhuangXiangActivity extends TabActivity {
 								return;
 							} else {
 								// 没有包装
-								MyApplication
-										.nextEditFocus(yimei_zhuangxiang_bincode);
+								MyApplication.nextEditFocus(yimei_zhuangxiang_bincode);
 							}
 						}
 						if (string.equals("cus_pnAddAdapter")) { // 往适配器写数据
@@ -832,9 +831,9 @@ public class ZhuangXiangActivity extends TabActivity {
 								map.put("zhuangxiang_cid",
 										cus_pnJsonObject.getString("cid"));
 								map.put("zhuangxiang_bat_no",
-										cus_pnJsonObject.getString("cus_pn"));
+										cus_pnJsonObject.getString("bat_no"));
 								map.put("zhuangxiang_bincode",
-										cus_pnJsonObject.getString("bincode"));
+										cus_pnJsonObject.getString("prd_mark"));
 								map.put("zhuangxiang_qty",
 										cus_pnJsonObject.getString("qty"));
 								map.put("zhuangxiang_prd_no",
@@ -1026,7 +1025,7 @@ public class ZhuangXiangActivity extends TabActivity {
 		}; // 判断出库数据有没有超出
 		if (cus_pnJsonObject.containsKey("qty")
 				|| cus_pnJsonObject.containsKey("prd_no")
-				|| cus_pnJsonObject.containsKey("bincode")) {
+				|| cus_pnJsonObject.containsKey("prd_mark")) {
 			cus_pnJsonObject.put("sys_stated", "3"); // 新增
 			cus_pnJsonObject.put("cid", cidgagarin); // 项次
 			cus_pnJsonObject.put("sid", sid); // 主表的sid
@@ -1038,6 +1037,7 @@ public class ZhuangXiangActivity extends TabActivity {
 			OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
 					null, mesIdMap, null, mHander, true, "cus_pnAddAdapter"); // 批次扫描添加
 			MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
+			yimei_zhuangxiang_bat_no.setText("");
 			yimei_zhuangxiang_bat_no.selectAll();
 		}
 	}

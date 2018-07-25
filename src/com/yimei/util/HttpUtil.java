@@ -28,7 +28,7 @@ public class HttpUtil {
 
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(8000);
+			connection.setConnectTimeout(80000);
 			connection.setReadTimeout(8000);
 			DataOutputStream out = new DataOutputStream(
 					connection.getOutputStream());
