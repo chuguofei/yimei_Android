@@ -54,11 +54,11 @@ public class ZhuangXiangAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		Map<String, String> map = listData.get(position);
-		viewHolder.zhuangxiang_cid.setText(map.get("zhuangxiang_cid"));
-		viewHolder.zhuangxiang_bat_no.setText(map.get("zhuangxiang_bat_no"));
-		viewHolder.zhuangxiang_bincode.setText(map.get("zhuangxiang_bincode")==null?"":map.get("zhuangxiang_bincode"));
-		viewHolder.zhuangxiang_qty.setText(map.get("zhuangxiang_qty")==null?"":map.get("zhuangxiang_qty"));
-		viewHolder.zhuangxiang_prd_no.setText(map.get("zhuangxiang_prd_no")==null?"":map.get("zhuangxiang_prd_no"));
+		viewHolder.zhuangxiang_cid.setText(map.get("cid"));
+		viewHolder.zhuangxiang_bat_no.setText(map.get("bat_no"));
+		viewHolder.zhuangxiang_bincode.setText(map.get("prd_mark")==null?"":map.get("prd_mark"));
+		viewHolder.zhuangxiang_qty.setText(map.get("qty")==null?"":map.get("qty"));
+		viewHolder.zhuangxiang_prd_no.setText(map.get("prd_no")==null?"":map.get("prd_no"));
 		/*viewHolder.zhuangxiang_prd_name.setText(map.get("zhuangxiang_prd_name")==null?"":map.get("zhuangxiang_prd_name"));*/
 		return convertView;
 	}

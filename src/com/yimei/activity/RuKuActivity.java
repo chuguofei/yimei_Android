@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
@@ -35,6 +36,7 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fast
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONPObject;
+import com.yimei.activity.ipqc.ORT_quyang;
 import com.yimei.adapter.BianDaiAdapter;
 import com.yimei.adapter.RuKuAdapter;
 import com.yimei.entity.mesPrecord;
@@ -44,6 +46,11 @@ import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
 
+/**
+ * 
+ * @author Administrator
+ *
+ */
 public class RuKuActivity extends Activity {
 
 	static MyApplication myapp;
@@ -55,10 +62,11 @@ public class RuKuActivity extends Activity {
 
 	private String zuoyeyuan;
 	private String bat_no;
-
+	private String SubmitSid;
+	
 	private EditText yimei_ruku_user_edt;
 	private EditText yimei_ruku_proNum_edt;
-
+	private Button ruku_submit;
 	private Map<String, Object> map1 = new HashMap<String, Object>(); // 判断是否是第二次或一扫描
 	private Map<String, String> map2 = new HashMap<String, String>(); // 查询已检测的批次号
 
@@ -153,7 +161,47 @@ public class RuKuActivity extends Activity {
 
 		yimei_ruku_user_edt = (EditText) findViewById(R.id.yimei_ruku_user_edt);
 		yimei_ruku_proNum_edt = (EditText) findViewById(R.id.yimei_ruku_proNum_edt);
-
+		ruku_submit = (Button) findViewById(R.id.ruku_submit);
+		if(map1.size() == 0){
+			ruku_submit.setEnabled(false);
+		}else{
+			ruku_submit.setEnabled(true);
+		}
+		ruku_submit.setOnClickListener(new Button.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				if (map1.size() == map2.size()) {
+					if(SubmitSid.equals("") || SubmitSid == null){
+						ToastUtil.showToast(rukuActivity,"请扫描批次！", 0);
+					}else{
+						Map<String, String> map = new HashMap<>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", MyApplication.user);
+						map.put("apiId", "chkup");
+						map.put("chkid", "33");
+						JSONObject ceaJson = new JSONObject();
+						ceaJson.put("sid",SubmitSid);
+						ceaJson.put("sbuid", "E0004");
+						ceaJson.put("statefr", "0");
+						ceaJson.put("stateto", "0");
+						map.put("cea", ceaJson.toString());
+						OkHttpUtils.getInstance().getServerExecute(
+								MyApplication.MESURL, null, map, null,
+								mHander, true, "Approval_33");
+						
+						Intent intent = new Intent();
+						intent.setClass(RuKuActivity.this, Loading1Activity.class);// 跳转到加载界面
+						startActivity(intent);
+					}
+				}else{
+					ToastUtil.showToast(rukuActivity,"请将当前的缴库单号扫完~", 0);
+					yimei_ruku_proNum_edt.setText("");
+				}
+			}
+		});
+		
+		
 		yimei_ruku_user_edt.setOnEditorActionListener(editEnter);
 		yimei_ruku_proNum_edt.setOnEditorActionListener(editEnter);
 
@@ -353,6 +401,7 @@ public class RuKuActivity extends Activity {
 								ToastUtil.showToast(rukuActivity, "没有该批次号!", 0);
 								yimei_ruku_proNum_edt.selectAll();
 							} else {
+								ruku_submit.setEnabled(true);
 								mesTmm0 mesTmm0 = new mesTmm0();
 
 								for (int i = 0; i < ((JSONArray) jsonObject
@@ -360,6 +409,7 @@ public class RuKuActivity extends Activity {
 									JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 											.get("values")).get(i));
 									mesTmm0 = jsonValue.toJavaObject(mesTmm0.class);
+									SubmitSid =  mesTmm0.getMm_no(); //用来提交的id
 								}
 
 								Map<String, String> map = MyApplication.QueryBatNo(
@@ -390,6 +440,39 @@ public class RuKuActivity extends Activity {
 						if(string.equals("UpdateCheckid")){
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							System.out.println(jsonObject);
+						}
+						if(string.equals("Approval_33")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if(Integer.parseInt(jsonObject.get("id").toString())==0){
+								JSONObject ceaJson = new JSONObject();
+								ceaJson.put("stateto","6");
+								ceaJson.put("sid",SubmitSid);
+								ceaJson.put("sbuid", "E0004");
+								ceaJson.put("ckd","true");
+								ceaJson.put("yjcontext", "");
+								ceaJson.put("bup", "1");
+								ceaJson.put("statefr", "0");
+								ceaJson.put("tousr","");
+								Map<String, String> map = new HashMap<>();
+								map.put("dbid", MyApplication.DBID);
+								map.put("usercode", MyApplication.user);
+								map.put("apiId", "chkup");
+								map.put("chkid", "34");
+								map.put("cea", ceaJson.toString());
+								OkHttpUtils.getInstance().getServerExecute(
+										MyApplication.MESURL, null, map, null,
+										mHander, true, "Approval_34");
+							}else{
+								ToastUtil.showToast(rukuActivity,"提交33："+jsonObject.getString("message"),0);
+							}
+						}
+						if(string.equals("Approval_34")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if(jsonObject.getInteger("id") == 0){
+								ToastUtil.showToast(rukuActivity,jsonObject.getString("message"),0);
+							}else{
+								ToastUtil.showToast(rukuActivity,"34:"+jsonObject.getString("message"),0);
+							}
 						}
 					}
 				} else {
@@ -440,8 +523,7 @@ public class RuKuActivity extends Activity {
 			if (Integer.parseInt(mesTmm0.getCheckid()) == 1) {
 				map2.put(mesTmm0.getBat_no(), mesTmm0.getBat_no());
 			}
-			map.put("ruku_checkid",
-					Integer.parseInt(mesTmm0.getCheckid()) == 1 ? "√" : "");
+			map.put("ruku_checkid",Integer.parseInt(mesTmm0.getCheckid()) == 1 ? "√" : "");
 			map.put("ruku_bat_no", mesTmm0.getBat_no());
 			map.put("ruku_prd_no", mesTmm0.getPrd_no());
 			map.put("ruku_prd_mark", mesTmm0.getPrd_mark());

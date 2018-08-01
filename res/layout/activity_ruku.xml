@@ -31,9 +31,9 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="生产入库作业员"
                 android:labelFor="@+id/yimei_ruku_user_edt"
-                android:paddingLeft="10dp" />
+                android:paddingLeft="10dp"
+                android:tag="生产入库作业员" />
         </TableRow>
 
         <TableRow android:paddingTop="20dp" >
@@ -52,10 +52,22 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:tag="生产入库批次号"
                 android:labelFor="@+id/yimei_ruku_proNum_edt"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:tag="生产入库批次号" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <Button
+                android:id="@+id/ruku_submit"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="提交" />
         </TableRow>
 
         <LinearLayout

@@ -41,6 +41,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -754,9 +755,25 @@ public class BianDaiActivity extends Activity {
 					}
 				}
 				if ("ListViewIsLotNo".equals(string)) {
-					JSONObject jsonObject = JSON.parseObject(b.getString(
-							"jsonObj").toString());
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));
+						if (Integer.parseInt(jsonValue.get("holdid").toString()) == 1) {
+							ToastUtil.showToast(BianDaiActivity.this,"该lot号已被【HOLD】", 0);
+							yimei_biandai_proNum_edt.setText("");
+							InputHidden();
+						}
+						// 0.测试站 1.编带站 2.看带站
+						if (Integer.parseInt(jsonValue.get("lotstate").toString()) == 1) {
+							ToastUtil.showToast(BianDaiActivity.this,"该lot号已编带", 0);
+							InputHidden();
+							return;
+						} else if (Integer.parseInt(jsonValue.get("lotstate").toString()) == 2) {
+							ToastUtil.showToast(BianDaiActivity.this,"该lot号已看带", 0);
+							yimei_biandai_proNum_edt.setText("");
+							InputHidden();
+							return;
+						}
 						// 如果有批号
 						if (BianDaiAdapter != null) {
 							// 循环列表
@@ -1108,6 +1125,17 @@ public class BianDaiActivity extends Activity {
 			}
 		}
 	};
+	
+	
+	/**
+	 * 键盘隐藏
+	 */
+	private void InputHidden(){
+		//调用键盘类
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 如果软键盘已经显示，则隐藏，反之则显示
+		imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+	}
 	
 	/**
 	 * 跳转首检界面

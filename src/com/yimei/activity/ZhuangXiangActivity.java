@@ -19,11 +19,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +40,6 @@ import android.widget.TextView.OnEditorActionListener;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
-import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.adapter.ZhuangXiangAdapter;
 import com.yimei.scrollview.GeneralCHScrollView;
 import com.yimei.util.OkHttpUtils;
@@ -45,7 +47,6 @@ import com.yimei.util.ToastUtil;
 
 /**
  * 辅助：
- *  PKLIST：装箱批次号查询
  *  ERPCKNO:装箱CK单查询
  *  TTM0： //查询入库批次号 checkid=1
  * @author Administrator
@@ -53,13 +54,12 @@ import com.yimei.util.ToastUtil;
  */
 public class ZhuangXiangActivity extends TabActivity {
 
-	//CK84280006   代号 F0200017
 	private EditText yimei_zhuangxiang_jinbanren,
 			yimei_zhuangxiang_canpindaihao,yimei_zhuangxiang_canpinxinghao,yimei_zhuangxiang_chukuNum,
 			yimei_zhuangxiang_shoudingdanhao, yimei_zhuangxiang_chukushenqing,
 			yimei_zhuangxiang_manxiangNum, yimei_zhuangxiang_bat_no,
 			yimei_zhuangxiang_Num, yimei_zhuangxiang_bincode;
-	private Button zhuangxiang_add;
+	private Button zhuangxiang_add,zhuangxiang_save;
 
 	static MyApplication myapp;
 	public static ZhuangXiangActivity zhuangxiangActivity;
@@ -74,7 +74,6 @@ public class ZhuangXiangActivity extends TabActivity {
 	private JSONObject cus_pnJsonObject; // 往适配器添加数据
 	private static ListView mListView;
 	private ZhuangXiangAdapter ZhuangXiangAdapter;
-	private Integer AllQty = 0; // 子表所数量的和
 	private String canpinmingcheng; // 产品名称
 	private JSONObject cus_pnQueryIspackingJson; // 没有包装过的json提交到服务器
 	private String sid; // sid
@@ -188,6 +187,94 @@ public class ZhuangXiangActivity extends TabActivity {
 							mHander, true, "cus_pnQuery"); // 批次号查询
 					MyApplication.nextEditFocus(yimei_zhuangxiang_bincode);
 				}
+				if(tag.equals("装箱作业bin")){
+					yimei_zhuangxiang_bincode.setText(barcodeData);
+					if (yimei_zhuangxiang_chukushenqing.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入出库申请单~", 0);
+						MyApplication
+								.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+						return ;
+					}
+					if (yimei_zhuangxiang_manxiangNum.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入满箱数量~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_manxiangNum);
+						return ;
+					}
+					if (yimei_zhuangxiang_bat_no.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入批次号~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
+						return ;
+					}
+					if (yimei_zhuangxiang_bincode.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入bincode~",
+								0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_bincode);
+						return ;
+					}
+					boolean isNum_manxiang = IsNum_manxiang(); // 判断满箱数量是否正确
+					if (!isNum_manxiang) {
+						return ;
+					}
+					MyApplication.nextEditFocus(yimei_zhuangxiang_Num); // 跳转到数量
+				}
+				if(tag.equals("装箱作业qty")){
+					yimei_zhuangxiang_Num.setText(barcodeData);
+					if (yimei_zhuangxiang_chukushenqing.getText().toString().trim()
+							.equals("")) {
+						ToastUtil
+								.showToast(getApplicationContext(), "请输入出库申请单~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+						return ;
+					}
+					if (yimei_zhuangxiang_manxiangNum.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入满箱数量~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_manxiangNum);
+						return ;
+					}
+					if (yimei_zhuangxiang_bat_no.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入批次号~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
+						return ;
+					}
+					if (yimei_zhuangxiang_Num.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入数量~", 0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_Num);
+						return ;
+					}
+					if (yimei_zhuangxiang_bincode.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(), "请输入bincode~",
+								0);
+						MyApplication.nextEditFocus(yimei_zhuangxiang_bincode);
+						return ;
+					}
+					if (chukushenqingJson == null) {
+						ToastUtil.showToast(getApplicationContext(), "没有该单号,请核对~",
+								0);
+						MyApplication
+								.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+						return ;
+					} else {
+						boolean isNum_manxiang = IsNum_manxiang(); // 判断满箱数量是否正确
+						if (!isNum_manxiang) {
+							return ;
+						}
+						Map<String, String> queryBatNo = MyApplication.QueryBatNo(
+								"MESPACKINGA", "~bat_no='" + zhuangxiang_bat_no
+										+ "'");
+						OkHttpUtils.getInstance().getServerExecute(
+								MyApplication.MESURL, null, queryBatNo, null,
+								mHander, true, "Num_cus_pnQueryIspacking"); // 批次号查询（是否包装过）|
+																			// 数量
+					}
+				}
 			}
 		}
 	};
@@ -208,6 +295,7 @@ public class ZhuangXiangActivity extends TabActivity {
 		yimei_zhuangxiang_bincode = (EditText) findViewById(R.id.yimei_zhuangxiang_bincode);
 		yimei_zhuangxiang_chukushenqing = (EditText) findViewById(R.id.yimei_zhuangxiang_chukushenqing);
 		zhuangxiang_add = (Button) findViewById(R.id.zhuangxiang_add);
+		zhuangxiang_save = (Button) findViewById(R.id.zhuangxiang_save);
 		yimei_zhuangxiang_canpinxinghao.setKeyListener(null);
 		yimei_zhuangxiang_canpindaihao.setKeyListener(null);
 		yimei_zhuangxiang_chukuNum.setKeyListener(null);
@@ -243,6 +331,65 @@ public class ZhuangXiangActivity extends TabActivity {
 //				show(chukushenqingJson);
 			}
 		});
+		
+		zhuangxiang_save.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(ZhuangXiangAdapter!=null){
+					//主对象
+					JSONObject jsonFatcher = new JSONObject();
+					jsonFatcher.put("sys_stated", "3"); // 新增
+					jsonFatcher.put("sopr", zuoyeyuan);
+					jsonFatcher.put("sbuid","H0003");
+					jsonFatcher.put("state","0");
+					jsonFatcher.put("mkdate",MyApplication.GetServerNowTime());
+					//jsonFatcher.put("cprn","1");  //打印标识
+					jsonFatcher.put("wh","01");
+					jsonFatcher.put("unit","1");
+					jsonFatcher.put("prtqty","1");
+					jsonFatcher.put("sorg",MyApplication.sorg);
+					jsonFatcher.put("pkid","0");
+					jsonFatcher.put("ckqty",yimei_zhuangxiang_chukuNum.getText().toString().toUpperCase().trim()); //出货数量(界面上的)
+					jsonFatcher.put("pkqty",manxiangshuliang); //满箱数量
+					jsonFatcher.put("spno",yimei_zhuangxiang_chukushenqing.getText().toString().toUpperCase().trim()); // 出库单
+					jsonFatcher.put("prd_name",yimei_zhuangxiang_canpinxinghao.getText().toString().toUpperCase().trim()); // 机型名称
+					jsonFatcher.put("prd_no",yimei_zhuangxiang_canpindaihao.getText().toString().toUpperCase().trim()); // 机型号
+					jsonFatcher.put("cdic",chukushenqingJson.containsKey("cdic")?chukushenqingJson.getString("cdic"):""); // 机型号
+					jsonFatcher.put("os_no",chukushenqingJson.getString("os_no")); // 受订单号
+					//子对象
+					JSONArray JsonSonArr = new JSONArray();
+					
+						int FatcherQty = 0;
+						Intent intent = new Intent();
+						intent.setClass(ZhuangXiangActivity.this, Loading1Activity.class);// 跳转到加载界面
+						startActivity(intent);
+						for (int i = 0; i < ZhuangXiangAdapter.getCount(); i++) {
+							Map<String, String> map = (Map<String, String>) ZhuangXiangAdapter.getItem(i);
+							JSONObject JsonSon = new JSONObject();
+							JsonSon.put("sys_stated", "3"); // 新增
+							JsonSon.put("cid", i+1); // 项次 cidgagarin
+							JsonSon.put("unit", "1"); // unit
+							JsonSon.put("bat_no", map.get("bat_no")); // 主表的sid
+							JsonSon.put("prd_mark", map.get("prd_mark")); // bincode
+							JsonSon.put("qty",map.get("qty")); // 新增
+							FatcherQty += Integer.parseInt(map.get("qty"));
+							JsonSon.put("prd_name",map.get("prd_name")); //产品名称
+							JsonSon.put("prd_no", map.get("prd_no")); // 产品代号
+							JsonSon.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
+							JsonSonArr.add(JsonSon);
+						}
+						jsonFatcher.put("H0003AWEB", JsonSonArr);
+						jsonFatcher.put("qty",FatcherQty); // 装箱总数
+						Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(
+								MyApplication.DBID, "savedata", MyApplication.user,
+								jsonFatcher.toString(), "H0003WEB(H0003AWEB)", "1"); // 批次号添加（服务器提交）
+						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
+								null, mesIdMap, null, mHander, true, "save_H0003"); // 批次扫描添加
+				}else{
+					ToastUtil.showToast(getApplicationContext(),"列表没有数据！",0);
+				}
+			}
+		});
 	}
 
 	/**
@@ -271,7 +418,8 @@ public class ZhuangXiangActivity extends TabActivity {
 						cidgagarin = 1;
 						if(ZhuangXiangAdapter!=null){
 							mListView.setAdapter(null);
-							ZhuangXiangAdapter.notifyDataSetChanged();
+							ZhuangXiangAdapter = null;
+//							ZhuangXiangAdapter.notifyDataS etChanged();
 						}
 						chukushenqingJson = null;
 						MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
@@ -328,6 +476,14 @@ public class ZhuangXiangActivity extends TabActivity {
 					yimei_zhuangxiang_jinbanren.setSelectAllOnFocus(true);
 				}
 			}
+			if (v.getId() == R.id.yimei_zhuangxiang_manxiangNum) {
+				if (!hasFocus) {
+					manxiangshuliang = Integer.parseInt(yimei_zhuangxiang_manxiangNum.getText().toString().trim());
+				} else {
+					yimei_zhuangxiang_manxiangNum.setSelectAllOnFocus(true);
+				}
+			}
+			
 			if (v.getId() == R.id.yimei_zhuangxiang_chukushenqing) {
 				if (hasFocus) {
 					yimei_zhuangxiang_chukushenqing.setSelectAllOnFocus(true);
@@ -392,8 +548,7 @@ public class ZhuangXiangActivity extends TabActivity {
 						mListView.setAdapter(ZhuangXiangAdapter);
 					}
 				}
-				chukushenqing = yimei_zhuangxiang_chukushenqing.getText()
-						.toString().trim();
+				chukushenqing = yimei_zhuangxiang_chukushenqing.getText().toString().trim().toUpperCase();
 				QuerySpno(chukushenqing); // 查询申请单号
 				flag = true;
 			}
@@ -421,27 +576,6 @@ public class ZhuangXiangActivity extends TabActivity {
 					if (!isNum_manxiang) {
 						return false;
 					}
-					chukushenqingJson.put("plqty", manxiangshuliang);
-					chukushenqingJson.put("sys_stated", "3"); // 新增
-					chukushenqingJson.put("sopr", zuoyeyuan);
-					chukushenqingJson.put("sbuid","H0003");
-					chukushenqingJson.put("state","0");
-					chukushenqingJson.put("mkdate",MyApplication.GetServerNowTime());
-					chukushenqingJson.put("cprn","1");
-					chukushenqingJson.put("wh","01");
-					chukushenqingJson.put("prtqty","1");
-					chukushenqingJson.put("sorg",MyApplication.sorg);
-					chukushenqingJson.put("pkid","0");
-					chukushenqingJson.put("pkqty",yimei_zhuangxiang_manxiangNum.getText()); //满箱数量
-					
-					Map<String, String> mesIdMap = MyApplication
-							.httpMapKeyValueMethod(MyApplication.DBID,
-									"savedata", MyApplication.user,
-									chukushenqingJson.toString(), "H0003WEB",
-									"1"); // 出库申请添加
-					OkHttpUtils.getInstance().getServerExecute(
-							MyApplication.MESURL, null, mesIdMap, null,
-							mHander, true, "AddChukushenqing"); // 出库申请添加
 					MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
 					flag = true;
 				}
@@ -615,43 +749,42 @@ public class ZhuangXiangActivity extends TabActivity {
 			ToastUtil.showToast(getApplicationContext(), "已超出满箱数量!", 0);
 			return false;
 		};
-		// 判断所有的数量加本次的数量是否超过出库数量
+		
+		int listQty = 0;
+		if(ZhuangXiangAdapter!=null){
+			for (int i = 0; i < ZhuangXiangAdapter.getCount(); i++) {
+				Map<String, String> map = (Map<String, String>) ZhuangXiangAdapter
+						.getItem(i);
+				listQty += Integer.parseInt(map.get("qty"));
+			}
+		}
+		// 判断列表中的数量加本次的数量是否超过出库数量
 		if (Integer.parseInt(yimei_zhuangxiang_Num.getText().toString().trim())
-				+ AllQty > Integer.parseInt(yimei_zhuangxiang_chukuNum
+				+ listQty > Integer.parseInt(yimei_zhuangxiang_chukuNum
 				.getText().toString().trim())) {
 			ToastUtil.showToast(getApplicationContext(), "出库数量已超出~", 0);
 			flag = false;
 			return false;
 		}
+		
 
 		if (flag == true) {
 			// 批次号没有查到添加
 			JSONObject jsonobj = new JSONObject();
-			jsonobj.put("cid", cidgagarin); // 项次
-			jsonobj.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim());// 批次号
-			jsonobj.put("prd_mark", yimei_zhuangxiang_bincode.getText().toString().trim()); // bincode
-			jsonobj.put("qty", yimei_zhuangxiang_Num.getText().toString().trim()); // 新增
-			jsonobj.put("prd_name", yimei_zhuangxiang_canpinxinghao.getText().toString().trim()); // 产品名称
-			jsonobj.put("prd_no", yimei_zhuangxiang_canpindaihao.getText().toString().trim()); // 产品代号
-			jsonobj.put("sys_stated", "3"); // 新增
-			jsonobj.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
-			jsonobj.put("unit", "1"); // unit
-			jsonobj.put("sid", sid); // 主表的sid
-			cidgagarin++;
-			Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(
-					MyApplication.DBID, "savedata", MyApplication.user,
-					jsonobj.toString(), "H0003AWEB", "1"); // 批次号添加
-			OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
-					null, mesIdMap, null, mHander, true, "Nocus_pnAddAdapter"); // 批次扫描添加
-
 			List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("zhuangxiang_cid", jsonobj.get("cid").toString());
-			map.put("zhuangxiang_bat_no", jsonobj.get("bat_no").toString());
-			map.put("zhuangxiang_bincode", jsonobj.get("prd_mark").toString());
-			map.put("zhuangxiang_qty", jsonobj.get("qty").toString());
-			map.put("zhuangxiang_prd_no", jsonobj.getString("prd_no"));
+			map.put("cid", String.valueOf(cidgagarin)); // 项次
+			map.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim());// 批次号
+			map.put("prd_mark", yimei_zhuangxiang_bincode.getText().toString().trim()); // bincode
+			map.put("qty", yimei_zhuangxiang_Num.getText().toString().trim()); // 批次号数量
+			map.put("prd_name", yimei_zhuangxiang_canpinxinghao.getText().toString().trim()); // 产品名称
+			map.put("prd_no", yimei_zhuangxiang_canpindaihao.getText().toString().trim()); // 产品代号
+//			map.put("sys_stated", "3"); // 新增
+			map.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
+			map.put("unit", "1"); // unit
+//			map.put("sid", sid); // 主表的sid
 			mList.add(map);
+			cidgagarin++;
 			if (ZhuangXiangAdapter == null) {
 				ZhuangXiangAdapter = new ZhuangXiangAdapter(zhuangxiangActivity, mList);
 				mListView.setAdapter(ZhuangXiangAdapter);
@@ -684,6 +817,39 @@ public class ZhuangXiangActivity extends TabActivity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
+						JSONObject LoginTimeMess = JSON.parseObject(b.getString("jsonObj").toString());
+						if (LoginTimeMess.containsKey("message")) {
+							if (LoginTimeMess.get("message").equals("请重新登录")) { // 超时登录
+								LoginTimeout_dig("超时登录", "请重新登录!");
+								return;
+							}
+						}
+						if (string.equals("TimeOutLogin")) { // 超时登录
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (jsonObject.getInteger("id") != 0) {
+								LoginTimeout_dig("密码错误", "");
+							}
+						}
+						if(string.equals("save_H0003")){
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if(jsonObject.getInteger("id") == 0){ //操作成功
+								ToastUtil.showToast(getApplicationContext(),jsonObject.getString("message"),0);
+								ZhuangXiangAdapter = null;
+								mListView.setAdapter(null);
+								yimei_zhuangxiang_chukushenqing.setText("");
+								yimei_zhuangxiang_manxiangNum.setText("186000");
+								yimei_zhuangxiang_bat_no.setText("");
+								yimei_zhuangxiang_bincode.setText("");
+								yimei_zhuangxiang_Num.setText("");
+								yimei_zhuangxiang_canpindaihao.setText("");
+								yimei_zhuangxiang_canpinxinghao.setText("");
+								yimei_zhuangxiang_chukuNum.setText("");
+								MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+							}else{
+								ToastUtil.showToast(getApplicationContext(),"（savedata）添加失败",0);
+							}
+							System.out.println(jsonObject);
+						}
 						if (string.equals("Querychukushenqing")) {
 							JSONObject jsonObject = JSON.parseObject(b.getString(
 									"jsonObj").toString());
@@ -706,30 +872,6 @@ public class ZhuangXiangActivity extends TabActivity {
 								showNormalDialog((JSONArray) jsonObject.get("values"));
 							}
 						}
-						if (string.equals("QuerychukushenqingSum")) { // 查询子表所有的数量
-							JSONObject jsonObject = JSON.parseObject(b.getString(
-									"jsonObj").toString());
-							if (!(Integer.parseInt(jsonObject.get("code")
-									.toString()) == 0)) { // 申请单没有数据的和
-								// 子表所有的数量和
-								String num = ((JSONObject) ((JSONArray) jsonObject
-										.get("values")).get(0)).get("qty")
-										.toString();
-								num = num.substring(0, num.indexOf("."));
-								AllQty = Integer.parseInt(num);
-							}
-						}
-						if (string.equals("AddChukushenqing")) {
-							JSONObject jsonObject = JSON.parseObject(b.getString(
-									"jsonObj").toString());
-							if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
-								sid = ((JSONObject) jsonObject.get("data")).get(
-										"sid").toString();
-							} else {
-								ToastUtil.showToast(getApplicationContext(),
-										jsonObject.getString("message"), 0);
-							}
-						}
 						if ("cus_pnQuery".equals(string)) { // 批次号查询回来的数据
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (!(Integer.parseInt(jsonObject.get("code").toString()) == 0)) { // 找到了批次号
@@ -740,24 +882,32 @@ public class ZhuangXiangActivity extends TabActivity {
 									ToastUtil.showToast(getApplicationContext(),"该批次没有机型号，无法匹配！",0);
 									return;
 								}
-								if(!a1.equals(chukushenqingJson.get("prd_no"))){
+								if(!a1.equals(yimei_zhuangxiang_canpindaihao.getText().toString().toUpperCase().trim())){
 									ToastUtil.showToast(getApplicationContext(),"该批次的产品出货机型不符~",0);
 									MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
-									yimei_zhuangxiang_bat_no.selectAll();
+									yimei_zhuangxiang_bat_no.setText("");
 									return;
 								}
 								// 拿回来的数量
-								Integer num = (Integer) ((JSONObject) ((JSONArray) jsonObject
-												.get("values")).get(0)).get("qty");
+								Integer num = (Integer) ((JSONObject) ((JSONArray) jsonObject.get("values")).get(0)).get("qty");
 								// 批次号是否包装
-								if (num + AllQty > Integer
-										.parseInt(yimei_zhuangxiang_chukuNum
-												.getText().toString().trim())) {
+								int listQty = 0;
+								if(ZhuangXiangAdapter!=null){
+									for (int i = 0; i < ZhuangXiangAdapter.getCount(); i++) {
+										Map<String, String> map = (Map<String, String>) ZhuangXiangAdapter.getItem(i);
+										if(map.get("bat_no").equals(yimei_zhuangxiang_bat_no.getText().toString().toUpperCase().trim())){
+											ToastUtil.showToast(getApplicationContext(),"该批次号已经扫描过",0);
+											yimei_zhuangxiang_bat_no.selectAll();
+											return;
+										}
+										listQty += Integer.parseInt(map.get("qty"));
+									}
+								}
+								if (num + listQty > Integer.parseInt(yimei_zhuangxiang_chukuNum.getText().toString().trim())) {
 									ToastUtil.showToast(getApplicationContext(),
 											"出库数量已超出~", 0);
 									return;
 								}
-
 								Map<String, String> queryBatNo = MyApplication
 										.QueryBatNo("MESPACKINGA", "~bat_no='"
 												+ zhuangxiang_bat_no + "'");
@@ -786,6 +936,7 @@ public class ZhuangXiangActivity extends TabActivity {
 								// 包装过
 								ToastUtil.showToast(getApplicationContext(), "《"
 										+ zhuangxiang_bat_no + "》已包装过~", 0);
+								MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
 								yimei_zhuangxiang_bat_no.selectAll();
 								return;
 							} else {
@@ -822,40 +973,6 @@ public class ZhuangXiangActivity extends TabActivity {
 								MyApplication.nextEditFocus(yimei_zhuangxiang_bincode);
 							}
 						}
-						if (string.equals("cus_pnAddAdapter")) { // 往适配器写数据
-							JSONObject jsonObject = JSON.parseObject(b.getString(
-									"jsonObj").toString());
-							if (Integer.parseInt(jsonObject.get("id").toString()) == 0) {
-								List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
-								Map<String, String> map = new HashMap<String, String>();
-								map.put("zhuangxiang_cid",
-										cus_pnJsonObject.getString("cid"));
-								map.put("zhuangxiang_bat_no",
-										cus_pnJsonObject.getString("bat_no"));
-								map.put("zhuangxiang_bincode",
-										cus_pnJsonObject.getString("prd_mark"));
-								map.put("zhuangxiang_qty",
-										cus_pnJsonObject.getString("qty"));
-								map.put("zhuangxiang_prd_no",
-										cus_pnJsonObject.getString("prd_no"));
-								map.put("zhuangxiang_prd_name",
-										cus_pnJsonObject.getString("prd_name"));
-								mList.add(map);
-								if (ZhuangXiangAdapter == null) {
-									ZhuangXiangAdapter = new ZhuangXiangAdapter(
-											zhuangxiangActivity, mList);
-
-									mListView.setAdapter(ZhuangXiangAdapter);
-									ZhuangXiangAdapter.notifyDataSetChanged();
-								} else {
-									ZhuangXiangAdapter.listData.add(map);
-									ZhuangXiangAdapter.notifyDataSetChanged();
-								}
-							} else {
-								ToastUtil.showToast(getApplicationContext(),
-										jsonObject.getString("message"), 0);
-							}
-						}
 					} catch (Exception e) {
 						e.printStackTrace();
 						ToastUtil.showToast(getApplicationContext(),e.toString(),0);
@@ -866,66 +983,6 @@ public class ZhuangXiangActivity extends TabActivity {
 			}
 		}
 	};
-	
-	/**
-	 * 申请号查出来多条记录弹框
-	 */
-	/*private ListView shenqinghaoQueryShowDig(JSONObject jsonObject){
-			JSONObject newJsonObject = (JSONObject) ((JSONArray) jsonObject
-					.get("values")).get(0);
-			List<Map<String, String>> mList = new ArrayList<Map<String,String>>();
-			for (int i = 0; i < ((JSONArray) jsonObject
-					.get("values")).size(); i++) {
-				JSONObject jsonObj  = (JSONObject) ((JSONArray) jsonObject
-						.get("values")).get(i);
-				Map<String,String> map = new HashMap<String,String>();
-				map.put("zhuangxiang_dig_chukudan",jsonObj.get("ck_no").toString());
-				map.put("zhuangxiang_dig_shoudandan",jsonObj.get("os_no").toString());
-				map.put("zhuangxiang_dig_kuhudingdan",jsonObj.get("cus_os_no").toString());
-				map.put("zhuangxiang_dig_chuhuobeizhu","");
-				map.put("zhuangxiang_dig_prdName",jsonObj.get("prd_name").toString());
-				mList.add(map);
-			}
-			
-			ZhuangXiang_dig_Adapter = new ZhuangXiang_Dig_Adapter(zhuangxiangActivity,mList);
-			dig_mListView.setAdapter(ZhuangXiang_dig_Adapter);
-			return dig_mListView;*/
-			/*chukushenqingJson = newJsonObject; // 全局
-												// 满箱数量回车后需要的json
-												// （服务器添加箱码号）
-			// 给界面添加数据================================
-			canpinmingcheng = newJsonObject.get("prd_name")
-					.toString();
-			yimei_zhuangxiang_canpindaihao
-					.setText(newJsonObject.get("prd_no")
-							.toString());
-			yimei_zhuangxiang_canpinxinghao.setText(
-					newJsonObject.get("prd_name")
-							.toString());
-			yimei_zhuangxiang_chukuNum.setText(newJsonObject
-					.get("qty")
-					.toString()
-					.substring(
-							0,
-							newJsonObject.get("qty").toString()
-									.indexOf(".")));
-			yimei_zhuangxiang_shoudingdanhao
-					.setText(newJsonObject.get("os_no")
-							.toString());
-			// 给界面添加数据================================
-	
-			MyApplication
-					.nextEditFocus(yimei_zhuangxiang_manxiangNum);
-	
-			Map<String, String> map = MyApplication.QueryBatNo(
-					"SHENQINGSUM", "~spno='" + chukushenqing
-							+ "'");
-			OkHttpUtils.getInstance().getServerExecute(
-					MyApplication.MESURL, null, map, null,
-					mHander, true, "QuerychukushenqingSum"); // 查询当前出货申请单号的子表的所有数量是否大于出库数量
-	
-			Log.i("jsonObj", jsonObject.toString());*/
-//	}
 
 	private void show(JSONObject jsonObj){
 		if(chukushenqingJson==null){
@@ -939,28 +996,16 @@ public class ZhuangXiangActivity extends TabActivity {
 			map.put("zhuangxiang_dig_chuhuobeizhu","");
 			map.put("zhuangxiang_dig_prdName",jsonObj.get("prd_name").toString());
 			mList.add(map);
-//			chukushenqingJson = jsonObj; // 全局
-												// 满箱数量回车后需要的json
-												// （服务器添加箱码号）
 			// 给界面添加数据================================
 			canpinmingcheng = jsonObj.get("prd_name").toString();
 			yimei_zhuangxiang_canpindaihao.setText(jsonObj.get("prd_no").toString());
 			yimei_zhuangxiang_canpinxinghao.setText(jsonObj.get("prd_name").toString());
-			yimei_zhuangxiang_chukuNum.setText(jsonObj.get("qty").toString().substring(0,jsonObj.get("qty").toString().indexOf(".")));
-			/*yimei_zhuangxiang_shoudingdanhao
-					.setText(jsonObj.get("os_no")==null?"":jsonObj.get("os_no").toString());*/
-			// 给界面添加数据================================
-	
+			if(jsonObj.get("qty").toString().indexOf(".") != -1){
+				yimei_zhuangxiang_chukuNum.setText(jsonObj.get("qty").toString().substring(0,jsonObj.get("qty").toString().indexOf(".")));
+			}else{
+				yimei_zhuangxiang_chukuNum.setText(jsonObj.get("qty").toString());
+			}
 			MyApplication.nextEditFocus(yimei_zhuangxiang_manxiangNum);
-	
-			Map<String, String> map1 = MyApplication.QueryBatNo(
-					"SHENQINGSUM", "~spno='" + chukushenqing
-							+ "'");
-			OkHttpUtils.getInstance().getServerExecute(
-					MyApplication.MESURL, null, map1, null,
-					mHander, true, "QuerychukushenqingSum"); // 查询当前出货申请单号的子表的所有数量是否大于出库数量
-	
-			Log.i("jsonObj", jsonObj.toString());
 		}
 	}
 	
@@ -1009,7 +1054,7 @@ public class ZhuangXiangActivity extends TabActivity {
 	
 	/**
 	 * 批次号存在提交服务器
-	 * 
+	 * 批次号回车
 	 * @param jsonObject
 	 */
 	private void bat_noExist(JSONObject jsonObject) { // 批次号存在
@@ -1019,27 +1064,81 @@ public class ZhuangXiangActivity extends TabActivity {
 					+ manxiangshuliang + "", 0);
 			return;
 		}
+		//判断列表中的数据是否超出满箱数量
 		if(!panduan_manxiangNum(Integer.parseInt(cus_pnJsonObject.get("qty").toString()))){
-			ToastUtil.showToast(getApplicationContext(), "已超出满箱数量!", 0);
+//			ToastUtil.showToast(getApplicationContext(), "已超出满箱数量!", 0);
 			return;
-		}; // 判断出库数据有没有超出
-		if (cus_pnJsonObject.containsKey("qty")
-				|| cus_pnJsonObject.containsKey("prd_no")
-				|| cus_pnJsonObject.containsKey("prd_mark")) {
-			cus_pnJsonObject.put("sys_stated", "3"); // 新增
-			cus_pnJsonObject.put("cid", cidgagarin); // 项次
-			cus_pnJsonObject.put("sid", sid); // 主表的sid
-			cus_pnJsonObject.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim()); // 主表的sid
-			cidgagarin++;
-			Map<String, String> mesIdMap = MyApplication.httpMapKeyValueMethod(
-					MyApplication.DBID, "savedata", MyApplication.user,
-					cus_pnJsonObject.toString(), "H0003AWEB", "1"); // 批次号添加（服务器提交）
-			OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
-					null, mesIdMap, null, mHander, true, "cus_pnAddAdapter"); // 批次扫描添加
-			MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
-			yimei_zhuangxiang_bat_no.setText("");
-			yimei_zhuangxiang_bat_no.selectAll();
+		}; 
+		
+		List<Map<String, String>> mList = new ArrayList<Map<String, String>>();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("cid", String.valueOf(cidgagarin)); // 项次
+		map.put("bat_no", yimei_zhuangxiang_bat_no.getText().toString().trim());// 批次号
+		map.put("prd_mark",cus_pnJsonObject.getString("prd_mark")); // bincode
+		map.put("qty", cus_pnJsonObject.getInteger("qty").toString()); // 批次号数量
+		map.put("prd_name", yimei_zhuangxiang_canpinxinghao.getText().toString().trim()); // 产品名称
+		map.put("prd_no", yimei_zhuangxiang_canpindaihao.getText().toString().trim()); // 产品代号
+		map.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
+		map.put("unit", "1"); // unit
+		mList.add(map);
+		if (ZhuangXiangAdapter == null) {
+			ZhuangXiangAdapter = new ZhuangXiangAdapter(zhuangxiangActivity, mList);
+			mListView.setAdapter(ZhuangXiangAdapter);
+			ZhuangXiangAdapter.notifyDataSetChanged();
+		} else {
+			ZhuangXiangAdapter.listData.add(0,map);
+			ZhuangXiangAdapter.notifyDataSetChanged();
 		}
+		MyApplication.nextEditFocus(yimei_zhuangxiang_bat_no);
+		yimei_zhuangxiang_bat_no.setText("");
+	}
+	
+	/**
+	 * 超时登录
+	 * 
+	 * @param Title
+	 * @param msg
+	 */
+	private void LoginTimeout_dig(String Title, String msg) {
+		LayoutInflater inflater = getLayoutInflater();
+		View dialog = inflater.inflate(R.layout.activity_mesurl_dig,
+				(ViewGroup) findViewById(R.id.dialogurl));
+		final EditText usertext = (EditText) dialog.findViewById(R.id.mesurl);
+		final EditText userpwd = (EditText) dialog.findViewById(R.id.mesdbid);
+		final TextView logintime_usertext = (TextView) dialog
+				.findViewById(R.id.logintime_user);
+		final TextView logintime_pwdtext = (TextView) dialog
+				.findViewById(R.id.logintime_pwd);
+		logintime_usertext.setText("用户名");
+		logintime_pwdtext.setText("密码");
+		userpwd.setInputType(InputType.TYPE_CLASS_TEXT
+				| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		usertext.setText(MyApplication.user);
+//		usertext.setKeyListener(null);
+
+		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+				ZhuangXiangActivity.this);
+		normalDialog.setTitle(Title);
+		normalDialog.setView(dialog);
+		// normalDialog.setMessage(Html.fromHtml("<font color='red'>" + msg
+		// + "</font>"));
+		normalDialog.setCancelable(false); // 设置不可点击界面之外的区域让对话框消失
+		normalDialog.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("dbid", MyApplication.DBID);
+						map.put("usercode", usertext.getText().toString());
+						map.put("apiId", "login");
+						map.put("pwd", MyApplication.Base64pwd(userpwd
+								.getText().toString()));
+						OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL,
+								null, map, null, mHander, true, "TimeOutLogin");
+					}
+				});
+		// 显示
+		normalDialog.show();
 	}
 
 	/**
@@ -1049,13 +1148,11 @@ public class ZhuangXiangActivity extends TabActivity {
 		int listNum = 0;
 		if (ZhuangXiangAdapter != null) {
 			for (int i = 0; i < ZhuangXiangAdapter.getCount(); i++) {
-				Map<String, String> map = (Map<String, String>) ZhuangXiangAdapter
-						.getItem(i);
-				listNum += Integer.parseInt(map.get("zhuangxiang_qty"));
+				Map<String, String> map = (Map<String, String>) ZhuangXiangAdapter.getItem(i);
+				listNum += Integer.parseInt(map.get("qty"));
 			}
 			if (listNum + num > manxiangshuliang) {
-				ToastUtil.showToast(getApplicationContext(), "满箱数量已超出,最多可以扫："
-						+ manxiangshuliang + "", 0);
+				ToastUtil.showToast(getApplicationContext(), "（列表相加）满箱数量已超出,已扫描："+ listNum + "", 0);
 				return false;
 			}
 		}

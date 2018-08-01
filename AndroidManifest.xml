@@ -239,6 +239,11 @@
             android:name="com.yimei.activity.SlkMboxActivity"
             android:label="@string/SlkMboxTitle" >
         </activity>
+        <!-- 工单绑料盒 -->
+        <activity
+            android:name="com.yimei.activity.KanDaiBadActivity"
+            android:label="@string/KandaiTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

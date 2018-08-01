@@ -309,6 +309,8 @@
     <string name="yimei_weixiuTitle">维修申请</string>
     <string name="tongyongguozhanTitle">通用过站</string>
     <string name="SlkMboxTitle">工单绑料盒</string>
+    <string name="KandaiTitle">不良记录补写</string>
+    
    
     <!-- 料盒 -->
     <string name="yimei_mbox_jiebang">料盒</string>

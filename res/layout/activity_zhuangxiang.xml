@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
-		
+
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,9 +78,9 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
-                            android:tag="装箱入库申请"
                             android:labelFor="@+id/yimei_zhuangxiang_chukushenqing"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:tag="装箱入库申请" />
                     </TableRow>
                     <!-- 满箱数量 -->
 
@@ -100,7 +100,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
-                            android:inputType="text"
+                            android:inputType="number"
                             android:labelFor="@+id/yimei_zhuangxiang_manxiangNum"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -123,11 +123,11 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
-                            android:tag="装箱作业批次号"
                             android:labelFor="@+id/yimei_zhuangxiang_bat_no"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:tag="装箱作业批次号" />
                     </TableRow>
-                     <!-- BinCode -->
+                    <!-- BinCode -->
 
                     <TableRow android:layout_marginTop="8dp" >
 
@@ -147,7 +147,8 @@
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_bincode"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:tag="装箱作业bin" />
                     </TableRow>
                     <!-- 数量 -->
 
@@ -169,16 +170,18 @@
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_Num"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:tag="装箱作业qty" />
                     </TableRow>
                     <!-- 产品型号 -->
+
                     <TableRow android:layout_marginTop="8dp" >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/gray"
-                            android:text="@string/zhuangxiang_canpinxinghao" />
+                            android:text="@string/zhuangxiang_canpinxinghao"
+                            android:textColor="@color/gray" />
 
                         <EditText
                             android:id="@+id/yimei_zhuangxiang_canpinxinghao"
@@ -187,11 +190,11 @@
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
                             android:enabled="true"
-                            android:textColor="@color/gray"
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_canpinxinghao"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:textColor="@color/gray" />
                     </TableRow>
                     <!-- 产品代号 -->
 
@@ -200,13 +203,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/gray"
-                            android:text="@string/zhuangxiang_canpindaihao" />
+                            android:text="@string/zhuangxiang_canpindaihao"
+                            android:textColor="@color/gray" />
 
                         <EditText
                             android:id="@+id/yimei_zhuangxiang_canpindaihao"
                             android:layout_width="250dp"
-                            android:textColor="@color/gray"
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
@@ -214,7 +216,8 @@
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_canpindaihao"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:textColor="@color/gray" />
                     </TableRow>
                     <!-- 出库数量 -->
 
@@ -223,25 +226,27 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/gray"
-                            android:text="@string/zhuangxiang_chukuNum" />
+                            android:text="@string/zhuangxiang_chukuNum"
+                            android:textColor="@color/gray" />
 
                         <EditText
                             android:id="@+id/yimei_zhuangxiang_chukuNum"
                             android:layout_width="250dp"
-                            android:textColor="@color/gray"
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
-                            android:inputType="text"
+                            android:inputType="number"
                             android:labelFor="@+id/yimei_zhuangxiang_chukuNum"
-                            android:paddingLeft="10dp" />
+                            android:paddingLeft="10dp"
+                            android:textColor="@color/gray" />
                     </TableRow>
                     <!-- 受定单号 -->
 
-                   <!--  <TableRow android:layout_marginTop="8dp" >
+
+                    <!--
+                    <TableRow android:layout_marginTop="8dp" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -259,9 +264,15 @@
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_shoudingdanhao"
                             android:paddingLeft="10dp" />
-                    </TableRow> -->
+                    </TableRow>
+                    -->
 
-                    <TableRow android:layout_marginTop="8dp" >
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:minHeight="40dip"
+                        android:orientation="horizontal" >
 
                         <Button
                             android:id="@+id/zhuangxiang_add"
@@ -271,7 +282,16 @@
                             android:layout_weight="1"
                             android:background="@drawable/btn_shape_check_border"
                             android:text="新增单号" />
-                    </TableRow>
+                        
+                        <Button
+                            android:id="@+id/zhuangxiang_save"
+                            android:layout_width="0dip"
+                            android:layout_height="40dp"
+                            android:layout_margin="5dip"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_shape_check_border"
+                            android:text="保存" />
+                    </LinearLayout>
                 </TableLayout>
             </LinearLayout>
 
@@ -315,20 +335,22 @@
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_bat_no"
                                 android:textColor="#850" />
-                            
+
                             <TextView
                                 android:layout_width="100dip"
                                 android:layout_height="fill_parent"
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_canpindaihao"
                                 android:textColor="#850" />
-                            
-                            <!-- <TextView
+
+                            <!--
+                                 <TextView
                                 android:layout_width="100dip"
                                 android:layout_height="fill_parent"
                                 android:gravity="center"
                                 android:text="@string/zhuangxiang_canpinxinghao"
-                                android:textColor="#850" /> -->
+                                android:textColor="#850" />
+                            -->
 
                             <TextView
                                 android:layout_width="100dip"

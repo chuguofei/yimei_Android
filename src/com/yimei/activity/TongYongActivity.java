@@ -67,10 +67,9 @@ import com.yimei.util.ToastUtil;
  * 200修改mes_precord
  * 202修改mes_lot_plana
  * QJ_ZCNO（器件的制程）: 查询器件的制程
- *QJ_Q_SLKMOBX //查询工单中绑定这个料没
+ * QJ_Q_SLKMOBX //查询工单中绑定这个料没
  * @author Administrator
  * PPA和EMC3030
- * MES再添加一个3030制程的流程，具体流程：plasma、固晶、烘烤、plasma、焊线、plasma、点胶、烘烤、外观、测试、编带、看带、包装
  */
 public class TongYongActivity extends Activity {
 
@@ -617,8 +616,7 @@ public class TongYongActivity extends Activity {
 			try {
 				super.handleMessage(msg);
 				Bundle b = msg.getData();
-				JSONObject LoginTimeMess = JSON.parseObject(b.getString(
-						"jsonObj").toString());
+				JSONObject LoginTimeMess = JSON.parseObject(b.getString("jsonObj").toString());
 				if (LoginTimeMess.containsKey("message")) {
 					if (LoginTimeMess.get("message").equals("请重新登录")) { // 超时登录
 						LoginTimeout_dig("超时登录", "请重新登录!");
@@ -1123,6 +1121,7 @@ public class TongYongActivity extends Activity {
 							jsonValue.put("smake", MyApplication.user);
 							jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 							jsonValue.put("sbuid", "D0001");
+							jsonValue.put("sorg", MyApplication.sorg);
 							newJson = jsonValue;
 							Map<String, String> mesIdMap = MyApplication
 									.httpMapKeyValueMethod(MyApplication.DBID,
