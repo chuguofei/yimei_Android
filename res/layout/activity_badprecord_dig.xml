@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/kandai_bad"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    
+    <EditText
+        android:id="@+id/bad_lotno" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:hint="lot号"
+        android:labelFor="@+id/bad_lotno" />
+    
+    
+    <!-- 断裂 -->
+    <EditText
+        android:id="@+id/bad_fracture" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="number"
+        android:hint="断裂"
+        android:labelFor="@+id/bad_fracture" />
+    
+    <!-- 压伤 -->
+     <EditText
+        android:id="@+id/bad_crushed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="number"
+        android:hint="压伤"
+        android:labelFor="@+id/bad_crushed" />
+    
+     <!-- 点记 -->
+    <EditText
+        android:id="@+id/bad_poinrem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="number"
+        android:hint="点记"
+        android:labelFor="@+id/bad_poinrem" />
+
+    <EditText
+        android:id="@+id/bad_broken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="破损"
+        android:inputType="number"
+        android:labelFor="@+id/bad_broken" />
+    
+     <EditText
+        android:id="@+id/bad_pressing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="压合"
+        android:inputType="number"
+        android:labelFor="@+id/bad_pressing" />
+
+     <EditText
+        android:id="@+id/bad_overflow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="溢胶"
+        android:inputType="number"
+        android:labelFor="@+id/bad_overflow" />
+     
+</LinearLayout>

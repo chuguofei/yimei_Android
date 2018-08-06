@@ -844,6 +844,7 @@ public class ZhuangXiangActivity extends TabActivity {
 								yimei_zhuangxiang_canpindaihao.setText("");
 								yimei_zhuangxiang_canpinxinghao.setText("");
 								yimei_zhuangxiang_chukuNum.setText("");
+								cidgagarin = 1;
 								MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
 							}else{
 								ToastUtil.showToast(getApplicationContext(),"（savedata）添加失败",0);
@@ -1081,6 +1082,7 @@ public class ZhuangXiangActivity extends TabActivity {
 		map.put("sc_dd", MyApplication.GetServerNowTime()); // sc_dd
 		map.put("unit", "1"); // unit
 		mList.add(map);
+		cidgagarin++;
 		if (ZhuangXiangAdapter == null) {
 			ZhuangXiangAdapter = new ZhuangXiangAdapter(zhuangxiangActivity, mList);
 			mListView.setAdapter(ZhuangXiangAdapter);

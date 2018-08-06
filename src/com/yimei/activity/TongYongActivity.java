@@ -96,7 +96,7 @@ public class TongYongActivity extends Activity {
 	private String EQIRP_prdno; // 判断是否做首检的机型号
 	private String EQIRP_firstchk; // 判断是否做首检的标示
 	private Button shangliao; // 上料按钮
-
+	
 	// 获取4个文本框的文本
 	private String zuoyeyuan; // 界面上的作业员(全局)
 	private String shebeihao; // 界面上的设备号(全局)
@@ -392,8 +392,7 @@ public class TongYongActivity extends Activity {
 						if (state.get(j) != null) {
 							@SuppressWarnings("unchecked")
 							// 取listview中的数据
-							HashMap<String, Object> map = (HashMap<String, Object>) scrollAdapter
-									.getItem(j);
+							HashMap<String, Object> map = (HashMap<String, Object>) scrollAdapter.getItem(j);
 							mesPrecord m = (mesPrecord) map.get("checkMap"); // 取选中工单号
 							mesObj = m;
 							count++;
@@ -1076,6 +1075,16 @@ public class TongYongActivity extends Activity {
 											}
 										}
 									}
+								}
+							}
+							
+							//判断料盒长度，因线程原因有的记录会绑定批号
+							if(zcno.equals("21") || zcno.equals("31")){
+								if(yimei_tongyong_newMbox.getText().toString().toUpperCase().trim().length()>8){
+									ToastUtil.showToast(getApplicationContext(),"没有"+yimei_tongyong_newMbox.getText().toString().toUpperCase().trim()+"料盒号!", 0);
+									yimei_tongyong_newMbox.selectAll();
+									MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+									return;
 								}
 							}
 							

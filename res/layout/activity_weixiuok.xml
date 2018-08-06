@@ -1,0 +1,121 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="13dp"
+    android:paddingRight="@dimen/activity_horizontal_margin">
+
+     <TableLayout
+        android:id="@+id/weixiuok_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/weixiu_start"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="开始维修" />
+
+            <Button
+                android:id="@+id/weixiu_stop"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="结束维修" />
+
+            <Button
+                android:id="@+id/weixui_shengchanOK"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="生产确认" />
+        </LinearLayout>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/weixiuok_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weixiuok_tab"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/weixiuok_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="50dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="#"
+                android:textColor="#850" />
+            
+            <TextView
+                android:layout_width="70dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="设备号"
+                android:textColor="#850" />
+
+            <TextView
+                android:layout_width="70dip"
+                android:text="保修人"
+                android:layout_height="fill_parent"
+                 android:textColor="#850" 
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="70dip"
+                android:text="维修状态"
+                 android:textColor="#850" 
+                android:layout_height="fill_parent"
+                android:gravity="center"/>
+            
+           <TextView
+                android:layout_width="70dip"
+                android:text="明细"
+                 android:textColor="#850" 
+                android:layout_height="fill_parent"
+                android:gravity="center"/>
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/weixiuok_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/weixiuok_data_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+   
+
+ </RelativeLayout>

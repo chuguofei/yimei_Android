@@ -244,6 +244,11 @@
             android:name="com.yimei.activity.KanDaiBadActivity"
             android:label="@string/KandaiTitle" >
         </activity>
+        <!-- 设备维修确认 -->
+        <activity
+            android:name="com.yimei.shebei.WeiXiuOkActivity"
+            android:label="@string/WeiXiuOkTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

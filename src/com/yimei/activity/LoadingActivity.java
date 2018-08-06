@@ -14,6 +14,7 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fast
 import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
+import com.yimei.shebei.WeiXiuOkActivity;
 import com.yimei.shebei.shebeiweixiuActivity;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.HttpUtil;
@@ -300,6 +301,10 @@ public class LoadingActivity extends Activity {
 						}
 						if (caidan.equals("D0097")) { //工单绑料盒
 							Intent intent = new Intent(LoadingActivity.this,SlkMboxActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("E6002")) { //待维修列表(维修确认)
+							Intent intent = new Intent(LoadingActivity.this,WeiXiuOkActivity.class);
 							startActivity(intent);
 						}
 						break;

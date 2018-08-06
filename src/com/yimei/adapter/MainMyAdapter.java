@@ -36,6 +36,7 @@ import com.yimei.activity.ipqc.IPQC_shoujian;
 import com.yimei.activity.ipqc.ORT_quyang;
 import com.yimei.activity.ipqc.PinZhiGuanLi_Activity;
 import com.yimei.entity.Main_map;
+import com.yimei.shebei.WeiXiuOkActivity;
 import com.yimei.shebei.shebeiweixiuActivity;
 
 import android.annotation.SuppressLint;
@@ -224,6 +225,11 @@ public class MainMyAdapter extends BaseAdapter {
 					Intent intent = new Intent(context,SlkMboxActivity.class);
 					v.getContext().startActivity(intent);
 				}
+				if (mainMap.getKey().equals("E6002")) { //设备维修列表(维修确认)
+					Intent intent = new Intent(context,WeiXiuOkActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				
 			}
 		});
         return view;

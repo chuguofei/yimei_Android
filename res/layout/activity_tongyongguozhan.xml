@@ -1,0 +1,173 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin" >
+
+    <TableLayout
+        android:id="@+id/tongyongguozhan_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gujing_type" />
+
+            <Spinner
+                android:id="@+id/tongyongguozhan_selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext" />
+        </TableRow>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_user" />
+
+            <EditText
+                android:id="@+id/tongyongguozhan_user"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/tongyongguozhan"
+                android:maxLength="12"
+                android:paddingLeft="10dp"
+                android:tag="通用过站作业员" />
+
+            <Button
+                android:id="@+id/tongyongguozhan_BadRecord"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="不良记录"
+                android:textColor="#e80e0e" />
+            
+            <!--  <Button
+                android:id="@+id/tongyongguozhan_BadRecord1"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="不良填写"
+                android:textColor="#e80e0e" /> -->
+            
+        </LinearLayout>
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scfl_bat_no" />
+
+            <EditText
+                android:id="@+id/tongyongguozhan_sid1"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/tongyongguozhan_sid1"
+                android:paddingLeft="10dp"
+                android:tag="通用过站批次号" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/tongyongguozhan_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tongyongguozhan_tab"
+        android:layout_marginTop="5dp"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/tongyongguozhan_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/slkid"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/gaowendianliang_sid1"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/gaowendianliang_slkid"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/gaowendianliang_prd_no"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/gaowendianliang_qty"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/gaowendianliang_zcno"
+                    android:textColor="#850" />
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/tongyongguozhan_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/tongyongguozhan_data_title"
+        android:layout_marginTop="6dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>

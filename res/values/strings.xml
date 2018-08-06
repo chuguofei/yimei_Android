@@ -194,6 +194,7 @@
     <string name="yimei_zhuanchu_slkid">制令单号</string>
     <string name="yimei_zhuanchu_prd_name">机型名称</string>
     <string name="yimei_zhuanchu_qty">批量</string>
+    <string name="yimei_weixiuok_xiangxi">详细</string>
     
     <!-- 接收 -->
     <string name="jieshou">接收</string>
@@ -310,6 +311,8 @@
     <string name="tongyongguozhanTitle">通用过站</string>
     <string name="SlkMboxTitle">工单绑料盒</string>
     <string name="KandaiTitle">不良记录补写</string>
+    <string name="WeiXiuOkTitle">设备维修确认</string>
+    
     
    
     <!-- 料盒 -->

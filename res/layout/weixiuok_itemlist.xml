@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="50dip"
+    android:orientation="horizontal" >
+
+    
+    
+   <com.yimei.scrollview.GeneralCHScrollView
+        android:id="@+id/weixiuok_item_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/yimei_weixiuok_quanxuan"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:textColor="#850" />
+            
+            <TextView
+                android:id="@+id/yimei_weixiuok_sbid"
+                android:layout_width="70dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#850" />
+
+            <TextView
+                android:id="@+id/yimei_weixiuok_sopr" 
+                android:layout_width="70dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"/>
+            
+            <TextView
+                android:id="@+id/yimei_weixiuok_state" 
+                android:layout_width="70dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/yimei_weixiuok_xiangxi"
+                android:layout_width="70dip"
+                android:layout_height="fill_parent"
+                android:text="@string/yimei_weixiuok_xiangxi"
+                android:gravity="center" />
+        </LinearLayout>
+    </com.yimei.scrollview.GeneralCHScrollView>
+
+</LinearLayout>

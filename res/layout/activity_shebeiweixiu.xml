@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
+
+    <TableLayout
+        android:id="@+id/weixiu_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+         <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gujing_type" />
+
+            <Spinner
+                android:id="@+id/weixiu_zcno_selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext" />
+        </TableRow>
+        
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_user" />
+
+            <EditText
+                android:id="@+id/yimei_weixiu_user"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="7"
+                android:maxLength="8"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_weixiu_user"
+                android:paddingLeft="10dp"
+                android:tag="维修作业员" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_biandai_num" />
+            
+           <EditText
+                android:id="@+id/yimei_weixiu_sbid"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_weixiu_sbid"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:tag="维修设备" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weixiuyuanyin" />
+
+            <Spinner
+                android:id="@+id/weixiu_yuanyin_selectValue"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext" />
+        </TableRow>
+        
+        <TableRow android:paddingTop="20dp" >
+
+            <Button
+                  android:id="@+id/yimei_weixiu_save"
+                  android:layout_width="0dip"
+                  android:layout_height="40dp"
+                  android:layout_margin="5dip"
+                  android:layout_weight="1"
+                  android:background="@drawable/btn_shape_check_border"
+                  android:text="保存" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
