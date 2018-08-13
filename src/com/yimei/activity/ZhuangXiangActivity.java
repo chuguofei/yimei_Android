@@ -863,8 +863,7 @@ public class ZhuangXiangActivity extends TabActivity {
 								yimei_zhuangxiang_canpinxinghao.setText("");
 								yimei_zhuangxiang_canpindaihao.setText("");
 								yimei_zhuangxiang_chukuNum.setText("");
-								MyApplication
-										.nextEditFocus(yimei_zhuangxiang_chukushenqing);
+								MyApplication.nextEditFocus(yimei_zhuangxiang_chukushenqing);
 								yimei_zhuangxiang_chukushenqing.selectAll();
 								return;
 							} else {

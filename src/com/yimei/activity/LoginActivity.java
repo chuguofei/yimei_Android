@@ -221,6 +221,15 @@ public class LoginActivity extends Activity {
 									.trim();
 							MyApplication.DBID = dbid.getText().toString()
 									.trim();
+							TextView show_ip =  (TextView) findViewById(R.id.show_ip);
+							try {
+								show_ip.setText("IP:"+MyApplication.MESURL.substring(7,MyApplication.MESURL.lastIndexOf(":")));
+							} catch (Exception e) {
+//								e.printStackTrace();
+								Log.i("log","请输入有效的地址!");
+								ToastUtil.showToastLocation(loginActivity,"请输入有效的地址!", 0);
+								show_ip.setText("IP:"+MyApplication.MESURL);
+							}
 						}
 					}
 				});

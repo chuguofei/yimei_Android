@@ -119,7 +119,7 @@ public class TongYongActivity extends Activity {
 	private String IsMboxMess_new = "";
 	private String [] glue;  //烤箱需要绑定的胶
 	private String [] stents; //烤箱需要绑定的支架
-	
+	private HashMap<String,String> repeatSid = new HashMap<>();  //录入同号批次
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -976,7 +976,14 @@ public class TongYongActivity extends Activity {
 							InputHidden(); // 隐藏键盘
 							return;
 						} else {
-							
+							if(repeatSid != null){
+								if(repeatSid.size() != 0){
+									if(repeatSid.containsKey(jsonValue.getString("sid1"))){
+										ToastUtil.showToast(getApplicationContext(),"【"+jsonValue.getString("sid1")+"】已经扫描过了!",0);
+										return;
+									}
+								}
+							}
 							if(zcno.equals("11")){ //判断工单中料盒
 								newJson = jsonValue;
 								Map<String, String> map = MyApplication.QueryBatNo("QJ_Q_SLKMOBX", "~slkid='"+jsonValue.getString("sid")+"' and mbox='"+yimei_tongyong_oldMbox.getText().toString().toUpperCase().trim()+"'");
@@ -1099,6 +1106,10 @@ public class TongYongActivity extends Activity {
 							qtyv = jsonValue.get("qty").toString(); // (201)批次数量
 							jsonValue.put("slkid", jsonValue.get("sid"));
 							jsonValue.put("sid", "");
+							//以防slkid字段写入主键字段
+							if(jsonValue.getString("slkid").indexOf("SR") != -1){
+								jsonValue.put("slkid",jsonValue.getString("sid1").substring(0, 11));
+							}
 							jsonValue.put("firstchk", jsonValue.get("fircheck"));
 							if (zcno.equals("41")||zcno.equals("1A")||zcno.equals("1B")) {
 								jsonValue.put("state1", "03");
@@ -1132,6 +1143,7 @@ public class TongYongActivity extends Activity {
 							jsonValue.put("sbuid", "D0001");
 							jsonValue.put("sorg", MyApplication.sorg);
 							newJson = jsonValue;
+							repeatSid.put(newJson.getString("sid1"), newJson.getString("sid1")); //避免记录表批次重复
 							Map<String, String> mesIdMap = MyApplication
 									.httpMapKeyValueMethod(MyApplication.DBID,
 											"savedata", MyApplication.user,
@@ -1181,6 +1193,10 @@ public class TongYongActivity extends Activity {
 						qtyv = newJson.get("qty").toString(); // (201)批次数量
 						newJson.put("slkid", newJson.get("sid"));
 						newJson.put("sid", "");
+						//以防slkid字段写入主键字段
+						if(newJson.getString("slkid").indexOf("SR") != -1){
+							newJson.put("slkid",newJson.getString("sid1").substring(0, 11));
+						}
 						newJson.put("firstchk", newJson.get("fircheck"));
 						if (zcno.equals("41")||zcno.equals("1A")||zcno.equals("1B")) {
 							newJson.put("state1", "03");
@@ -1213,6 +1229,7 @@ public class TongYongActivity extends Activity {
 						newJson.put("mkdate",MyApplication.GetServerNowTime());
 						newJson.put("sbuid", "D0001");
 						newJson = newJson;
+						repeatSid.put(newJson.getString("sid1"), newJson.getString("sid1")); //避免记录表批次重复
 						Map<String, String> mesIdMap = MyApplication
 								.httpMapKeyValueMethod(MyApplication.DBID,
 										"savedata", MyApplication.user,
@@ -1239,7 +1256,7 @@ public class TongYongActivity extends Activity {
 							}else{
 								pla_zcno = "01";
 							}
-							// 修改本表
+							// 修改本表 mes_lot_plana
 							Map<String, String> updateServerTable = MyApplication
 									.UpdateServerTableMethod(
 											MyApplication.DBID,
@@ -1495,6 +1512,9 @@ public class TongYongActivity extends Activity {
 						if (SlkidMapJudge.size() != 0) {
 							SlkidMapJudge.clear();
 						}
+					}
+					if (repeatSid.size() != 0) {
+						repeatSid.clear();
 					}
 					//删除数据
 					new mesAllMethod(TongYongActivity.this).delteAll();
