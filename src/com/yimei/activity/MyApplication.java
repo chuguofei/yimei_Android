@@ -38,7 +38,7 @@ public class MyApplication extends Application {
 	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核"
 												+ "2.修改首检工单错误"
 												+ "3.增加支架绑定";
-	public static final String SHOW_VERSION = "v18-08-13 9:00";
+	public static final String SHOW_VERSION = "v18-08-13 14:00";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息

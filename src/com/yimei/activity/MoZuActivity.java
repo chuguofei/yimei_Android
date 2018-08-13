@@ -395,137 +395,142 @@ public class MoZuActivity extends Activity {
 	 * @param publicState
 	 */
 	public void UpdateServerData(String publicState) {
-		HashMap<Integer, Boolean> state = MoZuAdapter.Getstate();
-		if (updateListState == null) {
-			updateListState.clear();
-		}
-		if (state == null || state.equals(null)) {
-			ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
-		} else {
-			int count = 0;
-			for (int j = 0; j < MoZuAdapter.getCount(); j++) {
-				if (state.get(j)) {
-					if (state.get(j) != null) {
-						@SuppressWarnings("unchecked")
-						HashMap<String, Object> map = (HashMap<String, Object>) MoZuAdapter
-								.getItem(j);
-
-						if (updateListState == null) {
-							updateListState = new ArrayList<mesPrecord>();
-						}
-						mesPrecord m = (mesPrecord) map.get("mozu_item_title");
-						updateListState.add(m);
-						count++;
-					}
-				}
+		try {
+			HashMap<Integer, Boolean> state = MoZuAdapter.Getstate();
+			if (updateListState != null) {
+				updateListState.clear();
 			}
-			switch (count) {
-			case 0:
-				ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
-				break;
-			default:
-				for (int i = 0; i < updateListState.size(); i++) {
-					mesPrecord mes_precord = updateListState.get(i);
-					JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
-					// 如果是入站状态改变
-					if (publicState.equals("kaigongUpdata")) {
-						// 如果状态是入站和上料都可以开工
-						if (json.get("state1").toString().equals("01")) {
-							httpRequestQueryRecord(
-									MyApplication.MESURL,     
-									MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
-											+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
-							
-							//===========================判断是否做了首检===============================================
-							// 打了首检标示（fircheck：首件检）
-							if (json.get("fircheck").toString().equals("1")) {
-								String a = json.get("prd_no").toString();
-								String a1 = EQIRP_prdno;
-								if(!json.get("prd_no").toString().equals(EQIRP_prdno)){ //判断当前机型和设备中的机型是否匹配
-									ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（prdno）!",0);
-									updateListState.clear();
-									return;
-								}
-								if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){ //是否做过首检
-									ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（fircheck）!",0);
-									updateListState.clear();
-									return;
-								}
+			if (state == null || state.equals(null)) {
+				ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+			} else {
+				int count = 0;
+				for (int j = 0; j < MoZuAdapter.getCount(); j++) {
+					if (state.get(j)) {
+						if (state.get(j) != null) {
+							@SuppressWarnings("unchecked")
+							HashMap<String, Object> map = (HashMap<String, Object>) MoZuAdapter
+									.getItem(j);
+
+							if (updateListState == null) {
+								updateListState = new ArrayList<mesPrecord>();
 							}
-							//===========================判断是否做了首检===============================================
-							
-							
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user,json.get("state1").toString(), "03",
-											mes_precord.getSid(), zuoyeyuan,
-											zcno, "202");
-
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
-							
-							// 修改本表
-							Map<String, String> updateServerTable = MyApplication
-									.UpdateServerTableMethod(
-											MyApplication.DBID,
-											MyApplication.user,json.get("state1").toString(), "03",
-											mes_precord.getSid1(), currSlkid, zcno,
-											"200");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateServerTable, "updateServerTable");
-						} else if (json.get("state1").toString().equals("02")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user, json.get("state1").toString(), "03",
-											mes_precord.getSid(), zuoyeyuan,
-											zcno, "202");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
-							
-							// 修改本表
-							Map<String, String> updateServerTable = MyApplication
-									.UpdateServerTableMethod(
-											MyApplication.DBID,
-											MyApplication.user,json.get("state1").toString(), "03",
-											mes_precord.getSid1(),json.get("slkid").toString(), zcno,
-											"200");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateServerTable, "updateServerTable");
-						} else if (json.get("state1").toString().equals("03")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次已是开工状态！", 0);
-						}
-					} else if (publicState.equals("chuzhanUpdata")) {
-						if (json.get("state1").toString().equals("03")) {
-							Map<String, String> updateTimeMethod = MyApplication
-									.updateServerTimeMethod(MyApplication.DBID,
-											MyApplication.user,json.get("state1").toString(), "04",
-											mes_precord.getSid(), zuoyeyuan,
-											zcno, "202");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateTimeMethod, publicState);
-							
-							// 修改本表
-							Map<String, String> updateServerTable = MyApplication
-									.UpdateServerTableMethod(
-											MyApplication.DBID,
-											MyApplication.user,json.get("state1").toString(), "04",
-											mes_precord.getSid1(),json.get("slkid").toString(), zcno,
-											"200");
-							httpRequestQueryRecord(MyApplication.MESURL,
-									updateServerTable, "updateServerTable");
-						} else if (json.get("state1").toString().equals("02")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次不能出站！", 0);
-						} else if (json.get("state1").toString().equals("01")) {
-							ToastUtil.showToast(getApplicationContext(),
-									"选中的批次不能出站！", 0);
+							mesPrecord m = (mesPrecord) map.get("mozu_item_title");
+							updateListState.add(m);
+							count++;
 						}
 					}
-
 				}
-				break;
+				switch (count) {
+				case 0:
+					ToastUtil.showToast(getApplicationContext(), "请选中一条数据", 0);
+					break;
+				default:
+					for (int i = 0; i < updateListState.size(); i++) {
+						mesPrecord mes_precord = updateListState.get(i);
+						JSONObject json = (JSONObject) JSON.toJSON(mes_precord);
+						// 如果是入站状态改变
+						if (publicState.equals("kaigongUpdata")) {
+							// 如果状态是入站和上料都可以开工
+							if (json.get("state1").toString().equals("01")) {
+								httpRequestQueryRecord(
+										MyApplication.MESURL,     
+										MyApplication.QueryBatNo("FIRCHCKQUERY", "~id='"
+												+ shebeihao + "'"), "fircheckQuery");// 查询是否做过首检
+								
+								//===========================判断是否做了首检===============================================
+								// 打了首检标示（fircheck：首件检）
+								if (json.get("fircheck").toString().equals("1")) {
+									String a = json.get("prd_no").toString();
+									String a1 = EQIRP_prdno;
+									if(!json.get("prd_no").toString().equals(EQIRP_prdno)){ //判断当前机型和设备中的机型是否匹配
+										ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（prdno）!",0);
+										updateListState.clear();
+										return;
+									}
+									if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){ //是否做过首检
+										ToastUtil.showToast(mozuActivity,"【"+json.get("prd_no")+"】机型没有做首检（fircheck）!",0);
+										updateListState.clear();
+										return;
+									}
+								}
+								//===========================判断是否做了首检===============================================
+								
+								
+								Map<String, String> updateTimeMethod = MyApplication
+										.updateServerTimeMethod(MyApplication.DBID,
+												MyApplication.user,json.get("state1").toString(), "03",
+												mes_precord.getSid(), zuoyeyuan,
+												zcno, "202");
+
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateTimeMethod, publicState);
+								
+								// 修改本表
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user,json.get("state1").toString(), "03",
+												mes_precord.getSid1(), currSlkid, zcno,
+												"200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable");
+							} else if (json.get("state1").toString().equals("02")) {
+								Map<String, String> updateTimeMethod = MyApplication
+										.updateServerTimeMethod(MyApplication.DBID,
+												MyApplication.user, json.get("state1").toString(), "03",
+												mes_precord.getSid(), zuoyeyuan,
+												zcno, "202");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateTimeMethod, publicState);
+								
+								// 修改本表
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user,json.get("state1").toString(), "03",
+												mes_precord.getSid1(),json.get("slkid").toString(), zcno,
+												"200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable");
+							} else if (json.get("state1").toString().equals("03")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次已是开工状态！", 0);
+							}
+						} else if (publicState.equals("chuzhanUpdata")) {
+							if (json.get("state1").toString().equals("03")) {
+								Map<String, String> updateTimeMethod = MyApplication
+										.updateServerTimeMethod(MyApplication.DBID,
+												MyApplication.user,json.get("state1").toString(), "04",
+												mes_precord.getSid(), zuoyeyuan,
+												zcno, "202");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateTimeMethod, publicState);
+								
+								// 修改本表
+								Map<String, String> updateServerTable = MyApplication
+										.UpdateServerTableMethod(
+												MyApplication.DBID,
+												MyApplication.user,json.get("state1").toString(), "04",
+												mes_precord.getSid1(),json.get("slkid").toString(), zcno,
+												"200");
+								httpRequestQueryRecord(MyApplication.MESURL,
+										updateServerTable, "updateServerTable");
+							} else if (json.get("state1").toString().equals("02")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次不能出站！", 0);
+							} else if (json.get("state1").toString().equals("01")) {
+								ToastUtil.showToast(getApplicationContext(),
+										"选中的批次不能出站！", 0);
+							}
+						}
+
+					}
+					break;
+				}
 			}
+		} catch (Exception e) {
+//			e.printStackTrace();
+			ToastUtil.showToast(getApplicationContext(),e.toString(), 0);
 		}
 	}
 
