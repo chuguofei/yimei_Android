@@ -388,8 +388,7 @@ public class SCFLActivity extends TabActivity {
 						}
 						if (yimei_scfl_qty.getText().toString().equals("")
 								|| yimei_scfl_qty.getText().toString() == null) {
-							ToastUtil
-									.showToast(SCFLActivity.this, "数量不能为空！", 0);
+							ToastUtil.showToast(SCFLActivity.this, "数量不能为空！", 0);
 							MyApplication.nextEditFocus(yimei_scfl_qty);
 							return;
 						}
@@ -401,8 +400,7 @@ public class SCFLActivity extends TabActivity {
 							yimei_scfl_qty.selectAll();
 							return;
 						}
-						qty = Integer.parseInt(yimei_scfl_qty.getText()
-								.toString().trim().toUpperCase());
+						qty = Integer.parseInt(yimei_scfl_qty.getText().toString().trim().toUpperCase());
 						if (yifa > yinfa) {
 							showNormalDialog("该binCode【" + bincode + "】数量够了！!");
 							return;

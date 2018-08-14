@@ -885,22 +885,22 @@ public class MoZuActivity extends Activity {
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘
 							return;
-						} else if (jsonValue.get("state1").toString().equals("0A")) {
+						} else if (jsonValue.get("state").toString().equals("0A")) {
 							ToastUtil.showToast(getApplicationContext(),"选中的【"+jsonValue.get("sid1").toString()+"】批次状态【异常】不能开工！", 0);
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘
 							return;
-						} else if (jsonValue.get("state1").toString().equals("0B")) {
+						} else if (jsonValue.get("state").toString().equals("0B")) {
 							ToastUtil.showToast(getApplicationContext(),"选中的【"+jsonValue.get("sid1").toString()+"】批次状态【暂停】不能开工！", 0);
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘
 							return;
-						} else if (jsonValue.get("state1").toString().equals("0C")) {
+						} else if (jsonValue.get("state").toString().equals("0C")) {
 							ToastUtil.showToast(getApplicationContext(),"选中的【"+jsonValue.get("sid1").toString()+"】批次状态【中止】不能开工！", 0);
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘
 							return;
-						} else if (jsonValue.get("state1").toString().equals("0D")) {
+						} else if (jsonValue.get("state").toString().equals("0D")) {
 							ToastUtil.showToast(getApplicationContext(),"选中的【"+jsonValue.get("sid1").toString()+"】批次状态【受控】不能开工！", 0);
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘

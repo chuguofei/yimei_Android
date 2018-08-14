@@ -256,7 +256,7 @@ public class ZhuanChuActivity extends Activity {
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
 								OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"' and sid='MOA18060090' and  bok='1' and edate is null"), null, mHander, true,
+										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"' and  bok='1' and edate is null"), null, mHander, true,
 										"QuerySid");
 							}else{
 								ToastUtil.showToast(ZhuanChuActivity.this, "该批次已经做过转序!",0);
