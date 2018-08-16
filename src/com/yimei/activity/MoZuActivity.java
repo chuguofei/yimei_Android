@@ -13,6 +13,7 @@ import com.yimei.adapter.MoZuAdapter;
 import com.yimei.entity.Pair;
 import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.MoZuCHScrollView;
+import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.GetAndroidMacUtil;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.ToastUtil;
@@ -83,6 +84,7 @@ public class MoZuActivity extends Activity {
 	private Spinner selectValue; // 下拉框
 	private List<mesPrecord> updateListState; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
 	private ArrayList<String> SlkidMapJudge = new ArrayList<String>(); // 不同工单不能入站
+	private HashMap<String,String> repeatSid = new HashMap<>();  //录入同号批次
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -907,16 +909,25 @@ public class MoZuActivity extends Activity {
 							return;
 						} 
 						else {
-						// 如果有首检标示
-						if (jsonValue.get("fircheck").toString().equals("1")) { // 打了首检标示（fircheck：首件检）
-							if(!jsonValue.get("prd_no").toString().equals(EQIRP_prdno)){
-								JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
-							}else{
-								if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){
-									JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
+							if(repeatSid != null){
+								if(repeatSid.size() != 0){
+									if(repeatSid.containsKey(jsonValue.getString("sid1"))){
+										ToastUtil.showToast(getApplicationContext(),"【"+jsonValue.getString("sid1")+"】已经扫描过了!",0);
+										return;
+									}
 								}
 							}
-						}
+							
+						// 如果有首检标示
+							if (jsonValue.get("fircheck").toString().equals("1")) { // 打了首检标示（fircheck：首件检）
+								if(!jsonValue.get("prd_no").toString().equals(EQIRP_prdno)){
+									JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
+								}else{
+									if(EQIRP_firstchk.equals("0")||EQIRP_firstchk.equals("")){
+										JumShouJianlDialog("首件检验", "【"+jsonValue.get("prd_no").toString()+"】机型没有做首检,请做首检!");
+									}
+								}
+							}
 						SlkidMapJudge.add(jsonValue.get("sid").toString()); //不同工单禁止入站
 						Log.i("SlkidMapJudge","入站"+SlkidMapJudge.toString());
 						currSlkid = jsonValue.get("sid").toString(); // 修改服务器表的slkid
@@ -936,6 +947,7 @@ public class MoZuActivity extends Activity {
 						jsonValue.put("smake", MyApplication.user);
 						jsonValue.put("mkdate",MyApplication.GetServerNowTime());
 						jsonValue.put("sbuid", "D0001");
+						repeatSid.put(jsonValue.getString("sid1"), jsonValue.getString("sid1")); //避免记录表批次重复
 						newJson = jsonValue;
 						Map<String, String> mesIdMap = MyApplication
 								.httpMapKeyValueMethod(MyApplication.DBID,
@@ -1025,6 +1037,12 @@ public class MoZuActivity extends Activity {
 							SlkidMapJudge.clear();
 						}
 					}
+					if (repeatSid.size() != 0) {
+						repeatSid.clear();
+					}
+					MoZuAdapter = null;
+					//删除数据
+//					new mesAllMethod(MoZuActivity.this).delteAll();
 					// 判断设备号+制程在服务器中是否有数据
 					if (Integer.parseInt(jsonObject.get("code").toString()) == 1) {
 

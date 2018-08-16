@@ -256,7 +256,7 @@ public class ZhuanChuActivity extends Activity {
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code").toString()) == 0) {
 								OkHttpUtils.getInstance().getServerExecute(MyApplication.MESURL, null,
-										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"' and  bok='1' and edate is null"), null, mHander, true,
+										MyApplication.QueryBatNo("MOZCLISTWEB", "~zcno='"+zcno+"' and sid1='"+sid+"' and  bok='1' "), null, mHander, true,
 										"QuerySid");
 							}else{
 								ToastUtil.showToast(ZhuanChuActivity.this, "该批次已经做过转序!",0);
@@ -277,9 +277,6 @@ public class ZhuanChuActivity extends Activity {
 									JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject
 											.get("values")).get(i));
 									
-								
-								
-								
 								if (Integer.parseInt(jsonValue.get("bok").toString()) == 0) {
 									ToastUtil.showToast(ZhuanChuActivity.this, "该批次不具备转序条件!",0);
 									yimei_zhuanchu_sid.selectAll();

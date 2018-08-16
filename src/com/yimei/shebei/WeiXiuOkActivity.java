@@ -296,6 +296,8 @@ public class WeiXiuOkActivity extends Activity {
 								}
 								weixiuokAdapter = new WeiXiuOkAdapter(WeiXiuOkActivity.this, mList);
 								mListView.setAdapter(weixiuokAdapter);
+							}else{
+								mListView.setAdapter(null);
 							}
 							System.out.println(jsonObject);
 						}

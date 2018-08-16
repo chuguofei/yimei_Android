@@ -165,7 +165,7 @@ public class shebeiweixiuActivity extends Activity{
 					return;
 				}
 				JSONObject json = new JSONObject();
-				json.put("sbuid","D0001");
+				json.put("sbuid","E6001");
 				json.put("sorg",MyApplication.sorg);
 				json.put("sopr",yimei_weixiu_user.getText().toString().toUpperCase().trim());
 				json.put("hpdate",MyApplication.GetServerNowTime());
