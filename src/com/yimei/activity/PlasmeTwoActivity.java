@@ -255,8 +255,8 @@ public class PlasmeTwoActivity extends Activity {
 									jsonValues.put("smake", MyApplication.user);
 									jsonValues.put("mkdate",MyApplication.GetServerNowTime());
 									jsonValues.put("outdate", MyApplication.GetServerNowTime());
-									jsonValues.put("op_o", op);
-									jsonValues.put("op", op);
+									jsonValues.put("op_o", yimei_plasma_user.getText());
+									jsonValues.put("op",yimei_plasma_user.getText());
 									jsonValues.put("state1","04");
 									jsonValues.put("state","0");
 									//插入清洗表

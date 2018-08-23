@@ -94,9 +94,10 @@ public class TongYongActivity extends Activity {
 	private TextView oldMboxText, newMboxText;
 	private LinearLayout mboxTab;
 	private Spinner selectValue; // 下拉框
-	private String zcno = "11";// 界面上的制程号
+	private String zcno = "31";// 界面上的制程号
 	private Button kaigong;// 开工按钮
 	private Button chuzhan;// 出站按钮
+	private Button jiajiao;// 加胶
 	private String EQIRP_prdno; // 判断是否做首检的机型号
 	private String EQIRP_firstchk; // 判断是否做首检的标示
 	private Button shangliao; // 上料按钮
@@ -339,6 +340,7 @@ public class TongYongActivity extends Activity {
 		shangliao = (Button) findViewById(R.id.ruliao); // 获取上料id
 		kaigong = (Button) findViewById(R.id.kaigong); // 获取开工id
 		chuzhan = (Button) findViewById(R.id.chuzhan); // 获取出站id
+		jiajiao = (Button) findViewById(R.id.jiajiao); // 获取出站id
 		if (gujing_list.mesDataCount() == 0) { // 是否禁用(上料，开工，出站)按钮
 			shangliao.setEnabled(false);
 			kaigong.setEnabled(false);
@@ -347,6 +349,19 @@ public class TongYongActivity extends Activity {
 		kaigong.setOnClickListener(kaigongClick); // 开工点击事件
 		chuzhan.setOnClickListener(chuzhanClick); // 出站点击事件
 		shangliao.setOnClickListener(shangliaoClick); // 上料点击事件
+		jiajiao.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(gujingActivity, JiaJiaoActivity.class);// 跳转到加胶页面
+				Bundle bundle = new Bundle();
+				bundle.putString("op", yimei_user_edt.getText().toString().toUpperCase().trim());
+				bundle.putString("sbid", yimei_equipment_edt.getText().toString().toUpperCase().trim());
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		});
 
 		// 取出站的时间
 		Map<String, String> map = MyApplication.QueryBatNo("M_PROCESS5", "");
@@ -1063,6 +1078,8 @@ public class TongYongActivity extends Activity {
 										if(cha >= MaxWaitTime.get(zcno)){ //第一次清洗是否大于6小时
 											if(jsonValue.getInteger("btw") == 1){ //二次清洗过
 												if(cha >= MaxWaitTime.get(zcno)){ //二次清洗是否超过6小时,超过插入
+//													ToastUtil.showToast(getApplicationContext(),"plasma二次清洗超过"+MaxWaitTime.get(zcno)+"小时",0);
+													showNormalDialog("提示","plasma二次清洗超过"+MaxWaitTime.get(zcno)+"小时!");
 													JSONObject errJson = new JSONObject();
 													errJson.put("sbuid", "D0074");
 													errJson.put("dcid", GetAndroidMacUtil.getMac());
@@ -1079,7 +1096,7 @@ public class TongYongActivity extends Activity {
 													errJson.put("op", yimei_user_edt.getText().toString().toUpperCase());
 													errJson.put("state", '0');
 													errJson.put("sorg", MyApplication.sorg); 
-													errJson.put("reason", "plasma二次清洗超过6小时"); 
+													errJson.put("reason", "plasma二次清洗超过"+MaxWaitTime.get(zcno)+"小时"); 
 													//插入异常监控记录表
 													errJson.put("remark", jsonValue.getString("remark")==null?"":jsonValue.getString("remark"));
 													Map<String, String> mesIdMap = MyApplication
@@ -2725,8 +2742,30 @@ public class TongYongActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
+			if(position == 0){
+				jiajiao.setVisibility(View.VISIBLE);
+			}else{
+				jiajiao.setVisibility(View.GONE);
+			}
 			switch (position) {
-			case 0: //固晶
+			case 0: //点胶
+				zcno = "31";
+				mboxTab.setVisibility(View.VISIBLE);
+				oldMboxText.setText("焊接料盒");
+				newMboxText.setText("点胶料盒");
+				if (yimei_tongyong_newMbox.getVisibility() == View.GONE) {
+					yimei_tongyong_newMbox.setVisibility(View.VISIBLE);
+				}
+				if (newMboxText.getVisibility() == View.GONE) {
+					newMboxText.setVisibility(View.VISIBLE);
+				}
+				shangliao.setVisibility(View.GONE);
+				if (kaigong.getVisibility() == View.GONE) {
+					kaigong.setVisibility(View.VISIBLE);
+				}
+				clearEditText();
+				break;
+			case 1: //固晶
 				zcno = "11";
 				mboxTab.setVisibility(View.VISIBLE);
 				oldMboxText.setText("固晶料盒"); // 旧料盒文本
@@ -2740,7 +2779,7 @@ public class TongYongActivity extends Activity {
 				kaigong.setVisibility(View.VISIBLE);
 				clearEditText();
 				break;
-			case 1:  //固2
+			case 2:  //固2
 				zcno = "12";
 				shangliao.setVisibility(View.VISIBLE);
 				kaigong.setVisibility(View.VISIBLE);
@@ -2748,7 +2787,7 @@ public class TongYongActivity extends Activity {
 				nextEditFocus(yimei_user_edt);
 				clearEditText();
 				break;
-			case 2:  //固3
+			case 3:  //固3
 				zcno = "13";
 				shangliao.setVisibility(View.VISIBLE);
 				kaigong.setVisibility(View.VISIBLE);
@@ -2756,21 +2795,21 @@ public class TongYongActivity extends Activity {
 				nextEditFocus(yimei_user_edt);
 				clearEditText();
 				break;
-			case 3:  //固晶烘烤1
+			case 4:  //固晶烘烤1
 				zcno = "1A";
 				mboxTab.setVisibility(View.GONE);
 				shangliao.setVisibility(View.GONE);
 				nextEditFocus(yimei_user_edt);
 				clearEditText();
 				break;
-			case 4:  //固晶烘烤2
+			case 5:  //固晶烘烤2
 				zcno = "1B";
 				mboxTab.setVisibility(View.GONE);
 				shangliao.setVisibility(View.GONE);
 				nextEditFocus(yimei_user_edt);
 				clearEditText();
 				break;
-			case 5: //焊接
+			case 6: //焊接
 				zcno = "21";
 				mboxTab.setVisibility(View.VISIBLE);
 				oldMboxText.setText("固晶料盒");
@@ -2786,23 +2825,6 @@ public class TongYongActivity extends Activity {
 				yimei_tongyong_newMbox.setVisibility(View.VISIBLE);
 				shangliao.setVisibility(View.VISIBLE);
 				kaigong.setVisibility(View.VISIBLE);
-				clearEditText();
-				break;
-			case 6: //点胶
-				zcno = "31";
-				mboxTab.setVisibility(View.VISIBLE);
-				oldMboxText.setText("焊接料盒");
-				newMboxText.setText("点胶料盒");
-				if (yimei_tongyong_newMbox.getVisibility() == View.GONE) {
-					yimei_tongyong_newMbox.setVisibility(View.VISIBLE);
-				}
-				if (newMboxText.getVisibility() == View.GONE) {
-					newMboxText.setVisibility(View.VISIBLE);
-				}
-				shangliao.setVisibility(View.GONE);
-				if (kaigong.getVisibility() == View.GONE) {
-					kaigong.setVisibility(View.VISIBLE);
-				}
 				clearEditText();
 				break;
 			case 7:  //点胶后烘烤

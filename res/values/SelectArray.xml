@@ -36,13 +36,13 @@
         <item>报废</item>
     </string-array>
     <string-array name="spingarr">
+        <item>点胶</item>
         <item>固晶1</item>
         <item>固晶2</item>
         <item>固晶3</item>
         <item>固晶烘烤1</item>
         <item>固晶烘烤2</item>
         <item>焊接</item>
-        <item>点胶</item>
         <item>点胶烘烤</item>
         <!--
         <item>测试SMD</item>

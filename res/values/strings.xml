@@ -28,6 +28,7 @@
     <string name="ruliao">上料</string>
     <string name="kaigong">开工</string>
     <string name="chuzhan">出站</string>
+    <string name="jiajiao">加胶</string>
     <string name="Data1">生产批号</string>
     <string name="Data2">当前状态</string>
     <string name="Data3">机种</string>

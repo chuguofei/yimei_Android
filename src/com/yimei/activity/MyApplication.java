@@ -19,6 +19,7 @@ import android.widget.EditText;
 public class MyApplication extends Application {
 	public static String MESURL = "http://192.168.7.15:8088/mes/api";
 //	public static String MESURL = "http://59.53.182.251:8088/mes/api";
+	
 	public static String DBID = "01";
 //	public static String DBID = "mes";
 
@@ -38,7 +39,7 @@ public class MyApplication extends Application {
 	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核"
 												+ "2.修改首检工单错误"
 												+ "3.增加支架绑定";
-	public static final String SHOW_VERSION = "v18-08-20 14:00";
+	public static final String SHOW_VERSION = "v18-08-23 12:30";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息

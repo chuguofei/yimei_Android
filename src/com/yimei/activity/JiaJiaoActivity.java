@@ -185,6 +185,14 @@ public class JiaJiaoActivity extends Activity {
 		setContentView(R.layout.activity_jiajiao);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+		String t_op = getIntent().getStringExtra("op");
+		if(t_op!=null){
+			zuoyeyuan = t_op;
+		}
+		String t_sbid = getIntent().getStringExtra("sbid");
+		if(t_sbid!=null){
+			sbid = t_sbid;
+		}
 	}
 
 	protected void onResume() {
@@ -194,7 +202,14 @@ public class JiaJiaoActivity extends Activity {
 		yimei_jiajiao_user = (EditText) findViewById(R.id.yimei_jiajiao_user);
 		yimei_jiajiao_jidiaojinumber = (EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber);
 		yimei_jiajiao_jiaobeipihao = (EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao);
-
+		
+		if(zuoyeyuan!=null){
+			yimei_jiajiao_user.setText(zuoyeyuan);
+		}
+		if(yimei_jiajiao_jidiaojinumber!=null){
+			yimei_jiajiao_jidiaojinumber.setText(sbid);
+		}
+		
 		yimei_jiajiao_user.setOnEditorActionListener(editEnter);
 		yimei_jiajiao_jidiaojinumber.setOnEditorActionListener(editEnter);
 		yimei_jiajiao_jiaobeipihao.setOnEditorActionListener(editEnter);

@@ -44,6 +44,11 @@ import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView.OnEditorActionListener;
 
+/**
+ * FL_COUNT //查询批次号是否扫描过
+ * @author 16332
+ *
+ */
 public class SCFLActivity extends TabActivity {
 
 	public HorizontalScrollView mTouchView;
@@ -264,44 +269,14 @@ public class SCFLActivity extends TabActivity {
 						// ************判断材料号***********************
 						cus_pn = yimei_scfl_bat_no.getText().toString().trim()
 								.toUpperCase();
-						if (scfl_scanAdapter != null) {
-							boolean flag1 = true;
-							for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
-								Map<String, String> map = (Map<String, String>) scfl_scanAdapter
-										.getItem(i);
-								try {
-									if ((map.get("sph").equals(cus_pn) && map.get(
-											"gdic").equals(prd_no))
-											|| map.get("sph").equals(cus_pn)) {
-										flag1 = false;
-									}
-								} catch (Exception e) {
-									continue;
-								}
-							}
-							if (flag1 == false) {
-								showNormalDialog("该批次已绑定");
-								yimei_scfl_bat_no.selectAll();
-							} else {
-								// 查询批号
-								OkHttpUtils.getInstance().getServerExecute(
-										MyApplication.MESURL,
-										null,
-										MyApplication.QueryBatNo("SCFLCUS_PN",
-												"~cus_pn='" + cus_pn + "'"),
-										null, mHander, true, "Querybat_no");
-							}
-						} else {
-							String a = cus_pn;
-							System.out.println(a);
-							// 查询批号
-							OkHttpUtils.getInstance().getServerExecute(
-									MyApplication.MESURL,
-									null,
-									MyApplication.QueryBatNo("SCFLCUS_PN",
-											"~cus_pn='" + cus_pn + "'"), null,
-									mHander, true, "Querybat_no");
-						}
+						
+						// 查询批次号是否在记录中存在
+						OkHttpUtils.getInstance().getServerExecute(
+								MyApplication.MESURL,
+								null,
+								MyApplication.QueryBatNo("FL_COUNT",
+										"~gdic='"+prd_no+"' and sph='"+cus_pn+"' and mono='"+mo_no+"'"),
+								null, mHander, true, "Query_mo_fla_Count");
 					}
 					if (tag.equals("生产发料bincode")) {
 						yimei_scfl_bincode.setText(barcodeData.toUpperCase());
@@ -830,44 +805,13 @@ public class SCFLActivity extends TabActivity {
 						}
 						cus_pn = yimei_scfl_bat_no.getText().toString().trim()
 								.toUpperCase();
-						if (scfl_scanAdapter != null) {
-							boolean flag1 = true;
-							for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
-								Map<String, String> map = (Map<String, String>) scfl_scanAdapter
-										.getItem(i);
-								try {
-									//判断批次和bincode是否绑定
-									if ((map.get("sph").equals(cus_pn) && map.get(
-											"gdic").equals(prd_no))
-											|| map.get("sph").equals(cus_pn)) {
-										flag1 = false;
-									}
-								} catch (Exception e) {
-									//没有bin会
-									continue;
-								}
-							}
-							if (flag1 == false) {
-								showNormalDialog("该批次已绑定");
-								yimei_scfl_bat_no.selectAll();
-							} else {
-								// 查询批号
-								OkHttpUtils.getInstance().getServerExecute(
-										MyApplication.MESURL,
-										null,
-										MyApplication.QueryBatNo("SCFLCUS_PN",
-												"~cus_pn='" + cus_pn + "'"),
-										null, mHander, true, "Querybat_no");
-							}
-						} else {
-							// 查询批号
-							OkHttpUtils.getInstance().getServerExecute(
-									MyApplication.MESURL,
-									null,
-									MyApplication.QueryBatNo("SCFLCUS_PN",
-											"~cus_pn='" + cus_pn + "'"), null,
-									mHander, true, "Querybat_no");
-						}
+						// 查询批次号是否在记录中存在
+						OkHttpUtils.getInstance().getServerExecute(
+								MyApplication.MESURL,
+								null,
+								MyApplication.QueryBatNo("FL_COUNT",
+										"~gdic='"+prd_no+"' and sph='"+cus_pn+"' and mono='"+mo_no+"'"),
+								null, mHander, true, "Query_mo_fla_Count");
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_bincode) { // bincode
@@ -1100,6 +1044,103 @@ public class SCFLActivity extends TabActivity {
 					Bundle b = msg.getData();
 					String string = b.getString("type");
 					try {
+						if(string.equals("Query_mo_fla_Count")){  //查询批次号在记录中是否存在
+							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+							if (Integer.parseInt(jsonObject.get("code").toString()) == 1) { //存在
+										new AlertDialog.Builder(SCFLActivity.this).setTitle("记录重复，是否继续扫描？")
+										.setPositiveButton("确定", new DialogInterface.OnClickListener() {  
+										    @Override  
+										    public void onClick(DialogInterface dialog, int which) {  
+										    	//查询批次号
+												if (scfl_scanAdapter != null) {
+													boolean flag1 = true;
+													for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
+														Map<String, String> map = (Map<String, String>) scfl_scanAdapter
+																.getItem(i);
+														try {
+															if ((map.get("sph").equals(cus_pn) && map.get(
+																	"gdic").equals(prd_no))
+																	|| map.get("sph").equals(cus_pn)) {
+																flag1 = false;
+															}
+														} catch (Exception e) {
+															continue;
+														}
+													}
+													if (flag1 == false) {
+														showNormalDialog("该批次已绑定");
+														yimei_scfl_bat_no.selectAll();
+													} else {
+														// 查询批号
+														OkHttpUtils.getInstance().getServerExecute(
+																MyApplication.MESURL,
+																null,
+																MyApplication.QueryBatNo("SCFLCUS_PN",
+																		"~cus_pn='" + cus_pn + "'"),
+																null, mHander, true, "Querybat_no");
+													}
+												} else {
+													String a = cus_pn;
+													System.out.println(a);
+													// 查询批号
+													OkHttpUtils.getInstance().getServerExecute(
+															MyApplication.MESURL,
+															null,
+															MyApplication.QueryBatNo("SCFLCUS_PN",
+																	"~cus_pn='" + cus_pn + "'"), null,
+															mHander, true, "Querybat_no");
+												}
+										    }  
+										}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+											
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												yimei_scfl_bat_no.setText("");
+												MyApplication.nextEditFocus(yimei_scfl_bat_no);
+											}
+										}).show();
+							}else{
+								//查询批次号
+								if (scfl_scanAdapter != null) {
+									boolean flag1 = true;
+									for (int i = 0; i < scfl_scanAdapter.getCount(); i++) {
+										Map<String, String> map = (Map<String, String>) scfl_scanAdapter
+												.getItem(i);
+										try {
+											if ((map.get("sph").equals(cus_pn) && map.get(
+													"gdic").equals(prd_no))
+													|| map.get("sph").equals(cus_pn)) {
+												flag1 = false;
+											}
+										} catch (Exception e) {
+											continue;
+										}
+									}
+									if (flag1 == false) {
+										showNormalDialog("该批次已绑定");
+										yimei_scfl_bat_no.selectAll();
+									} else {
+										// 查询批号
+										OkHttpUtils.getInstance().getServerExecute(
+												MyApplication.MESURL,
+												null,
+												MyApplication.QueryBatNo("SCFLCUS_PN",
+														"~cus_pn='" + cus_pn + "'"),
+												null, mHander, true, "Querybat_no");
+									}
+								} else {
+									String a = cus_pn;
+									System.out.println(a);
+									// 查询批号
+									OkHttpUtils.getInstance().getServerExecute(
+											MyApplication.MESURL,
+											null,
+											MyApplication.QueryBatNo("SCFLCUS_PN",
+													"~cus_pn='" + cus_pn + "'"), null,
+											mHander, true, "Querybat_no");
+								}
+							}
+						}
 						if (string.equals("QueryMo_no")) { // 制令单号查询
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
@@ -1156,7 +1197,7 @@ public class SCFLActivity extends TabActivity {
 							}
 							System.out.println(jsonObject);
 						}
-						if (string.equals("Querybat_no")) { // 批次号查询
+						if (string.equals("Querybat_no")) { // 批次号查询  
 							JSONObject jsonObject = JSON.parseObject(b
 									.getString("jsonObj").toString());
 							if (Integer.parseInt(jsonObject.get("code")
