@@ -17,12 +17,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
-//	public static String MESURL = "http://192.168.7.15:8088/mes/api";
-	public static String MESURL = "http://59.53.182.251:8088/mes/api";
+	public static String MESURL = "http://192.168.7.15:8088/mes/api";
+//	public static String MESURL = "http://59.53.182.251:8088/mes/api";
 	public static String DBID = "01";
 //	public static String DBID = "mes";
 
-//	public static String MESURL = "http://192.168.5.85:9999/jd/api";
+//	public static String MESURL = "http://192.168.0.117:9999/jd/api";
 //	public static String MESURL = "http://192.168.6.80:9999/jd/api";
 //	public static String MESURL = "http://192.168.1.86:9999/jd/api";
 
@@ -38,7 +38,7 @@ public class MyApplication extends Application {
 	public static final String TONGYONG_VTEXT = "1.增加换机型进行首检审核"
 												+ "2.修改首检工单错误"
 												+ "3.增加支架绑定";
-	public static final String SHOW_VERSION = "v18-08-16 18:30";
+	public static final String SHOW_VERSION = "v18-08-20 14:00";
 	public static final int LOGOUT = 1; // 切换用户
 	public static final int ABOUTUS = 2; // 关于我们
 	public static final int VERSION = 3; // 版本信息
@@ -68,7 +68,9 @@ public class MyApplication extends Application {
 	public static String GetServerNowTime() {
 		//GregorianCalendar g = new GregorianCalendar();
 		Calendar c = Calendar.getInstance();
-		Date d = new Date(c.getTimeInMillis() + ServerTimeCha);
+		String aa = df.format(new Date(c.getTimeInMillis()));
+		String bb = df.format(new Date(ServerTimeCha));
+		Date d = new Date(c.getTimeInMillis() + ServerTimeCha); //当前毫秒数 + 服务器时间戳
 		String a = df.format(d.getTime());
 		// g.setTime(d);
 		return df.format(d.getTime());

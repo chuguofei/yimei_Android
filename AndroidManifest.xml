@@ -249,6 +249,11 @@
             android:name="com.yimei.shebei.WeiXiuOkActivity"
             android:label="@string/WeiXiuOkTitle" >
         </activity>
+        <!-- 二次清洗 -->
+        <activity
+            android:name="com.yimei.activity.PlasmeTwoActivity"
+            android:label="@string/PlasmaTwoTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

@@ -102,7 +102,7 @@ public class LoadingActivity extends Activity {
 	 */
 	public void httpRequestQueryRecord(final String baseUrl,
 			final Map<String, String> map, final String type) {
-		new Thread(new Runnable() {
+		new Thread(new Runnable() { 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
@@ -154,6 +154,11 @@ public class LoadingActivity extends Activity {
 				if (httpPost.equals("-1")) {
 					JumpServerError();
 				} else {
+					//拿服务器时间
+					Map<String, String> map1 = new HashMap<String, String>();
+					map1.put("msclass", "$TIME");
+					httpRequestQueryRecord(MyApplication.MESServerTime, map1,
+							"GetServerTime");
 					ProcessData(httpPost);
 				}
 			}
@@ -189,6 +194,11 @@ public class LoadingActivity extends Activity {
 				Log.i("id", json.toString());
 
 				if (json.getInteger("id") == 0) {
+					//拿服务器时间
+					Map<String, String> map1 = new HashMap<String, String>();
+					map1.put("msclass", "$TIME");
+					httpRequestQueryRecord(MyApplication.MESServerTime, map1,"GetServerTime");
+					
 					JSONObject jsonsorg = (JSONObject) json.get("data");
 					MyApplication.sorg = ((JSONObject)((JSONObject)(JSONObject)jsonsorg.get("user")).get("deptInfo")).get("deptCode").toString();
 					MyApplication.user = user;
@@ -305,6 +315,10 @@ public class LoadingActivity extends Activity {
 						}
 						if (caidan.equals("E6002")) { //待维修列表(维修确认)
 							Intent intent = new Intent(LoadingActivity.this,WeiXiuOkActivity.class);
+							startActivity(intent);
+						}
+						if (caidan.equals("D0073")) { //二次清洗
+							Intent intent = new Intent(LoadingActivity.this,PlasmeTwoActivity.class);
 							startActivity(intent);
 						}
 						break;

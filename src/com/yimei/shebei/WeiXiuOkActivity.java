@@ -46,6 +46,7 @@ public class WeiXiuOkActivity extends Activity {
 	private static List<GeneralCHScrollView> GeneralCHScrollView = new ArrayList<GeneralCHScrollView>();
 	private static ListView mListView;
 	private Button weixiu_start, weixiu_stop, weixui_shengchanOK;
+	private EditText yimei_weixiu_remark;
 	private WeiXiuOkAdapter weixiuokAdapter;
 	public static WeiXiuOkActivity ip;
 	private JSONObject ChooseJson;
@@ -81,6 +82,7 @@ public class WeiXiuOkActivity extends Activity {
 		weixiu_start = (Button) findViewById(R.id.weixiu_start);
 		weixiu_stop = (Button) findViewById(R.id.weixiu_stop);
 		weixui_shengchanOK = (Button) findViewById(R.id.weixui_shengchanOK);
+		yimei_weixiu_remark = (EditText) findViewById(R.id.yimei_weixiu_remark);
 		
 		weixiu_start.setOnClickListener(Onclick);
 		weixiu_stop.setOnClickListener(Onclick);
@@ -114,60 +116,64 @@ public class WeiXiuOkActivity extends Activity {
 	 * @param publicState
 	 */
 	public void ShowDig(String publicState) {
-		HashMap<Integer, Boolean> state = weixiuokAdapter.Getstate();
-		if (state == null || state.equals(null)) {
+		if(weixiuokAdapter == null){
 			ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
-		} else {
-			int count = 0;
-			JSONObject jsonObj = null;
-			for (int j = 0; j < weixiuokAdapter.getCount(); j++) {
-				if (state.get(j)) {
-					if (state.get(j) != null) {
-						@SuppressWarnings("unchecked")
-						HashMap<String, Object> map = (HashMap<String, Object>) weixiuokAdapter.getItem(j);
-						jsonObj = JSONObject.parseObject(map.get("checkMap").toString());
-						count++;
+		}else{
+			HashMap<Integer, Boolean> state = weixiuokAdapter.Getstate();
+			if (state == null || state.equals(null)) {
+				ToastUtil.showToast(getApplicationContext(), "列表为空~", 0);
+			} else {
+				int count = 0;
+				JSONObject jsonObj = null;
+				for (int j = 0; j < weixiuokAdapter.getCount(); j++) {
+					if (state.get(j)) {
+						if (state.get(j) != null) {
+							@SuppressWarnings("unchecked")
+							HashMap<String, Object> map = (HashMap<String, Object>) weixiuokAdapter.getItem(j);
+							jsonObj = JSONObject.parseObject(map.get("checkMap").toString());
+							count++;
+						}
+					} 
+				}
+				if(count==0){
+					ToastUtil.showToast(getApplicationContext(),"请选中一条数据!",0);
+					return;
+				}
+				if(count>1){
+					ToastUtil.showToast(getApplicationContext(),"只能选中一条!",0);
+				}else{
+	//				ToastUtil.showToast(getApplicationContext(),jsonObj.toString(),0);
+					if(publicState.equals("start")){ //开始维修
+						if(jsonObj.getInteger("wxstate") == 1){
+							ToastUtil.showToast(getApplicationContext(),"状态为【开始维修】!",0);
+							return;
+						}else if(jsonObj.getInteger("wxstate") == 2){
+							ToastUtil.showToast(getApplicationContext(),"状态为【待确认】!",0);
+							return;
+						}else if(jsonObj.getInteger("wxstate") == 3){
+							ToastUtil.showToast(getApplicationContext(),"状态为【已确认】!",0);
+							return;
+						}
+						UpdateWeiXiu_dig("开始维修",jsonObj,publicState);  
+					}else if(publicState.equals("stop")){  //结束维修
+						if(jsonObj.getInteger("wxstate") == 0){
+							ToastUtil.showToast(getApplicationContext(),"状态为【待维修】!",0);
+							return;
+						}else if(jsonObj.getInteger("wxstate") == 2){
+							ToastUtil.showToast(getApplicationContext(),"状态为【待确认】!",0);
+							return;
+						}else if(jsonObj.getInteger("wxstate") == 3){
+							ToastUtil.showToast(getApplicationContext(),"状态为【已确认】!",0);
+							return;
+						}
+						UpdateWeiXiu_dig("结束维修",jsonObj,publicState);  
+					}else if(publicState.equals("shengchan")){ //生产确认
+						if(jsonObj.getInteger("wxstate") != 2){
+							ToastUtil.showToast(getApplicationContext(),"没有维修或结束!",0);
+							return;
+						}
+						UpdateWeiXiu_dig("生产确认",jsonObj,publicState);  
 					}
-				} 
-			}
-			if(count==0){
-				ToastUtil.showToast(getApplicationContext(),"请选中一条数据!",0);
-				return;
-			}
-			if(count>1){
-				ToastUtil.showToast(getApplicationContext(),"只能选中一条!",0);
-			}else{
-//				ToastUtil.showToast(getApplicationContext(),jsonObj.toString(),0);
-				if(publicState.equals("start")){ //开始维修
-					if(jsonObj.getInteger("wxstate") == 1){
-						ToastUtil.showToast(getApplicationContext(),"状态为【开始维修】!",0);
-						return;
-					}else if(jsonObj.getInteger("wxstate") == 2){
-						ToastUtil.showToast(getApplicationContext(),"状态为【待确认】!",0);
-						return;
-					}else if(jsonObj.getInteger("wxstate") == 3){
-						ToastUtil.showToast(getApplicationContext(),"状态为【已确认】!",0);
-						return;
-					}
-					UpdateWeiXiu_dig("开始维修",jsonObj,publicState);  
-				}else if(publicState.equals("stop")){  //结束维修
-					if(jsonObj.getInteger("wxstate") == 0){
-						ToastUtil.showToast(getApplicationContext(),"状态为【待维修】!",0);
-						return;
-					}else if(jsonObj.getInteger("wxstate") == 2){
-						ToastUtil.showToast(getApplicationContext(),"状态为【待确认】!",0);
-						return;
-					}else if(jsonObj.getInteger("wxstate") == 3){
-						ToastUtil.showToast(getApplicationContext(),"状态为【已确认】!",0);
-						return;
-					}
-					UpdateWeiXiu_dig("结束维修",jsonObj,publicState);  
-				}else if(publicState.equals("shengchan")){ //生产确认
-					if(jsonObj.getInteger("wxstate") != 2){
-						ToastUtil.showToast(getApplicationContext(),"没有维修或结束!",0);
-						return;
-					}
-					UpdateWeiXiu_dig("生产确认",jsonObj,publicState);  
 				}
 			}
 		}
@@ -287,7 +293,7 @@ public class WeiXiuOkActivity extends Activity {
 									}else if(wxstate == 3){
 										wxstateName = "已确认";
 									}
-									json.put("state",wxstateName);
+								    json.put("state",wxstateName);
 									map.put("checkMap",json.toJSONString());
 									map.put("sbid", json.getString("sbid"));
 									map.put("sopr", json.getString("sopr"));
@@ -339,6 +345,7 @@ public class WeiXiuOkActivity extends Activity {
 								Update_700.put("sbid",  ChooseJson.getString("sbid"));
 								Update_700.put("op", jsonValue.getString("usrcode"));
 								Update_700.put("state", "2"); // 结束维修
+								Update_700.put("remark", yimei_weixiu_remark.getText()==null?"":yimei_weixiu_remark.getText().toString()); // 结束维修
 								OkHttpUtils.getInstance().getServerExecute(
 										MyApplication.MESURL, null, Update_700 , null, mHander,
 										true, "WEIXIUOK_Server");

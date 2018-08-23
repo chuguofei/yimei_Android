@@ -1,7 +1,9 @@
 package com.yimei.activity;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,7 @@ import com.yimei.entity.mesPrecord;
 import com.yimei.scrollview.CHScrollView;
 import com.yimei.sqlliteUtil.mesAllMethod;
 import com.yimei.util.GetAndroidMacUtil;
+import com.yimei.util.HourConversion;
 import com.yimei.util.HttpUtil;
 import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
@@ -68,6 +71,7 @@ import com.yimei.util.ToastUtil;
  * 202修改mes_lot_plana
  * QJ_ZCNO（器件的制程）: 查询器件的制程
  * QJ_Q_SLKMOBX //查询工单中绑定这个料没
+ * QJBOXWEB //查询批次料盒
  * @author Administrator
  * PPA和EMC3030
  */
@@ -108,6 +112,11 @@ public class TongYongActivity extends Activity {
 	private static String fircheck_PRDNO = ""; // 首检的机种名称（换机种要做首检）
 	private List<mesPrecord> updatekaigongSid1; // 修改服务器的2张表的状态（出站，开工）,更改本地库的状态
 	private Map<String, String> ptime = new HashMap<String, String>();  //获取出站时间
+	private Map<String, Integer> MaxWaitTime = new HashMap<String, Integer>();  //最大等待时间
+	private Map<String, Integer> MinWaitTime = new HashMap<String, Integer>();  //最小等待时间
+	private Map<String, Integer> ListShow = new HashMap<String, Integer>();  //列表中现实几条数据
+	private Map<String, Integer> ctrlnode = new HashMap<String, Integer>();  //列表中现实几条数据
+	
 	// private HashMap<Integer, String> SlkidMapJudge = new HashMap<>(); //
 	// 不同工单不能入站
 	private ArrayList<String> SlkidMapJudge = new ArrayList<String>(); // 不同工单不能入站
@@ -300,8 +309,6 @@ public class TongYongActivity extends Activity {
 						return;
 					}
 					sid1GetData(); // 生产批号回车事件
-//					nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
-//					yimei_proNum_edt.selectAll();
 				}
 			}
 		}
@@ -520,8 +527,8 @@ public class TongYongActivity extends Activity {
 		yimei_proNum_edt.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
 		yimei_tongyong_newMbox.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
 		yimei_tongyong_oldMbox.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
+	
 	};
-
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -1039,6 +1046,58 @@ public class TongYongActivity extends Activity {
 								}
 							}
 							
+							
+							//Plasma清洗后，焊线站控制如超过6小时不允许入站
+							if(zcno.equals("21")){
+								if(jsonValue.getInteger("bfirst") == 0){ //不是首工序
+									if(jsonValue.containsKey("edate")){
+										if(jsonValue.getString("edate").length() == 16){
+											jsonValue.put("mes_edate", jsonValue.getString("edate")+":00");
+										}else{
+											jsonValue.put("mes_edate", jsonValue.getString("edate"));
+										}
+										Date edate = new Date(MyApplication.df.parse(jsonValue.getString("mes_edate")).getTime()); //清洗的出站时间
+										long getServerNowTime = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime();
+										Date d = new Date(getServerNowTime);
+										long cha = (d.getTime() - edate.getTime()) / (1000 * 60 * 60);
+										if(cha >= MaxWaitTime.get(zcno)){ //第一次清洗是否大于6小时
+											if(jsonValue.getInteger("btw") == 1){ //二次清洗过
+												if(cha >= MaxWaitTime.get(zcno)){ //二次清洗是否超过6小时,超过插入
+													JSONObject errJson = new JSONObject();
+													errJson.put("sbuid", "D0074");
+													errJson.put("dcid", GetAndroidMacUtil.getMac());
+													errJson.put("sbid", yimei_equipment_edt.getText().toString().toUpperCase());
+													errJson.put("slkid", jsonValue.getString("sid1").substring(0, 11));
+													errJson.put("sid1", jsonValue.getString("sid1"));
+													errJson.put("prd_no", jsonValue.getString("prd_no")==null?"":jsonValue.getString("prd_no"));
+													errJson.put("prd_name", jsonValue.getString("prd_name")==null?"":jsonValue.getString("prd_name"));
+													errJson.put("qty", jsonValue.getString("qty")==null?"":jsonValue.getString("qty"));
+													errJson.put("zcno", zcno);
+													errJson.put("zcno1", jsonValue.getString("zcno1"));
+													errJson.put("mkdate", MyApplication.GetServerNowTime());
+													errJson.put("smake", MyApplication.user);
+													errJson.put("op", yimei_user_edt.getText().toString().toUpperCase());
+													errJson.put("state", '0');
+													errJson.put("sorg", MyApplication.sorg); 
+													errJson.put("reason", "plasma二次清洗超过6小时"); 
+													//插入异常监控记录表
+													errJson.put("remark", jsonValue.getString("remark")==null?"":jsonValue.getString("remark"));
+													Map<String, String> mesIdMap = MyApplication
+															.httpMapKeyValueMethod(MyApplication.DBID,
+																	"savedata", MyApplication.user,
+																	errJson.toJSONString(),
+																	"D0074W", "1");
+													httpRequestQueryRecord(MyApplication.MESURL,mesIdMap, "mes_perrlog_savedata");
+												}
+											}else{ //没有进行二次清洗											
+												showNormalDialog("警告","该【"+jsonValue.getString("sid1")+"】已经超过"+MaxWaitTime.get(zcno)+"小时，请进行二次清洗。");
+												return;
+											}
+										}
+									}
+								}
+							}
+							
 							if (!zcno.equals("41") && !zcno.equals("31")) { // 烤箱只做记录
 								// 如果有首检标示
 								if (jsonValue.get("fircheck").toString()
@@ -1085,6 +1144,59 @@ public class TongYongActivity extends Activity {
 								}
 							}
 							
+							//烘烤出战时间大于最大小于最小
+							if(zcno.equals("41")){
+								if(jsonValue.getInteger("bfirst") == 0){ //不是首工序
+									if(jsonValue.containsKey("edate")){
+										if(jsonValue.getString("edate").length() == 16){
+											jsonValue.put("mes_edate", jsonValue.getString("edate")+":00");
+										}else{
+											jsonValue.put("mes_edate",jsonValue.getString("edate") );
+										}
+										Date edate = new Date(MyApplication.df.parse(jsonValue.getString("mes_edate")).getTime()); //点胶出战时间
+										long hour = ((MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()) - edate.getTime()) / (1000 * 60 * 60);  //是否够一小时
+										long minutes = ((MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()) - edate.getTime()) / 1000 / 60; //分钟
+										long minutesCha = HourConversion.HourConVMinutes(MinWaitTime.get(zcno)) -  minutes; //还有多长时间入站
+										if( MinWaitTime.get(zcno) != 0){
+											if(hour < MinWaitTime.get(zcno)){ //小于最低时间
+												showNormalDialog("提前入烤","点胶入烤还需要"+ Math.abs(minutesCha) +"分钟!");
+												return;
+											}
+										}
+										if(MaxWaitTime.get(zcno) != 0){
+											if(hour > MaxWaitTime.get(zcno)){ //大于最大时间
+												showNormalDialog("入烤超时","点胶入烤已超时"+ Math.abs(minutesCha)+"分钟,请在流程卡上张贴超时异常标识!");
+												JSONObject errJson = new JSONObject();
+												errJson.put("sbuid", "D0074");
+												errJson.put("dcid", GetAndroidMacUtil.getMac());
+												errJson.put("sbid", yimei_equipment_edt.getText().toString().toUpperCase());
+												errJson.put("slkid", jsonValue.getString("sid1").substring(0, 11));
+												errJson.put("sid1", jsonValue.getString("sid1"));
+												errJson.put("prd_no", jsonValue.getString("prd_no")==null?"":jsonValue.getString("prd_no"));
+												errJson.put("prd_name", jsonValue.getString("prd_name")==null?"":jsonValue.getString("prd_name"));
+												errJson.put("qty", jsonValue.getString("qty")==null?"":jsonValue.getString("qty"));
+												errJson.put("zcno", zcno);
+												errJson.put("zcno1", jsonValue.getString("zcno1"));
+												errJson.put("mkdate", MyApplication.GetServerNowTime());
+												errJson.put("smake", MyApplication.user);
+												errJson.put("op", yimei_user_edt.getText().toString().toUpperCase());
+												errJson.put("state", '0');
+												errJson.put("sorg", MyApplication.sorg);
+												errJson.put("reason", "点胶入烤已超时"+ Math.abs(minutesCha)+"分钟,请在流程卡上张贴超时异常标识!"); 
+												//插入异常监控记录表
+												errJson.put("remark", jsonValue.getString("remark")==null?"":jsonValue.getString("remark"));
+												Map<String, String> mesIdMap = MyApplication
+														.httpMapKeyValueMethod(MyApplication.DBID,
+																"savedata", MyApplication.user,
+																errJson.toJSONString(),
+																"D0074W", "1");
+												httpRequestQueryRecord(MyApplication.MESURL,mesIdMap, "mes_perrlog_savedata");
+											}
+										}
+									}
+								}
+							}
+							
 							//判断料盒长度，因线程原因有的记录会绑定批号
 							if(zcno.equals("21") || zcno.equals("31")){
 								if(yimei_tongyong_newMbox.getText().toString().toUpperCase().trim().length()>8){
@@ -1094,6 +1206,21 @@ public class TongYongActivity extends Activity {
 									return;
 								}
 							}
+							
+							//列表中可显示几条记录
+							if(ListShow.containsKey(zcno)){
+								if(ListShow.get(zcno) != 0){
+									if(scrollAdapter != null){
+										if(scrollAdapter.getCount() >= ListShow.get(zcno)){
+											ToastUtil.showToast(gujingActivity,"请先将一个批次出站!", 0);
+											return;
+										}
+									}
+								}
+								
+							}
+							
+							
 							
 							Intent intent = new Intent();
 							intent.setClass(TongYongActivity.this, Loading1Activity.class);// 跳转到加载界面
@@ -1153,6 +1280,10 @@ public class TongYongActivity extends Activity {
 									mesIdMap, "id");
 						}
 					}
+				}
+				if(string.equals("mes_perrlog_savedata")){
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+					System.out.println(jsonObject);
 				}
 				if(string.equals("QuerySlkMox")){ //固晶查询工单料盒
 					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
@@ -1564,7 +1695,10 @@ public class TongYongActivity extends Activity {
 										chuzhan.setEnabled(false);
 										kaigong.setEnabled(false);
 										mListView.setAdapter(null);
-										scrollAdapter.notifyDataSetChanged();
+										if (scrollAdapter != null) {
+											scrollAdapter.notifyDataSetChanged();
+											scrollAdapter = null;
+										}
 									}
 
 								} else {
@@ -1590,7 +1724,11 @@ public class TongYongActivity extends Activity {
 							chuzhan.setEnabled(false);
 							kaigong.setEnabled(false);
 							mListView.setAdapter(null);
-							scrollAdapter.notifyDataSetChanged();
+//							scrollAdapter.notifyDataSetChanged();
+							if (scrollAdapter != null) {
+								scrollAdapter.notifyDataSetChanged();
+								scrollAdapter = null;
+							}
 						}
 						if (mListView == null) {
 							shangliao.setEnabled(false);
@@ -1606,6 +1744,7 @@ public class TongYongActivity extends Activity {
 							mListView.setAdapter(null);
 							if (scrollAdapter != null) {
 								scrollAdapter.notifyDataSetChanged();
+								scrollAdapter = null;
 							}
 						}
 					}
@@ -1724,7 +1863,19 @@ public class TongYongActivity extends Activity {
 								.get("values")).get(i));
 						if (jsonValue.containsKey("ptime")) {
 							ptime.put(jsonValue.get("id").toString(), jsonValue
-									.get("ptime").toString());
+									.get("ptime").toString()); //工序加工时间
+						}
+						if (jsonValue.containsKey("minwait")) {
+							MinWaitTime.put(jsonValue.get("id").toString(),jsonValue.getInteger("minwait")); //最小等待时间
+						}
+						if (jsonValue.containsKey("maxwait")) {
+							MaxWaitTime.put(jsonValue.get("id").toString(),jsonValue.getInteger("maxwait")); //最小等待时间
+						}
+						if (jsonValue.containsKey("maxlot")) {
+							ListShow.put(jsonValue.get("id").toString(),jsonValue.getInteger("maxlot")); //列表可显示几条
+						}
+						if (jsonValue.containsKey("ctrlnode")) {
+							ctrlnode.put(jsonValue.get("id").toString(),jsonValue.getInteger("ctrlnode")); //列表可显示几条
 						}
 					}
 				}
@@ -1894,6 +2045,10 @@ public class TongYongActivity extends Activity {
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		// 如果软键盘已经显示，则隐藏，反之则显示
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+		
+		/*disableShowSoftInput(yimei_tongyong_oldMbox);
+		disableShowSoftInput(yimei_tongyong_newMbox);
+		disableShowSoftInput(yimei_proNum_edt);*/
 	}
 
 	/**
@@ -2788,11 +2943,6 @@ public class TongYongActivity extends Activity {
 					} else {
 						Log.i("foucus", "设备号回车");
 						sbidGetData(); // 设备号的回车键
-						/*if (!zcno.equals("41")) {
-							nextEditFocus((EditText) findViewById(R.id.yimei_tongyong_oldMbox));
-						} else {
-							nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
-						}*/
 						return true;
 					}
 				}
@@ -2967,8 +3117,6 @@ public class TongYongActivity extends Activity {
 						return false;
 					} else {
 						sid1GetData(); // 生产批号回车事件
-//						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
-//						yimei_proNum_edt.selectAll();
 						flag = true;
 					}
 				}

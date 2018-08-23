@@ -13,6 +13,7 @@ import com.yimei.activity.JieShou1Activity;
 import com.yimei.activity.JieShouActivity;
 import com.yimei.activity.KuaiSuGuoZhanActivity;
 import com.yimei.activity.MainActivity;
+import com.yimei.activity.PlasmeTwoActivity;
 import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.SlkMboxActivity;
 import com.yimei.activity.TongYongActivity;
@@ -229,6 +230,11 @@ public class MainMyAdapter extends BaseAdapter {
 					Intent intent = new Intent(context,WeiXiuOkActivity.class);
 					v.getContext().startActivity(intent);
 				}
+				if (mainMap.getKey().equals("D0073")) { //二次清洗
+					Intent intent = new Intent(context,PlasmeTwoActivity.class);
+					v.getContext().startActivity(intent);
+				}
+				
 				
 			}
 		});

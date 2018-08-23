@@ -12,6 +12,7 @@ import com.yimei.activity.JiaXiGaoActivity;
 import com.yimei.activity.JieBangMboxActivity;
 import com.yimei.activity.JieShou1Activity;
 import com.yimei.activity.JieShouActivity;
+import com.yimei.activity.PlasmeTwoActivity;
 import com.yimei.activity.RuKuActivity;
 import com.yimei.activity.SCFLActivity;
 import com.yimei.activity.SlkMboxActivity;
@@ -120,6 +121,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("设备维修确认")) {
 			activity = (WeiXiuOkActivity) context;
 		}
+		if (title.equals("二次清洗")) {
+			activity = (PlasmeTwoActivity) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -200,6 +204,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof WeiXiuOkActivity) {
 			((WeiXiuOkActivity) activity).mTouchView = this;
+		}
+		if (activity instanceof PlasmeTwoActivity) { 
+			((PlasmeTwoActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -371,6 +378,13 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof WeiXiuOkActivity) {
 			if (((WeiXiuOkActivity) activity).mTouchView == this) {
 				((WeiXiuOkActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof PlasmeTwoActivity) {
+			if (((PlasmeTwoActivity) activity).mTouchView == this) {
+				((PlasmeTwoActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}

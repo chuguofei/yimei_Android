@@ -1059,6 +1059,12 @@ public class ZhuangXiangActivity extends TabActivity {
 	 */
 	private void bat_noExist(JSONObject jsonObject) { // 批次号存在
 		cus_pnJsonObject = (JSONObject) ((JSONArray) jsonObject.get("values")).get(0); // 全局适配器添加数据
+		if(cus_pnJsonObject.containsKey("holdid")){
+			if(cus_pnJsonObject.getInteger("holdid") == 1){
+				ToastUtil.showToast(getApplicationContext(), "该批次已被HOLD!" , 0);
+				return;
+			}
+		}
 		if (Integer.parseInt(cus_pnJsonObject.get("qty").toString()) > manxiangshuliang) {
 			ToastUtil.showToast(getApplicationContext(), "满箱数量已超出,最多可以扫："
 					+ manxiangshuliang + "", 0);

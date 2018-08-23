@@ -47,6 +47,26 @@
                 android:background="@drawable/btn_shape_check_border"
                 android:text="生产确认" />
         </LinearLayout>
+        
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="故障描述" />
+
+            <EditText
+                android:id="@+id/yimei_weixiu_remark"
+                android:layout_width="250dp"
+                android:layout_height="100dp"
+                android:background="@drawable/shape_edittext_bordercolor"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:labelFor="@+id/yimei_weixiu_remark"
+                android:paddingLeft="10dp"/>
+        </TableRow>
     </TableLayout>
 
     <LinearLayout

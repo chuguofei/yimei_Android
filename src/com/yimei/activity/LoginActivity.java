@@ -6,11 +6,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONArray;
+import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
+import com.yimei.adapter.ZhiJuQingXiAdapter;
+import com.yimei.util.GetAndroidMacUtil;
+import com.yimei.util.OkHttpUtils;
 import com.yimei.util.ToastUtil;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -45,6 +54,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.UserHandle;
 import android.util.Log;
 import android.view.Display;
@@ -118,8 +128,7 @@ public class LoginActivity extends Activity {
 					}
 					if (login_edit_pwd.getText().toString().trim().equals("")
 							|| login_edit_pwd.getText().toString().trim() == null) {
-						Toast.makeText(getApplicationContext(), "密码不能为空", 0)
-								.show();
+						Toast.makeText(getApplicationContext(), "密码不能为空", 0).show();
 						return;
 					}
 
@@ -128,8 +137,7 @@ public class LoginActivity extends Activity {
 
 					// 利用bundle来存取数据
 					Bundle bundle = new Bundle();
-					bundle.putString("user", login_edit_account.getText()
-							.toString());
+					bundle.putString("user", login_edit_account.getText().toString());
 					bundle.putString("pwd", login_edit_pwd.getText().toString());
 					// 再把bundle中的数据传给intent，以传输过去
 					intent.putExtras(bundle);
@@ -139,7 +147,7 @@ public class LoginActivity extends Activity {
 		});
 
 	}
-
+	
 	/**
 	 * 弹出提示框
 	 * 

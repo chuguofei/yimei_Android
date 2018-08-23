@@ -207,7 +207,7 @@ public class TongYongGuoZhanActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(barcodeReceiver); // 取消广播注册
-	}
+	} 
 
 	/**
 	 * 判断文本框失去|获取焦点
