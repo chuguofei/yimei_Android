@@ -72,6 +72,7 @@ import com.yimei.util.ToastUtil;
  * QJ_ZCNO（器件的制程）: 查询器件的制程
  * QJ_Q_SLKMOBX //查询工单中绑定这个料没
  * QJBOXWEB //查询批次料盒
+ * Q_GRECORD //点胶查询是否夹胶
  * @author Administrator
  * PPA和EMC3030
  */
@@ -130,6 +131,7 @@ public class TongYongActivity extends Activity {
 	private String [] glue;  //烤箱需要绑定的胶
 	private String [] stents; //烤箱需要绑定的支架
 	private HashMap<String,String> repeatSid = new HashMap<>();  //录入同号批次
+	private String beforeUpdate_sid_31; //记录点胶查询是否加胶后要修改的主键
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -655,6 +657,29 @@ public class TongYongActivity extends Activity {
 					} else {
 						SetSelectValue(jsonObject);
 						System.out.println(jsonObject);
+					}
+				}
+				if(string.equals("Query_grecord_31")){ //查询点胶
+					JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
+					if (Integer.parseInt(jsonObject.get("code").toString()) == 0) { // 没有加胶记录
+						showNormalDialog("警告","该机台暂时没有加胶记录,请先进行加胶!");
+					}else{
+						JSONObject jsonValue = (JSONObject) (((JSONArray) jsonObject.get("values")).get(0));  //拿第一条记录
+						if(jsonValue.getInteger("tms") > 80){ //如果加胶时间大于80分钟，就去联系工程
+							showNormalDialog("提示","该机台加胶已超时，请找工程!");
+						}else{
+							//调用开工
+							Map<String, String> updateTimeMethod = MyApplication
+							.updateServerTimeMethod(
+									MyApplication.DBID,
+									MyApplication.user,
+									"01", "03",
+									beforeUpdate_sid_31,
+									zuoyeyuan, zcno, "202");
+							httpRequestQueryRecord(
+									MyApplication.MESURL,
+									updateTimeMethod, "kaigongUpdata"); 
+						}
 					}
 				}
 				if(string.equals("Query_Precord_chuzhan")){ //出站查询批次是否异常OA
@@ -2329,16 +2354,12 @@ public class TongYongActivity extends Activity {
 										updatekaigongSid1.clear();
 										return;
 									} else {
-										Map<String, String> updateTimeMethod = MyApplication
-												.updateServerTimeMethod(
-														MyApplication.DBID,
-														MyApplication.user,
-														"01", "03",
-														mes_precord.getSid(),
-														zuoyeyuan, zcno, "202");
+										
 										httpRequestQueryRecord(
 												MyApplication.MESURL,
-												updateTimeMethod, publicState);
+												MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' and sbid='"+shebeihao+"'")
+												, "Query_grecord_31");  //点胶查询是否加胶过
+										beforeUpdate_sid_31 = mes_precord.getSid();
 									}
 								} else if (zcno.equals("11") || zcno.equals("1A") || zcno.equals("1B")) { // 固晶可开俩批
 									int state02 = 0;
@@ -3153,7 +3174,7 @@ public class TongYongActivity extends Activity {
 	 * @param baseUrl
 	 * @param map
 	 */
-	public void httpRequestQueryRecord(final String baseUrl,
+	/*public void httpRequestQueryRecord(final String baseUrl,
 			final Map<String, String> map, final String type) {
 		new Thread(new Runnable() {
 			@SuppressWarnings("deprecation")
@@ -3169,6 +3190,12 @@ public class TongYongActivity extends Activity {
 				handler.sendMessage(m);
 			}
 		}).start();
+	}*/
+	
+	public void httpRequestQueryRecord(final String baseUrl,
+			final Map<String, String> map, final String type){
+		OkHttpUtils.getInstance().getServerExecute(baseUrl,
+				null, map, null, handler, true, type);
 	}
 
 	public void response(String http) {
