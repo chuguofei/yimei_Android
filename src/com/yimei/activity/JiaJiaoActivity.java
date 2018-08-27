@@ -49,7 +49,7 @@ import android.widget.TextView.OnEditorActionListener;
  * 辅助:
  *   MESGLUEJOB //查询胶杯号
  *   MESEQUTM // 查询设备号
- *   
+ *   MSBMOLIST_JJ //加胶前查询的辅助 （ID:Query_Precord_slkid_1 //往设备上加胶）
  *   
  */
 public class JiaJiaoActivity extends Activity {
@@ -235,7 +235,7 @@ public class JiaJiaoActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_jiajiao_jiaobeipihao) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) { // 胶杯批号
+//				if (actionId == EditorInfo.IME_ACTION_DONE) { // 胶杯批号
 					jiaobeipihao = yimei_jiajiao_jiaobeipihao.getText()
 							.toString().trim();
 					if (yimei_jiajiao_user.getText().toString().trim()
@@ -270,10 +270,10 @@ public class JiaJiaoActivity extends Activity {
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 					yimei_jiajiao_jiaobeipihao.selectAll();
 					flag = true;
-				}
+//				}
 			}
 			if (v.getId() == R.id.yimei_jiajiao_user) { // 作业员
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+//				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					if (yimei_jiajiao_user.getText().toString().trim()
 							.equals("")) {
 						ToastUtil.showToast(getApplicationContext(),
@@ -284,10 +284,10 @@ public class JiaJiaoActivity extends Activity {
 					zuoyeyuan = yimei_jiajiao_user.getText().toString().trim();
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
 					flag = true;
-				}
+//				}
 			}
 			if (v.getId() == R.id.yimei_jiajiao_jidiaojinumber) { // 设备号
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+//				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					sbid = yimei_jiajiao_jidiaojinumber.getText().toString()
 							.toUpperCase().trim();
 					if (zuoyeyuan.equals("")) {
@@ -311,7 +311,7 @@ public class JiaJiaoActivity extends Activity {
 					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
 							"Isshebei");
 					flag = true;
-				}
+//				}
 			}
 			return flag;
 		}
@@ -372,7 +372,7 @@ public class JiaJiaoActivity extends Activity {
 									"没有该胶机编号!", 0);
 						}
 					} else {
-						auxiliaryQuery("MSBMOLIST","~sbid='"+sbid+"' and state1='03'","Query_Precord_slkid_1"); //查询任务表中正在生产的工单
+						auxiliaryQuery("MSBMOLIST_JJ","~sbid='"+sbid+"' ","Query_Precord_slkid_1"); //查询任务表中正在生产的工单  and state1='03'
 					}
 				}
 				if(string.equals("Query_Precord_slkid_1")){ //胶杯回车去查设备号是否正确
@@ -398,7 +398,7 @@ public class JiaJiaoActivity extends Activity {
 							yimei_jiajiao_jidiaojinumber.selectAll();
 						}
 					}else{
-						showSlkid("当前没有正在生产的批次，请先将批次入站开工！");
+						showSlkid("当前机台没有入站的批次,无法加胶!"); //当前没有正在生产的批次，请先将批次入站开工！
 						yimei_jiajiao_jidiaojinumber.selectAll();
 					}
 				}
@@ -421,7 +421,7 @@ public class JiaJiaoActivity extends Activity {
 									"没有该胶机编号!", 0);
 						}
 					} else { //有这个机台
-						auxiliaryQuery("MSBMOLIST","~sbid='"+sbid+"' and state1='03'","Query_Precord_slkid"); //查询任务表中正在生产的工单
+						auxiliaryQuery("MSBMOLIST_JJ","~sbid='"+sbid+"' ","Query_Precord_slkid"); //查询任务表中正在生产的工单 and state1='03'
 //						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 					}
 				}
@@ -438,7 +438,7 @@ public class JiaJiaoActivity extends Activity {
 							yimei_jiajiao_jidiaojinumber.selectAll();
 						}
 					}else{
-						showSlkid("当前没有正在生产的批次，请先将批次入站开工！");
+						showSlkid("当前机台没有入站的批次,无法加胶!"); 
 						yimei_jiajiao_jidiaojinumber.selectAll();
 					}
 				}
@@ -468,12 +468,13 @@ public class JiaJiaoActivity extends Activity {
 											return;
 										}
 									}
-									if(jsonValue.containsKey("mixing_time")){
+									if(jsonValue.containsKey("mixing_time")){ //判断混胶后20分钟内需要加胶
 										if(!jsonValue.get("mixing_time").toString().equals("")){
 											String mixing_time = jsonValue.get("mixing_time").toString();
 											if(mixing_time.length() == 16){
 												mixing_time+=":00";
 											}
+											//判断混胶后20分钟内需要加胶
 											long Time = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()  - MyApplication.df.parse(mixing_time).getTime();
 											long Time1 = Time/1000/60;
 											if(!((Time/1000/60) < Integer.parseInt(jsonValue.get("fr_add_time").toString()))&&(Time/1000/60)>0){
@@ -530,7 +531,7 @@ public class JiaJiaoActivity extends Activity {
 						Map<String, String> mesIdMap = MyApplication
 								.updateServerJiaJiao(MyApplication.DBID,
 										MyApplication.user, sbid, jiaobeipihao,
-										"300");
+										"300");   
 						String a = jiaobeipihao;
 						httpRequestQueryRecord(MyApplication.MESURL, mesIdMap,
 								"updateServerJiaJiao");

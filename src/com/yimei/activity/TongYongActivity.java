@@ -2476,7 +2476,7 @@ public class TongYongActivity extends Activity {
 								ToastUtil.showToast(getApplicationContext(),
 										"选中的【"+json.get("sid1").toString()+"】批次状态【异常】不能开工！", 0);
 								updatekaigongSid1.clear(); // 清空需要修改的列表
-							}else if (json.get("state1").toString().equals("0B")) {
+							}else if (json.get("state1").toString().equals("0B")) { 
 								ToastUtil.showToast(getApplicationContext(),
 										"选中的【"+json.get("sid1").toString()+"】批次状态【暂停】不能开工！", 0);
 								updatekaigongSid1.clear(); // 清空需要修改的列表
