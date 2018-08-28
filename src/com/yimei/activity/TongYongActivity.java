@@ -2362,7 +2362,18 @@ public class TongYongActivity extends Activity {
 										updatekaigongSid1.clear();
 										return;
 									} else {
-										if(zcno.equals("31")){
+										if(zcno.equals("21")){
+											Map<String, String> updateTimeMethod = MyApplication
+													.updateServerTimeMethod(
+															MyApplication.DBID,
+															MyApplication.user,
+															"01", "03",
+															mes_precord.getSid(),
+															zuoyeyuan, zcno, "202");
+											httpRequestQueryRecord(
+													MyApplication.MESURL,
+													updateTimeMethod, publicState);
+										}else if(zcno.equals("31")){
 											httpRequestQueryRecord(
 													MyApplication.MESURL,
 													MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' and sbid='"+shebeihao+"'")

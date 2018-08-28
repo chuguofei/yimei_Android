@@ -17,8 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class MyApplication extends Application {
-	public static String MESURL = "http://192.168.7.15:8088/mes/api";
-//	public static String MESURL = "http://59.53.182.251:8088/mes/api";
+//	public static String MESURL = "http://192.168.7.15:8088/mes/api";
+	public static String MESURL = "ht1tp://59.53.182.251:8088/mes/api";
 	
 	public static String DBID = "01";
 //	public static String DBID = "mes";
