@@ -457,10 +457,12 @@ public class JiaJiaoActivity extends Activity {
 			
 										SimpleDateFormat sdf = new SimpleDateFormat(
 												"yyyy-MM-dd HH:mm");
+										//加3小时间后的时间
 										String newly_time =  jsonValue.get("newly_time").toString();
 										if(newly_time.length() == 16){
 											newly_time += ":00";
 										}
+										//最晚到期时间
 										long vdate = sdf.parse(newly_time).getTime()- MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime();
 										if (vdate < 0) {
 											ToastUtil.showToast(getApplicationContext(),
@@ -470,6 +472,7 @@ public class JiaJiaoActivity extends Activity {
 									}
 									if(jsonValue.containsKey("mixing_time")){ //判断混胶后20分钟内需要加胶
 										if(!jsonValue.get("mixing_time").toString().equals("")){
+											//最近混胶时间
 											String mixing_time = jsonValue.get("mixing_time").toString();
 											if(mixing_time.length() == 16){
 												mixing_time+=":00";

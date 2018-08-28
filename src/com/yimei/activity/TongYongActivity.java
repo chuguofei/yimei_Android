@@ -1262,6 +1262,14 @@ public class TongYongActivity extends Activity {
 								
 							}
 							
+							if(zcno.equals("21") || zcno.equals("31") || zcno.equals("11")){
+								if(yimei_tongyong_newMbox.getText().toString().trim().toUpperCase().equals("")){
+									ToastUtil.showToast(gujingActivity,"服务器没有返回响应，请重新扫描!", 0);
+									MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+									InputHidden();
+									return;
+								}
+							}
 							
 							
 							Intent intent = new Intent();
@@ -2350,16 +2358,17 @@ public class TongYongActivity extends Activity {
 									if (state02 >= 1) {
 										ToastUtil.showToast(
 												TongYongActivity.this,
-												"请将上一个批次【出站】后再【开工】。", 0);
+												"请将上一个批次【出站】后再【开工】", 0);
 										updatekaigongSid1.clear();
 										return;
 									} else {
-										
-										httpRequestQueryRecord(
-												MyApplication.MESURL,
-												MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' and sbid='"+shebeihao+"'")
-												, "Query_grecord_31");  //点胶查询是否加胶过
-										beforeUpdate_sid_31 = mes_precord.getSid();
+										if(zcno.equals("31")){
+											httpRequestQueryRecord(
+													MyApplication.MESURL,
+													MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' and sbid='"+shebeihao+"'")
+													, "Query_grecord_31");  //点胶查询是否加胶过
+											beforeUpdate_sid_31 = mes_precord.getSid();
+										}
 									}
 								} else if (zcno.equals("11") || zcno.equals("1A") || zcno.equals("1B")) { // 固晶可开俩批
 									int state02 = 0;
