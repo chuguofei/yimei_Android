@@ -1,0 +1,170 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin" >
+
+    <TableLayout
+        android:id="@+id/clearmbox_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:shrinkColumns="0,1,2" >
+
+        <TableRow android:layout_marginTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_user" />
+
+            <EditText
+                android:id="@+id/yimei_clearmbox_op"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLength="12"
+                android:paddingLeft="10dp"
+                android:tag="清洗作业员" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clearmbox_rem" />
+
+            <EditText
+                android:id="@+id/yimei_clearmbox_rem"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:background="@drawable/shape_edittext_bordercolor"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:labelFor="@+id/yimei_clearmbox_rem"
+                android:paddingLeft="10dp"
+                android:tag="清洗备注"
+                android:textSize="16px" />
+        </TableRow>
+
+        <TableRow android:paddingTop="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yimei_gujing_oldmbox" />
+
+            <EditText
+                android:id="@+id/yimei_clearmbox_mbox"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:background="@drawable/shape_edittext"
+                android:ems="10"
+                android:enabled="true"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:labelFor="@+id/yimei_clearmbox_mbox"
+                android:paddingLeft="10dp"
+                android:tag="清洗料盒号" />
+        </TableRow>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+             <Button
+                android:id="@+id/clearmbox_new"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="新建" />
+            
+            <Button
+                android:id="@+id/clearmbox_save"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="保存" />
+
+            <Button
+                android:id="@+id/clearmbox_submit"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_margin="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape_check_border"
+                android:text="提交" />
+        </LinearLayout>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/clearmbox_data_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/clearmbox_tab"
+        android:background="#ccc"
+        android:minHeight="40dip"
+        android:orientation="horizontal" >
+
+        <com.yimei.scrollview.GeneralCHScrollView
+            android:id="@+id/clearmbox_scroll_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="作业员"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/clearmbox_mbox"
+                    android:textColor="#850" />
+
+                <TextView
+                    android:layout_width="100dip"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/clearmbox_rem"
+                    android:textColor="#850" />
+            </LinearLayout>
+        </com.yimei.scrollview.GeneralCHScrollView>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/clearmbox_scroll_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/clearmbox_data_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.yimei.activity.BianDaiActivity;
+import com.yimei.activity.ClearMboxActivity;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
@@ -234,8 +235,10 @@ public class MainMyAdapter extends BaseAdapter {
 					Intent intent = new Intent(context,PlasmeTwoActivity.class);
 					v.getContext().startActivity(intent);
 				}
-				
-				
+				if (mainMap.getKey().equals("D009A")) { //料盒清洗
+					Intent intent = new Intent(context,ClearMboxActivity.class);
+					v.getContext().startActivity(intent);
+				}
 			}
 		});
         return view;

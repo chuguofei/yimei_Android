@@ -190,7 +190,7 @@ public class SlkMboxActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if(v.getId() == R.id.yimei_slkmbox_op){
-				if (actionId == EditorInfo.IME_ACTION_DONE) { 
+				if (actionId == 0) { 
 					if(yimei_slkmbox_op.getText().toString().trim().equals("")){
 						ToastUtil.showToast(getApplicationContext(), "作业员不能为空", 0);
 						MyApplication.nextEditFocus(yimei_slkmbox_op);
@@ -200,12 +200,31 @@ public class SlkMboxActivity extends Activity {
 				}
 			}
 			if(v.getId() == R.id.yimei_slkmbox_slkid){
-				if (actionId == EditorInfo.IME_ACTION_DONE) { 
-					
+				if (actionId == 0) { 
+					if (yimei_slkmbox_op.getText().toString().toUpperCase()
+							.trim().equals("")
+							|| yimei_slkmbox_op.getText().toString()
+									.toUpperCase().trim() == null) {
+						ToastUtil.showToast(SlkMboxActivity.this,"作业员不能为空", 0);
+						MyApplication.nextEditFocus(yimei_slkmbox_op);
+						return false;
+					}
+					if (yimei_slkmbox_slkid.getText().toString().toUpperCase()
+							.trim().equals("")
+							|| yimei_slkmbox_slkid.getText().toString()
+									.toUpperCase().trim() == null) {
+						ToastUtil.showToast(SlkMboxActivity.this,"工单号不能为空", 0);
+						MyApplication.nextEditFocus(yimei_slkmbox_slkid);
+						return false;
+					}
+					Map<String, String> map = MyApplication.QueryBatNo("MBOX_SLKID", "~sid='" + yimei_slkmbox_slkid.getText().toString() + "'");
+					OkHttpUtils.getInstance().getServerExecute(
+							MyApplication.MESURL, null, map, null, mHander,
+							true, "QuerySLKID");
 				}
 			}
 			if(v.getId() == R.id.yimei_slkmbox_mbox){
-				if (actionId == EditorInfo.IME_ACTION_DONE) { 
+				if (actionId == 0) { 
 					if(yimei_slkmbox_op.getText().toString().trim().equals("")){
 						ToastUtil.showToast(getApplicationContext(), "作业员不能为空！", 0);
 						MyApplication.nextEditFocus(yimei_slkmbox_op);
@@ -264,7 +283,6 @@ public class SlkMboxActivity extends Activity {
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if (jsonObject.getInteger("code") == 0) {
 								MyApplication.nextEditFocus(yimei_slkmbox_op);
-								yimei_slkmbox_op.selectAll();
 								ToastUtil.showToast(getApplicationContext(),"请输入正确的作业员工号!",0);
 								InputHidden();
 							}
@@ -485,7 +503,7 @@ public class SlkMboxActivity extends Activity {
 				} 
 			}
 			if(v.getId() == R.id.yimei_slkmbox_slkid){
-				if (!hasFocus) { // 失去焦点
+				/*if (!hasFocus) { // 失去焦点
 					if(yimei_slkmbox_op.getText().toString().trim().equals("")){
 						ToastUtil.showToast(getApplicationContext(), "作业员不能为空", 0);
 						MyApplication.nextEditFocus(yimei_slkmbox_op);
@@ -500,7 +518,7 @@ public class SlkMboxActivity extends Activity {
 					OkHttpUtils.getInstance().getServerExecute(
 							MyApplication.MESURL, null, map, null, mHander,
 							true, "QuerySLKID");
-				}
+				}*/
 			}
 		}
 	};

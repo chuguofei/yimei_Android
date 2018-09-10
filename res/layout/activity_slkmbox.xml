@@ -32,6 +32,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:tag="工单料盒作业员"
+                android:nextFocusDown="@+id/yimei_slkmbox_op"
                 android:labelFor="@+id/yimei_slkmbox_op"
                 android:paddingLeft="10dp" />
         </TableRow>
@@ -51,6 +52,7 @@
                 android:ems="10"
                 android:enabled="true"
                 android:imeOptions="actionDone"
+                android:nextFocusDown="@+id/yimei_slkmbox_slkid"
                 android:inputType="text"
                 android:tag="工单绑定工单"
                 android:labelFor="@+id/yimei_slkmbox_slkid"
@@ -74,6 +76,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:tag="工单绑定料盒号"
+                android:nextFocusDown="@+id/yimei_slkmbox_mbox"
                 android:labelFor="@+id/yimei_slkmbox_mbox"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />

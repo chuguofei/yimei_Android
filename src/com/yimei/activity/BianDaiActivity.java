@@ -453,7 +453,7 @@ public class BianDaiActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_biandai_user_edt) { // 作业员
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_biandai_user_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_biandai_user_edt.getText().toString()
@@ -468,7 +468,7 @@ public class BianDaiActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_biandai_sbid_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					shebeihao = yimei_biandai_sbid_edt.getText().toString()
 							.toUpperCase().trim();
 					yimei_biandai_sbid_edt.setText(shebeihao);
@@ -500,7 +500,7 @@ public class BianDaiActivity extends Activity {
 			}
 			// 生产批号的回车事件
 			if (v.getId() == R.id.yimei_biandai_proNum_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					lot_no = yimei_biandai_proNum_edt.getText().toString()
 							.trim();
 					if (yimei_biandai_user_edt.getText().toString().trim()

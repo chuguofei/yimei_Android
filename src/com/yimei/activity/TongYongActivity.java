@@ -1,6 +1,5 @@
 package com.yimei.activity;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -73,6 +72,7 @@ import com.yimei.util.ToastUtil;
  * QJ_Q_SLKMOBX //查询工单中绑定这个料没
  * QJBOXWEB //查询批次料盒
  * Q_GRECORD //点胶查询是否夹胶
+ * MBOXQUERY //查询料盒号是否存在
  * @author Administrator
  * PPA和EMC3030
  */
@@ -499,7 +499,8 @@ public class TongYongActivity extends Activity {
 	 */
 	protected void onResume() {
 		super.onResume();
-
+		registerReceiver(barcodeReceiver, new IntentFilter(
+				MyApplication.INTENT_ACTION_SCAN_RESULT)); // 注册广播
 		List<Map<String, Object>> getListMes_Procord = GetListMes_Procord(
 				shebeihao, zcno);
 		if (getListMes_Procord != null) {
@@ -533,12 +534,19 @@ public class TongYongActivity extends Activity {
 		yimei_proNum_edt.selectAll();
 		
 		
-		yimei_user_edt.setOnEditorActionListener(editEnter); // 操作员的回车监听事件
+		/*yimei_user_edt.setOnEditorActionListener(editEnter); // 操作员的回车监听事件
 		yimei_equipment_edt.setOnEditorActionListener(editEnter); // 设备的回车监听事件
 		yimei_proNum_edt.setOnEditorActionListener(editEnter);// 生产批号的回车监听事件
 		yimei_tongyong_oldMbox.setOnEditorActionListener(editEnter);// 生产批号的回车监听事件
 		yimei_tongyong_newMbox.setOnEditorActionListener(editEnter);// 生产批号的回车监听事件
-
+*/
+		
+		yimei_user_edt.setOnEditorActionListener(zuoyeyuanEnter); // 操作员的回车监听事件
+		yimei_equipment_edt.setOnEditorActionListener(sbidEnter); // 设备的回车监听事件
+		yimei_proNum_edt.setOnEditorActionListener(sid1Enter);// 生产批号的回车监听事件
+		yimei_tongyong_oldMbox.setOnEditorActionListener(oldMboxEnter);// 生产批号的回车监听事件
+		yimei_tongyong_newMbox.setOnEditorActionListener(newMboxEnter);// 生产批号的回车监听事件
+		
 		yimei_user_edt.setOnFocusChangeListener(EditGetFocus);// 操作员失去焦点
 		yimei_equipment_edt.setOnFocusChangeListener(EditGetFocus);// 设备号失去焦点
 		yimei_proNum_edt.setOnFocusChangeListener(EditGetFocus);// 批号失去焦点
@@ -995,7 +1003,14 @@ public class TongYongActivity extends Activity {
 							yimei_proNum_edt.selectAll();
 							InputHidden(); // 隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString().equals("02")
+						}else if(jsonValue.getInteger("holdid") == 1){
+							ToastUtil.showToast(gujingActivity, "该批号状态为【HOLD】，请找QC!", 0);
+							MyApplication.nextEditFocus(yimei_proNum_edt);
+							yimei_proNum_edt.selectAll();
+							InputHidden(); // 隐藏键盘
+							return;
+						}
+						else if (jsonValue.get("state").toString().equals("02")
 								|| jsonValue.get("state").toString().equals("03")) {
 							ToastUtil.showToast(gujingActivity, "该批号状态为【入站】!",
 									0);
@@ -1363,6 +1378,28 @@ public class TongYongActivity extends Activity {
 							}
 						}
 						
+						//列表中可显示几条记录
+						if(ListShow.containsKey(zcno)){
+							if(ListShow.get(zcno) != 0){
+								if(scrollAdapter != null){
+									if(scrollAdapter.getCount() >= ListShow.get(zcno)){
+										ToastUtil.showToast(gujingActivity,"请先将一个批次出站!", 0);
+										return;
+									}
+								}
+							}
+							
+						}
+						
+						if(zcno.equals("11")){
+							if(yimei_tongyong_oldMbox.getText().toString().trim().toUpperCase().equals("")){
+								ToastUtil.showToast(gujingActivity,"服务器没有返回响应，请重新扫描!", 0);
+								MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+								InputHidden();
+								return;
+							}
+						}
+						
 						Intent intent = new Intent();
 						intent.setClass(TongYongActivity.this, Loading1Activity.class);// 跳转到加载界面
 						startActivity(intent);
@@ -1409,6 +1446,7 @@ public class TongYongActivity extends Activity {
 						newJson.put("smake", MyApplication.user);
 						newJson.put("mkdate",MyApplication.GetServerNowTime());
 						newJson.put("sbuid", "D0001");
+						newJson.put("sorg", MyApplication.sorg);
 						newJson = newJson;
 						repeatSid.put(newJson.getString("sid1"), newJson.getString("sid1")); //避免记录表批次重复
 						Map<String, String> mesIdMap = MyApplication
@@ -2376,8 +2414,8 @@ public class TongYongActivity extends Activity {
 										}else if(zcno.equals("31")){
 											httpRequestQueryRecord(
 													MyApplication.MESURL,
-													MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' and sbid='"+shebeihao+"'")
-													, "Query_grecord_31");  //点胶查询是否加胶过
+													MyApplication.QueryBatNo("Q_GRECORD","~slkid='"+mes_precord.getSlkid()+"' ")
+													, "Query_grecord_31");  //点胶查询是否加胶过   and sbid='"+shebeihao+"'
 											beforeUpdate_sid_31 = mes_precord.getSid();
 										}
 									}
@@ -2964,30 +3002,40 @@ public class TongYongActivity extends Activity {
 			}
 		}
 	};
-
+	
 	/**
-	 * 键盘回车事件
+	 * 作业员
 	 */
-	OnEditorActionListener editEnter = new OnEditorActionListener() {
-
-		@SuppressLint("DefaultLocale")
+	OnEditorActionListener zuoyeyuanEnter = new OnEditorActionListener() {
+		
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			boolean flag = false;
 			if (v.getId() == R.id.yimei_user_edt) { // 作业员回车
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
+						nextEditFocus(yimei_user_edt);
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
 						return false;
 					}
 					zuoyeyuan = yimei_user_edt.getText().toString().trim();
 					nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
-					flag = true;
+					yimei_equipment_edt.selectAll();
 				}
 			}
+			return false;
+		}
+	};
+
+	/**
+	 * 设备号
+	 */
+	OnEditorActionListener sbidEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.yimei_equipment_edt) { // 设备号回车
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					shebeihao = yimei_equipment_edt.getText().toString().trim();
 					shebeihao = shebeihao.toUpperCase().trim();
 					yimei_equipment_edt.setText(shebeihao);
@@ -3006,12 +3054,23 @@ public class TongYongActivity extends Activity {
 					} else {
 						Log.i("foucus", "设备号回车");
 						sbidGetData(); // 设备号的回车键
-						return true;
 					}
 				}
 			}
+			return false;
+		}
+	};
+
+	
+	/**
+	 * 旧料盒
+	 */
+	OnEditorActionListener oldMboxEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.yimei_tongyong_oldMbox) { // 旧料盒
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
@@ -3055,8 +3114,18 @@ public class TongYongActivity extends Activity {
 							"Old_QueryMboX");
 				}
 			}
+			return false;
+		}
+	};
+	/**
+	 * 新料盒
+	 */
+	OnEditorActionListener newMboxEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.yimei_tongyong_newMbox) { // 新料盒
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
@@ -3118,8 +3187,241 @@ public class TongYongActivity extends Activity {
 							"New_QueryMboX");
 				}
 			}
+			return false;
+		}
+	};
+	/**
+	 * 批次号
+	 */
+	OnEditorActionListener sid1Enter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.yimei_proNum_edt) { // 生产批号的回车事件
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
+						return false;
+					}
+					if (yimei_equipment_edt.getText().toString().trim()
+							.equals("")
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
+						return false;
+					}
+					// 旧料盒
+					if (yimei_tongyong_oldMbox.getText().toString().trim()
+							.equals("")
+							|| yimei_tongyong_oldMbox.getText().toString()
+									.trim() == null) {
+						if (zcno.equals("11")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("21")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("31")) {
+							ToastUtil
+									.showToast(gujingActivity, "焊接料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						}
+					}
+					// 新料盒
+					if (yimei_tongyong_newMbox.getText().toString().trim()
+							.equals("")
+							|| yimei_tongyong_newMbox.getText().toString()
+									.trim() == null) {
+						if (zcno.equals("21")) {
+							ToastUtil
+									.showToast(gujingActivity, "焊接料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+							return false;
+						} else if (zcno.equals("31")) {
+							ToastUtil
+									.showToast(gujingActivity, "点胶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+							return false;
+						}
+					}
+					if (yimei_proNum_edt.getText().toString().trim().equals("")
+							|| yimei_proNum_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "批次号为空~", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_proNum_edt));
+						Log.i("foucus", "批次号回车");
+						return false;
+					} else {
+						sid1GetData(); // 生产批号回车事件
+					}
+				}
+			}
+			return false;
+		}
+	};
+	
+	
+	/**
+	 * 键盘回车事件
+	 */
+	OnEditorActionListener editEnter = new OnEditorActionListener() {
+
+		@SuppressLint("DefaultLocale")
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			boolean flag = false;
+			if (v.getId() == R.id.yimei_user_edt) { // 作业员回车
+//				if (actionId >6) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
+						return false;
+					}
+					zuoyeyuan = yimei_user_edt.getText().toString().trim();
+					nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
+					flag = true;
+//				}
+			}
+			if (v.getId() == R.id.yimei_equipment_edt) { // 设备号回车
+//				if (actionId >6) {
+					shebeihao = yimei_equipment_edt.getText().toString().trim();
+					shebeihao = shebeihao.toUpperCase().trim();
+					yimei_equipment_edt.setText(shebeihao);
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
+						return false;
+					}
+					if (yimei_equipment_edt.getText().toString().trim()
+							.equals("")
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
+						return false;
+					} else {
+						Log.i("foucus", "设备号回车");
+						sbidGetData(); // 设备号的回车键
+						return true;
+					}
+//				}
+			}
+			if (v.getId() == R.id.yimei_tongyong_oldMbox) { // 旧料盒
+//				if (actionId >6) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
+						return false;
+					}
+					if (yimei_equipment_edt.getText().toString().trim()
+							.equals("")
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
+						return false;
+					}
+					if (yimei_tongyong_oldMbox.getText().toString().trim()
+							.equals("")
+							|| yimei_tongyong_oldMbox.getText().toString()
+									.trim() == null) {
+						if (zcno.equals("11")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("21")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("31")) {
+							ToastUtil
+									.showToast(gujingActivity, "焊接料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						}
+					}
+					Map<String, String> queryMBox = MyApplication.QueryBatNo(
+							"MBOXQUERY", "~id='"
+									+ yimei_tongyong_oldMbox.getText()
+											.toString().toUpperCase().trim()
+									+ "'");
+					httpRequestQueryRecord(MyApplication.MESURL, queryMBox,
+							"Old_QueryMboX");
+//				}
+			}
+			if (v.getId() == R.id.yimei_tongyong_newMbox) { // 新料盒
+//				if (actionId >6) {
+					if (yimei_user_edt.getText().toString().trim().equals("")
+							|| yimei_user_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_user_edt));
+						return false;
+					}
+					if (yimei_equipment_edt.getText().toString().trim()
+							.equals("")
+							|| yimei_equipment_edt.getText().toString().trim() == null) {
+						ToastUtil.showToast(gujingActivity, "设备号不能为空", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_equipment_edt));
+						return false;
+					}
+					// 旧料盒
+					if (yimei_tongyong_oldMbox.getText().toString().trim()
+							.equals("")
+							|| yimei_tongyong_oldMbox.getText().toString()
+									.trim() == null) {
+						if (zcno.equals("11")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("21")) {
+							ToastUtil
+									.showToast(gujingActivity, "固晶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						} else if (zcno.equals("31")) {
+							ToastUtil
+									.showToast(gujingActivity, "焊接料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_oldMbox);
+							return false;
+						}
+					}
+					// 新料盒
+					if (yimei_tongyong_newMbox.getText().toString().trim()
+							.equals("")
+							|| yimei_tongyong_newMbox.getText().toString()
+									.trim() == null) {
+						if (zcno.equals("21")) {
+							ToastUtil
+									.showToast(gujingActivity, "焊接料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+							return false;
+						} else if (zcno.equals("31")) {
+							ToastUtil
+									.showToast(gujingActivity, "点胶料盒号不能为空~", 0);
+							MyApplication.nextEditFocus(yimei_tongyong_newMbox);
+							return false;
+						}
+					}
+					Map<String, String> queryMBox = MyApplication.QueryBatNo(
+							"MBOXQUERY", "~id='"
+									+ yimei_tongyong_newMbox.getText()
+											.toString().toUpperCase().trim()
+									+ "'");
+					httpRequestQueryRecord(MyApplication.MESURL, queryMBox,
+							"New_QueryMboX");
+//				}
+			}
+			if (v.getId() == R.id.yimei_proNum_edt) { // 生产批号的回车事件
+//				if (actionId >6) {
 					if (yimei_user_edt.getText().toString().trim().equals("")
 							|| yimei_user_edt.getText().toString().trim() == null) {
 						ToastUtil.showToast(gujingActivity, "作业员不能为空", 0);
@@ -3182,7 +3484,7 @@ public class TongYongActivity extends Activity {
 						sid1GetData(); // 生产批号回车事件
 						flag = true;
 					}
-				}
+//				}
 			}
 			return flag;
 		}
@@ -3194,7 +3496,7 @@ public class TongYongActivity extends Activity {
 	 * @param baseUrl
 	 * @param map
 	 */
-	/*public void httpRequestQueryRecord(final String baseUrl,
+/*	public void httpRequestQueryRecord(final String baseUrl,
 			final Map<String, String> map, final String type) {
 		new Thread(new Runnable() {
 			@SuppressWarnings("deprecation")

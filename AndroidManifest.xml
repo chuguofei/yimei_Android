@@ -254,6 +254,11 @@
             android:name="com.yimei.activity.PlasmeTwoActivity"
             android:label="@string/PlasmaTwoTitle" >
         </activity>
+        <!-- 料盒清洗 -->
+        <activity
+            android:name="com.yimei.activity.ClearMboxActivity"
+            android:label="@string/ClearMboxTitle" >
+        </activity>
     </application>
 
     <!-- 单元测试 -->

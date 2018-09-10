@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
 
+import com.yimei.activity.ClearMboxActivity;
 import com.yimei.activity.GuJingActivity;
 import com.yimei.activity.HunJiaoActivity;
 import com.yimei.activity.JiaXiGaoActivity;
@@ -124,6 +125,9 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (title.equals("二次清洗")) {
 			activity = (PlasmeTwoActivity) context;
 		}
+		if (title.equals("料盒清洗")) {
+			activity = (ClearMboxActivity) context;
+		}
 	}
 
 	public GeneralCHScrollView(Context context) {
@@ -207,6 +211,10 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		}
 		if (activity instanceof PlasmeTwoActivity) { 
 			((PlasmeTwoActivity) activity).mTouchView = this;
+		}
+		
+		if (activity instanceof ClearMboxActivity) { 
+			((ClearMboxActivity) activity).mTouchView = this;
 		}
 		return super.onTouchEvent(ev);
 	}
@@ -385,6 +393,13 @@ public class GeneralCHScrollView extends HorizontalScrollView {
 		if (activity instanceof PlasmeTwoActivity) {
 			if (((PlasmeTwoActivity) activity).mTouchView == this) {
 				((PlasmeTwoActivity) activity).onScrollChanged(l, t, oldl, oldt);
+			} else {
+				super.onScrollChanged(l, t, oldl, oldt);
+			}
+		}
+		if (activity instanceof ClearMboxActivity) {
+			if (((ClearMboxActivity) activity).mTouchView == this) {
+				((ClearMboxActivity) activity).onScrollChanged(l, t, oldl, oldt);
 			} else {
 				super.onScrollChanged(l, t, oldl, oldt);
 			}

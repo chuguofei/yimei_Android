@@ -1118,7 +1118,7 @@ public class GuJingActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_gujinguser_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_gujinguser_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_gujinguser_edt.getText().toString().trim() == null) {
@@ -1132,7 +1132,7 @@ public class GuJingActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_gujingequipment_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					shebeihao = yimei_gujingequipment_edt.getText().toString()
 							.trim();
 					shebeihao = shebeihao.toUpperCase().trim();
@@ -1160,7 +1160,7 @@ public class GuJingActivity extends Activity {
 			}
 			// 生产批号的回车事件
 			if (v.getId() == R.id.yimei_gujingproNum_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_gujinguser_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_gujinguser_edt.getText().toString().trim() == null) {

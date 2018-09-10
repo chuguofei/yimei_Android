@@ -31,6 +31,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_zhijulingchu_user_edt"
                 android:tag="制具领出作业员"
                 android:labelFor="@+id/yimei_zhijulingchu_user_edt"
                 android:paddingLeft="10dp" />
@@ -66,6 +67,7 @@
                 android:ems="10"
                 android:enabled="true"
                 android:imeOptions="actionDone"
+                android:nextFocusDown="@id/yimei_zhijulingchu_proNum_edt"
                 android:inputType="text"
                 android:tag="制具领出批次号"
                 android:labelFor="@+id/yimei_zhijulingchu_proNum_edt"
@@ -89,6 +91,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_zhijulingchu_mojuId"
                 android:tag="制具领出模具编号"
                 android:labelFor="@+id/yimei_zhijulingchu_mojuId"
                 android:paddingLeft="10dp"

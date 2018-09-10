@@ -22,6 +22,7 @@
                 android:imeOptions="actionDone"
                 android:layout_height="40dp"
                 android:layout_margin="8dp"
+                android:nextFocusDown="@id/bad_lotno1"
                 android:background="@drawable/shape_edittext"
                 android:hint="lot号"
                 android:tag="lotno号"
@@ -41,6 +42,7 @@
                 android:background="@drawable/shape_edittext"
                 android:hint="断裂"
                 android:inputType="number"
+                 android:nextFocusDown="@id/bad_fracture1"
                 android:labelFor="@+id/bad_fracture1" />
         </TableRow>
 
@@ -55,6 +57,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/shape_edittext"
                 android:hint="压伤"
+                android:nextFocusDown="@id/bad_crushed1"
                 android:inputType="number"
                 android:labelFor="@+id/bad_crushed1" />
         </TableRow>
@@ -70,6 +73,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/shape_edittext"
                 android:hint="点记"
+                android:nextFocusDown="@id/bad_poinrem1"
                 android:inputType="number"
                 android:labelFor="@+id/bad_poinrem1" />
         </TableRow>
@@ -83,6 +87,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/shape_edittext"
                 android:hint="破损"
+                android:nextFocusDown="@id/bad_broken1"
                 android:inputType="number"
                 android:labelFor="@+id/bad_broken1" />
         </TableRow>
@@ -97,6 +102,7 @@
                 android:background="@drawable/shape_edittext"
                 android:hint="压合"
                 android:inputType="number"
+                 android:nextFocusDown="@id/bad_pressing1"
                 android:labelFor="@+id/bad_pressing1" />
         </TableRow>
 
@@ -109,6 +115,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/shape_edittext"
                 android:hint="溢胶"
+                 android:nextFocusDown="@id/bad_overflow1"
                 android:inputType="number"
                 android:labelFor="@+id/bad_overflow1" />
         </TableRow>

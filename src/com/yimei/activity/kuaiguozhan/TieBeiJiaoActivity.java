@@ -253,7 +253,14 @@ public class TieBeiJiaoActivity extends Activity {
 											"该批号不具备入站条件,上个工序为出站!", 0);
 									gaowen_sid1.selectAll();
 									return;
-								} else if (jsonValue.get("state").toString()
+								}else if (jsonValue.getInteger("holdid") == 1) {
+									ToastUtil.showToast(
+											TieBeiJiaoActivity.this,
+											"该批号状态为【HOLD】，请找QC!", 0);
+									gaowen_sid1.selectAll();
+									return;
+								} 
+								else if (jsonValue.get("state").toString()
 										.equals("02")
 										|| jsonValue.get("state").toString()
 												.equals("03")) {

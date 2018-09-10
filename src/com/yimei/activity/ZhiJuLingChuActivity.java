@@ -223,7 +223,7 @@ public class ZhiJuLingChuActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_zhijulingchu_user_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijulingchu_user.getText().toString().trim()
 							.equals("")
 							|| yimei_zhijulingchu_user.getText().toString()
@@ -240,7 +240,7 @@ public class ZhiJuLingChuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_zhijulingchu_proNum_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijulingchu_user.getText().toString().trim()
 							.equals("")
 							|| yimei_zhijulingchu_user.getText().toString()
@@ -270,7 +270,7 @@ public class ZhiJuLingChuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_zhijulingchu_mojuId) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijulingchu_user.getText().toString().trim()
 							.equals("")
 							|| yimei_zhijulingchu_user.getText().toString()

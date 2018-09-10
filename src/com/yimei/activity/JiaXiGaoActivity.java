@@ -189,7 +189,7 @@ public class JiaXiGaoActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_jiaxigao_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
 							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
@@ -202,7 +202,7 @@ public class JiaXiGaoActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_jiaxigao_sbid) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
 							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);
@@ -226,7 +226,7 @@ public class JiaXiGaoActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_jiaxigao_prtno) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiaxigao_user.getText().toString().trim().equals("")
 							|| yimei_jiaxigao_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(JiaXiGaoActivity.this, "作业员不能为空",0);

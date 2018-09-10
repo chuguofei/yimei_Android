@@ -246,7 +246,7 @@ public class TongYongGuoZhanActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.tongyongguozhan_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) { // 用户名
+				if (actionId >= 0) { // 用户名
 					if (tongyongguozhan_user.getText().toString().toUpperCase()
 							.equals("")
 							|| tongyongguozhan_user.getText() == null) {
@@ -260,7 +260,7 @@ public class TongYongGuoZhanActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.tongyongguozhan_sid1) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) { // 用户名
+				if (actionId >= 0) { // 用户名
 					if (tongyongguozhan_user.getText().toString().toUpperCase()
 							.equals("")
 							|| tongyongguozhan_user.getText() == null) {
@@ -471,6 +471,12 @@ public class TongYongGuoZhanActivity extends Activity {
 								if(!zcno.equals("81")){
 									if(Integer.parseInt(jsonValue.get("bok").toString()) == 0){
 										ToastUtil.showToast(getApplicationContext(),"选中的【"+jsonValue.get("sid1").toString()+"】不具备过站条件！", 0);
+										return;
+									}
+									if(Integer.parseInt(jsonValue.get("holdid").toString()) == 1){
+										ToastUtil.showToast(getApplicationContext(),"该批号状态为【HOLD】，请找QC!", 0);
+										tongyongguozhan_sid1.selectAll();
+										InputHidden();
 										return;
 									}
 									if (jsonValue.get("state").toString().equals("04")) {

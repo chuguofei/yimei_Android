@@ -210,9 +210,9 @@ public class JiaJiaoActivity extends Activity {
 			yimei_jiajiao_jidiaojinumber.setText(sbid);
 		}
 		
-		yimei_jiajiao_user.setOnEditorActionListener(editEnter);
-		yimei_jiajiao_jidiaojinumber.setOnEditorActionListener(editEnter);
-		yimei_jiajiao_jiaobeipihao.setOnEditorActionListener(editEnter);
+		yimei_jiajiao_user.setOnEditorActionListener(userEnter);
+		yimei_jiajiao_jidiaojinumber.setOnEditorActionListener(sbidEnter);
+		yimei_jiajiao_jiaobeipihao.setOnEditorActionListener(prtnoEnter);
 
 		yimei_jiajiao_user.setOnFocusChangeListener(EditGetFocus);
 		yimei_jiajiao_jidiaojinumber.setOnFocusChangeListener(EditGetFocus);
@@ -225,7 +225,117 @@ public class JiaJiaoActivity extends Activity {
 		super.onPause();
 		unregisterReceiver(barcodeReceiver); // 取消广播注册
 	}
+	
+	/**
+	 * 胶杯号
+	 */
+	OnEditorActionListener prtnoEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (v.getId() == R.id.yimei_jiajiao_jiaobeipihao) {
+				if (actionId >= 0) { // 胶杯批号
+					jiaobeipihao = yimei_jiajiao_jiaobeipihao.getText()
+							.toString().trim();
+					if (yimei_jiajiao_user.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"作业员不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_user));
+						return false;
+					}
+					if (yimei_jiajiao_jidiaojinumber.getText().toString()
+							.trim().equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"点胶机编号不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
+						return false;
+					}
+					if (yimei_jiajiao_jiaobeipihao.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"胶杯批号不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+						return false;
+					}
+					Map<String, String> mapSbid = new HashMap<String, String>();
+					mapSbid.put("dbid", MyApplication.DBID);
+					mapSbid.put("usercode", MyApplication.user);
+					mapSbid.put("apiId", "assist");
+					mapSbid.put("assistid", "{MESEQUTM}");
+					mapSbid.put("cont", "~id='" + sbid + "' and zc_id='31'");
+					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
+							"Isshebei1");
+					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
+					yimei_jiajiao_jiaobeipihao.selectAll();
+				}
+			}
+			return false;
+		}
+	};
 
+	/**
+	 * 作业员
+	 */
+	OnEditorActionListener userEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (v.getId() == R.id.yimei_jiajiao_user) { // 作业员
+				if (actionId >= 0) {
+					if (yimei_jiajiao_user.getText().toString().trim()
+							.equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"作业员不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_user));
+						return false;
+					}
+					zuoyeyuan = yimei_jiajiao_user.getText().toString().trim();
+					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
+				}
+			}
+			return false;
+		}
+	}; 
+	
+	
+	/**
+	 * 设备号
+	 */
+	OnEditorActionListener sbidEnter = new OnEditorActionListener() {
+		
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (v.getId() == R.id.yimei_jiajiao_jidiaojinumber) { // 设备号
+				if (actionId >= 0) {
+					sbid = yimei_jiajiao_jidiaojinumber.getText().toString()
+							.toUpperCase().trim();
+					if (zuoyeyuan.equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"作业员不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_user));
+						return false;
+					}
+					if (sbid.equals("")) {
+						ToastUtil.showToast(getApplicationContext(),
+								"点胶机编号不能为空!", 0);
+						nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
+						return false;
+					}
+					Map<String, String> mapSbid = new HashMap<String, String>();
+					mapSbid.put("dbid", MyApplication.DBID);
+					mapSbid.put("usercode", MyApplication.user);
+					mapSbid.put("apiId", "assist");
+					mapSbid.put("assistid", "{MESEQUTM}");
+					mapSbid.put("cont", "~id='" + sbid + "' and zc_id='31'");
+					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
+							"Isshebei");
+				}
+			}
+			return false;
+		}
+	};
+	
 	/**
 	 * 回车事件（通用）
 	 */
@@ -235,7 +345,7 @@ public class JiaJiaoActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_jiajiao_jiaobeipihao) {
-//				if (actionId == EditorInfo.IME_ACTION_DONE) { // 胶杯批号
+				if (actionId >= 0) { // 胶杯批号
 					jiaobeipihao = yimei_jiajiao_jiaobeipihao.getText()
 							.toString().trim();
 					if (yimei_jiajiao_user.getText().toString().trim()
@@ -270,10 +380,10 @@ public class JiaJiaoActivity extends Activity {
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jiaobeipihao));
 					yimei_jiajiao_jiaobeipihao.selectAll();
 					flag = true;
-//				}
+				}
 			}
 			if (v.getId() == R.id.yimei_jiajiao_user) { // 作业员
-//				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiajiao_user.getText().toString().trim()
 							.equals("")) {
 						ToastUtil.showToast(getApplicationContext(),
@@ -284,10 +394,10 @@ public class JiaJiaoActivity extends Activity {
 					zuoyeyuan = yimei_jiajiao_user.getText().toString().trim();
 					nextEditFocus((EditText) findViewById(R.id.yimei_jiajiao_jidiaojinumber));
 					flag = true;
-//				}
+				}
 			}
 			if (v.getId() == R.id.yimei_jiajiao_jidiaojinumber) { // 设备号
-//				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					sbid = yimei_jiajiao_jidiaojinumber.getText().toString()
 							.toUpperCase().trim();
 					if (zuoyeyuan.equals("")) {
@@ -311,7 +421,7 @@ public class JiaJiaoActivity extends Activity {
 					httpRequestQueryRecord(MyApplication.MESURL, mapSbid,
 							"Isshebei");
 					flag = true;
-//				}
+				}
 			}
 			return flag;
 		}
@@ -480,6 +590,7 @@ public class JiaJiaoActivity extends Activity {
 											//判断混胶后20分钟内需要加胶
 											long Time = MyApplication.df.parse(MyApplication.GetServerNowTime()).getTime()  - MyApplication.df.parse(mixing_time).getTime();
 											long Time1 = Time/1000/60;
+											//如果混胶时间大于20分钟(!混交时间<20)
 											if(!((Time/1000/60) < Integer.parseInt(jsonValue.get("fr_add_time").toString()))&&(Time/1000/60)>0){
 												ToastUtil.showToast(JiaJiaoActivity.this,"请联系工程人员！",0);
 												return;

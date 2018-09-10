@@ -578,7 +578,7 @@ public class MoZuActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_mozu_user_edt) { // 作业员
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_mozu_user_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_mozu_user_edt.getText().toString().trim() == null) {
@@ -592,7 +592,7 @@ public class MoZuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_mozu_sbid_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					shebeihao = yimei_mozu_sbid_edt.getText().toString()
 							.toUpperCase().trim();
 					yimei_mozu_sbid_edt.setText(shebeihao);
@@ -621,7 +621,7 @@ public class MoZuActivity extends Activity {
 			// 生产批号的回车事件
 
 			if (v.getId() == R.id.yimei_mozu_proNum_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					picihao = yimei_mozu_proNum_edt.getText().toString().trim();
 					if (yimei_mozu_user_edt.getText().toString().trim()
 							.equals("")
@@ -873,7 +873,12 @@ public class MoZuActivity extends Activity {
 							yimei_mozu_proNum_edt.selectAll();
 							InputHidden(); //隐藏键盘
 							return;
-						} else if (jsonValue.get("state").toString()
+						}else if(jsonValue.getInteger("holdid") == 1){
+							ToastUtil.showToast(MoZuActivity.this, "该批号状态为【HOLD】，请找QC!", 0);
+							yimei_mozu_proNum_edt.selectAll();
+							InputHidden(); //隐藏键盘
+							return;
+						}else if (jsonValue.get("state").toString()
 								.equals("02")
 								|| jsonValue.get("state").toString()
 										.equals("03")) {

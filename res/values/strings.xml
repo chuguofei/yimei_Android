@@ -104,6 +104,7 @@
     <string name="ruku_prd_mark">BinCode</string>
     <string name="ruku_prd_name">产品名称</string>
     <string name="ruku_wh">仓库</string>
+
     <string name="ruku_qty">数量</string>
     <string name="ruku_info">备注</string>
 
@@ -314,8 +315,12 @@
     <string name="KandaiTitle">不良记录补写</string>
     <string name="WeiXiuOkTitle">设备维修确认</string>
     <string name="PlasmaTwoTitle">二次清洗</string>
+    <string name="ClearMboxTitle">料盒清洗</string>
     
     
+    <!-- 清洗料盒 -->
+    <string name="clearmbox_mbox">料盒</string>
+    <string name="clearmbox_rem">备注</string>
    
     <!-- 料盒 -->
     <string name="yimei_mbox_jiebang">料盒</string>

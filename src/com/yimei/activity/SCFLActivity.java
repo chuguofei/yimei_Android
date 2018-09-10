@@ -641,7 +641,7 @@ public class SCFLActivity extends TabActivity {
 			boolean flag = false;
 			try {
 				if (v.getId() == R.id.yimei_SCFL_user) { // 作业员
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -654,7 +654,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_mo_no) { // 制令号
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -701,7 +701,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_prd_no) { // 材料号
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -767,7 +767,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_bat_no) { // 批次号
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -815,7 +815,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_bincode) { // bincode
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",
@@ -866,7 +866,7 @@ public class SCFLActivity extends TabActivity {
 					}
 				}
 				if (v.getId() == R.id.yimei_scfl_qty) { // 数量
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if (yimei_SCFL_user.getText().toString().equals("")
 								|| yimei_SCFL_user.getText().toString() == null) {
 							ToastUtil.showToast(SCFLActivity.this, "作业员不能为空！",

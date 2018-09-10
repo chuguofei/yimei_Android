@@ -516,12 +516,12 @@ public class ShangLiaoActivity extends TabActivity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			try {
 				if (v.getId() == R.id.yimei_shangliao_materialCode) { // 材料批号
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						cailiao_EnterMethod();
 					}
 				}
 				if (v.getId() == R.id.yimei_shangliao_Num) { // 数量回车
-					if (actionId == EditorInfo.IME_ACTION_DONE) {
+					if (actionId >= 0) {
 						if(mesObj.getZcno().equals("11")||mesObj.getZcno().equals("12")||mesObj.getZcno().equals("13")){
 							showNormalDialog("创批时已绑定数量，不可更改");
 							return false;
@@ -1188,7 +1188,7 @@ public class ShangLiaoActivity extends TabActivity {
 	 * @param hScrollView
 	 */
 	private boolean cailiao_EnterMethod() {
-		if (!mesObj.getZcno().equals("11")&&!mesObj.getZcno().equals("12")&&!mesObj.getZcno().equals("13")) {
+ 		if (!mesObj.getZcno().equals("11")&&!mesObj.getZcno().equals("12")&&!mesObj.getZcno().equals("13")) {
 			if (yimei_shangliao_materialCode.getText().toString().trim()
 					.equals("")
 					|| yimei_shangliao_materialCode.getText().toString().trim() == null) {

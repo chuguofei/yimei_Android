@@ -289,7 +289,7 @@ public class JieShouActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_jieshou_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if(yimei_jieshou_user.getText().toString().trim().equals("")
 							||yimei_jieshou_user.getText().toString().trim()==null){
 						ToastUtil.showToast(JieShouActivity.this,"作业员不能为空",0);

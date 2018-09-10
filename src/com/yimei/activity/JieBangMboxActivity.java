@@ -192,7 +192,7 @@ public class JieBangMboxActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.yimei_jiebang_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiebang_user.getText().toString().toUpperCase()
 							.trim().equals("")
 							|| yimei_jiebang_user.getText().toString()
@@ -208,7 +208,7 @@ public class JieBangMboxActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_jiebang_sid1) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiebang_user.getText().toString().toUpperCase()
 							.trim().equals("")
 							|| yimei_jiebang_user.getText().toString()
@@ -240,7 +240,7 @@ public class JieBangMboxActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_jiebang_mbox) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_jiebang_user.getText().toString().toUpperCase()
 							.trim().equals("")
 							|| yimei_jiebang_user.getText().toString()

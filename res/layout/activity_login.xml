@@ -29,6 +29,7 @@
             android:layout_below="@+id/login_edit_account"
             android:drawableLeft="@android:drawable/ic_lock_idle_lock"
             android:ems="10"
+            android:nextFocusDown="@id/login_edit_pwd"
             android:hint="@string/login_edit_pwd_text"
             android:imeOptions="actionDone"
             android:inputType="textPassword" />
@@ -42,6 +43,7 @@
             android:drawableLeft="@android:drawable/ic_menu_myplaces"
             android:hint="@string/login_edit_account_text"
             android:imeOptions="actionDone"
+            android:nextFocusDown="@id/login_edit_account"
             android:inputType="textPersonName" />
 
         <Button

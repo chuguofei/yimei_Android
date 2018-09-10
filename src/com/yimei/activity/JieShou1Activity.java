@@ -171,7 +171,7 @@ public class JieShou1Activity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_jieshou1_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if(yimei_jieshou1_user.getText().toString().toUpperCase().trim()==null
 							||yimei_jieshou1_user.getText().toString().toUpperCase().trim().equals("")){
 						ToastUtil.showToast(JieShou1Activity.this,"作业员不能为空",0);
@@ -184,7 +184,7 @@ public class JieShou1Activity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_jieshou1_sid) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if(yimei_jieshou1_user.getText().toString().toUpperCase().trim()==null
 							||yimei_jieshou1_user.getText().toString().toUpperCase().trim().equals("")){
 						ToastUtil.showToast(JieShou1Activity.this,"作业员不能为空",0);

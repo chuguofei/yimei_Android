@@ -193,7 +193,7 @@ public class ZhiJuRukKuActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_zhijuruku_user_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijuruku_user_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_zhijuruku_user_edt.getText().toString()
@@ -209,7 +209,7 @@ public class ZhiJuRukKuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_zhijuruku_mojuId) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijuruku_user_edt.getText().toString().trim()
 							.equals("")
 							|| yimei_zhijuruku_user_edt.getText().toString()

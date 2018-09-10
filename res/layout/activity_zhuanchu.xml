@@ -32,6 +32,7 @@
                     android:enabled="true"
                     android:imeOptions="actionDone"
                     android:inputType="text"
+                    android:nextFocusDown="@id/yimei_zhuanchu_user"
                     android:labelFor="@+id/yimei_zhuanchu_edt"
                     android:maxLength="12"
                     android:paddingLeft="10dp"
@@ -72,6 +73,7 @@
                     android:inputType="text"
                     android:labelFor="@+id/yimei_zhuanchu_sid"
                     android:paddingLeft="10dp"
+                    android:nextFocusDown="@id/yimei_zhuanchu_sid"
                     android:paddingRight="10dp"
                     android:tag="转出批次号" />
             </TableRow>

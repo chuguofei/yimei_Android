@@ -249,7 +249,7 @@ public class ZhiJuQingXiActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_zhijuqingxi_user_edt) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijuqingxi_user.getText().toString().trim().equals("")
 							|| yimei_zhijuqingxi_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(ZhiJuQingXiActivity.this, "作业员不能为空", 0);
@@ -261,7 +261,7 @@ public class ZhiJuQingXiActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_zhijuqingxi_mojuId) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_zhijuqingxi_user.getText().toString().trim().equals("")
 							|| yimei_zhijuqingxi_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(ZhiJuQingXiActivity.this, "作业员不能为空", 0);

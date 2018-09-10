@@ -179,7 +179,7 @@ public class ZhuanChuActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_zhuanchu_user) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if(yimei_zhuanchu_user.getText().toString().toUpperCase().trim()==null
 							||yimei_zhuanchu_user.getText().toString().toUpperCase().trim().equals("")){
 						ToastUtil.showToast(ZhuanChuActivity.this,"作业员不能为空",0);
@@ -192,7 +192,7 @@ public class ZhuanChuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_zhuanchu_sid) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if(yimei_zhuanchu_user.getText().toString().toUpperCase().trim()==null
 							||yimei_zhuanchu_user.getText().toString().toUpperCase().trim().equals("")){
 						ToastUtil.showToast(ZhuanChuActivity.this,"作业员不能为空",0);

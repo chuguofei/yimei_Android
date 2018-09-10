@@ -1,4 +1,4 @@
-package com.yimei.activity;
+ package com.yimei.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -219,7 +219,7 @@ public class RuKuActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean flag = false;
 			if (v.getId() == R.id.yimei_ruku_user_edt) { // 作业员
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_ruku_user_edt.getText().toString().trim()
 							.equals("")) {
 						ToastUtil.showToast(rukuActivity, "作业员不能为空", 0);
@@ -232,7 +232,7 @@ public class RuKuActivity extends Activity {
 				}
 			}
 			if (v.getId() == R.id.yimei_ruku_proNum_edt) { //批次号
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_ruku_user_edt.getText().toString().trim()
 							.equals("")) {
 						ToastUtil.showToast(rukuActivity, "作业员不能为空", 0);

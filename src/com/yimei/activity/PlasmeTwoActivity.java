@@ -152,7 +152,7 @@ public class PlasmeTwoActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if(v.getId() == R.id.yimei_plasma_user){
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_plasma_user.getText().toString().trim().equals("")
 							|| yimei_plasma_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(PlasmeTwoActivity.this, "作业员不能为空1", 0);
@@ -165,7 +165,7 @@ public class PlasmeTwoActivity extends Activity {
 				}
 			}
 			if(v.getId() == R.id.yimei_plasma_sid1){
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					if (yimei_plasma_user.getText().toString().trim().equals("")
 							|| yimei_plasma_user.getText().toString().trim() == null) {
 						ToastUtil.showToast(PlasmeTwoActivity.this, "作业员不能为空2", 0);

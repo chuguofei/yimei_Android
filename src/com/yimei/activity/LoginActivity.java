@@ -259,7 +259,7 @@ public class LoginActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.login_edit_account) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId >= 0) {
 					EditText nextEditText = (EditText) findViewById(R.id.login_edit_pwd);
 					nextEditText.setFocusable(true);
 					nextEditText.setFocusableInTouchMode(true);

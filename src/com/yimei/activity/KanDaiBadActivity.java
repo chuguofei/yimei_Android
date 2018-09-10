@@ -141,7 +141,7 @@ public class KanDaiBadActivity extends Activity {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (v.getId() == R.id.bad_lotno1) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) { // 用户名
+				if (actionId >= 0) { // 用户名
 					Map<String, String> map = MyApplication.QueryBatNo(
 							"TESTQUERY", "~lotno='" + bad_lotno1.getText().toString().toUpperCase() + "' ");
 					OkHttpUtils.getInstance().getServerExecute(

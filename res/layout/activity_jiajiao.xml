@@ -31,6 +31,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_jiajiao_user"
                 android:tag="加胶作业员"
                 android:labelFor="@+id/yimei_jiajiao_user"
                 android:paddingLeft="10dp" />
@@ -52,6 +53,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_jiajiao_jidiaojinumber"
                 android:tag="加胶胶机编号"
                 android:labelFor="@+id/yimei_jiajiao_jidiaojinumber"
                 android:paddingLeft="5dp" />
@@ -73,6 +75,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_jiajiao_jiaobeipihao"
                 android:tag="加胶胶杯批号"
                 android:labelFor="@+id/yimei_jiajiao_jiaobeipihao"
                 android:paddingLeft="10dp"
