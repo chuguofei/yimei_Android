@@ -29,6 +29,7 @@
                 android:ems="10"
                 android:enabled="true"
                 android:imeOptions="actionDone"
+                 android:nextFocusDown="@id/yimei_clearmbox_op"
                 android:inputType="text"
                 android:maxLength="12"
                 android:paddingLeft="10dp"
@@ -52,6 +53,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="textMultiLine"
                 android:labelFor="@+id/yimei_clearmbox_rem"
+                 android:nextFocusDown="@id/bad_lotno"
                 android:paddingLeft="10dp"
                 android:tag="清洗备注"
                 android:textSize="16px" />
@@ -71,6 +73,7 @@
                 android:background="@drawable/shape_edittext"
                 android:ems="10"
                 android:enabled="true"
+                 android:nextFocusDown="@id/yimei_clearmbox_mbox"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:labelFor="@+id/yimei_clearmbox_mbox"

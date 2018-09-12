@@ -65,6 +65,7 @@ public class TongYongGuoZhanActivity extends Activity {
 	private String bad_sid;
 	private String getServerNowTime = null;
 	private int testqty;
+	private Map<String,String> Repeat_Lotno = new HashMap<String, String>();
 	/**
 	 * 获取pda扫描（广播）
 	 */
@@ -517,6 +518,14 @@ public class TongYongGuoZhanActivity extends Activity {
 										return;
 									}
 								}
+								if(Repeat_Lotno.size() != 0){
+									if(Repeat_Lotno.containsKey(sid1)){
+										ToastUtil.showToast(getApplicationContext(),"该批次已经扫描到列表中！", 0);
+										tongyongguozhan_sid1.selectAll();
+										InputHidden();
+										return;
+									}
+								}
 								
 								getServerNowTime = tongyongguozhan_sid1.getText().toString().toUpperCase();
 								jsonValue.put("sbuid", "D0001");
@@ -592,6 +601,7 @@ public class TongYongGuoZhanActivity extends Activity {
 								map.put("qty", jsonValue.get("qty").toString());
 								map.put("zcno",jsonValue.get("zcname").toString());
 								mList.add(map);
+								Repeat_Lotno.put(sid1, sid1); //重复lotno记录
 								if (gaowendianliangApapter == null) {
 									gaowendianliangApapter = new GaoWenDianLiangAdapter(
 											TongYongGuoZhanActivity.this, mList);

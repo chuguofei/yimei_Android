@@ -73,6 +73,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
+                             android:nextFocusDown="@id/yimei_shangliao_materialCode"
                             android:tag="上料代码"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_shangliao_materialCode"
@@ -99,6 +100,7 @@
                             android:imeOptions="actionDone"
                             android:inputType="text"
                             android:tag="上料批次号"
+                            android:nextFocusDown="@id/yimei_shangliao_materialPihao"
                             android:labelFor="@+id/yimei_shangliao_materialPihao"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -122,6 +124,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
+                            android:nextFocusDown="@id/yimei_shangliao_materialBinCode"
                             android:inputType="text"
                             android:tag="上料bincode"
                             android:labelFor="@+id/yimei_shangliao_materialBinCode"
@@ -145,6 +148,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
+                            android:nextFocusDown="@id/yimei_shangliao_Num"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_shangliao_Num"
                             android:paddingLeft="10dp" />

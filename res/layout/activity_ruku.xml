@@ -31,6 +31,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_ruku_user_edt"
                 android:labelFor="@+id/yimei_ruku_user_edt"
                 android:paddingLeft="10dp"
                 android:tag="生产入库作业员" />
@@ -54,6 +55,7 @@
                 android:inputType="text"
                 android:labelFor="@+id/yimei_ruku_proNum_edt"
                 android:paddingLeft="10dp"
+                android:nextFocusDown="@id/yimei_ruku_proNum_edt"
                 android:paddingRight="10dp"
                 android:tag="生产入库批次号" />
         </TableRow>

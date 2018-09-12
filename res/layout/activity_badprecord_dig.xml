@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:nextFocusDown="@id/bad_lotno"
         android:inputType="text"
         android:hint="lot号"
         android:labelFor="@+id/bad_lotno" />
@@ -21,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:nextFocusDown="@id/bad_fracture"
         android:inputType="number"
         android:hint="断裂"
         android:labelFor="@+id/bad_fracture" />
@@ -33,6 +35,7 @@
         android:layout_margin="8dp"
         android:inputType="number"
         android:hint="压伤"
+         android:nextFocusDown="@id/bad_crushed"
         android:labelFor="@+id/bad_crushed" />
     
      <!-- 点记 -->
@@ -43,6 +46,7 @@
         android:layout_margin="8dp"
         android:inputType="number"
         android:hint="点记"
+         android:nextFocusDown="@id/bad_poinrem"
         android:labelFor="@+id/bad_poinrem" />
 
     <EditText
@@ -51,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="破损"
+         android:nextFocusDown="@id/bad_broken"
         android:inputType="number"
         android:labelFor="@+id/bad_broken" />
     
@@ -60,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="压合"
+         android:nextFocusDown="@id/bad_pressing"
         android:inputType="number"
         android:labelFor="@+id/bad_pressing" />
 
@@ -69,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="溢胶"
+         android:nextFocusDown="@id/bad_overflow"
         android:inputType="number"
         android:labelFor="@+id/bad_overflow" />
      

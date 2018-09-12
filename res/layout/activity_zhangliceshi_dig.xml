@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:inputType="number"
+        android:nextFocusDown="@id/A"
         android:hint="A"
         android:labelFor="@+id/A" />
     
@@ -19,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:inputType="number"
+        android:nextFocusDown="@id/B"
         android:hint="B"
         android:labelFor="@+id/B" />
     
@@ -27,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:nextFocusDown="@id/C"
         android:inputType="number"
         android:hint="C"
         android:labelFor="@+id/C" />
@@ -36,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:nextFocusDown="@id/D"
         android:hint="D"
         android:inputType="number"
         android:labelFor="@+id/D" />
@@ -46,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="E"
+        android:nextFocusDown="@id/E"
         android:inputType="number"
         android:labelFor="@+id/E" />
 

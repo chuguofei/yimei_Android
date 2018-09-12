@@ -47,6 +47,7 @@
                 android:inputType="text"
                 android:tag="模组作业员"
                 android:labelFor="@+id/yimei_mozu_user_edt"
+                android:nextFocusDown="@id/yimei_mozu_user_edt"
                 android:paddingLeft="10dp" />
         </TableRow>
 
@@ -66,6 +67,7 @@
                 android:enabled="true"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:nextFocusDown="@id/yimei_mozu_sbid_edt"
                 android:tag="模组设备号"
                 android:labelFor="@+id/yimei_mozu_sbid_edt"
                 android:paddingLeft="10dp" />
@@ -85,6 +87,7 @@
                 android:background="@drawable/shape_edittext"
                 android:ems="10"
                 android:enabled="true"
+                android:nextFocusDown="@id/yimei_mozu_proNum_edt"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:tag="模组批次号"

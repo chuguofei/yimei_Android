@@ -56,6 +56,7 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_jinbanren"
                             android:labelFor="@+id/yimei_zhuangxiang_jinbanren"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -77,6 +78,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_chukushenqing"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_chukushenqing"
                             android:paddingLeft="10dp"
@@ -101,6 +103,7 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="number"
+                             android:nextFocusDown="@id/yimei_zhuangxiang_manxiangNum"
                             android:labelFor="@+id/yimei_zhuangxiang_manxiangNum"
                             android:paddingLeft="10dp" />
                     </TableRow>
@@ -120,6 +123,7 @@
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_bat_no"
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
@@ -145,6 +149,7 @@
                             android:ems="10"
                             android:enabled="true"
                             android:imeOptions="actionDone"
+                             android:nextFocusDown="@id/yimei_zhuangxiang_bincode"
                             android:inputType="text"
                             android:labelFor="@+id/yimei_zhuangxiang_bincode"
                             android:paddingLeft="10dp"
@@ -169,6 +174,7 @@
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_Num"
                             android:labelFor="@+id/yimei_zhuangxiang_Num"
                             android:paddingLeft="10dp"
                             android:tag="装箱作业qty" />
@@ -189,6 +195,7 @@
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_canpinxinghao"
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
@@ -212,6 +219,7 @@
                             android:layout_height="40dp"
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_canpindaihao"
                             android:enabled="true"
                             android:imeOptions="actionDone"
                             android:inputType="text"
@@ -236,6 +244,7 @@
                             android:background="@drawable/shape_edittext"
                             android:ems="10"
                             android:enabled="true"
+                            android:nextFocusDown="@id/yimei_zhuangxiang_chukuNum"
                             android:imeOptions="actionDone"
                             android:inputType="number"
                             android:labelFor="@+id/yimei_zhuangxiang_chukuNum"

@@ -97,6 +97,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_edittext"
                 android:gravity="center"
+                android:nextFocusDown="@id/weixiuok_reason"
                 android:inputType="text"
                 android:labelFor="@+id/weixiuok_sopr" />
         </TableRow>
@@ -115,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_edittext"
                 android:gravity="center"
+                android:nextFocusDown="@id/weixiuok_madate"
                 android:inputType="text"
                 android:labelFor="@+id/weixiuok_sopr" />
         </TableRow>
@@ -132,6 +134,7 @@
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_edittext"
+                android:nextFocusDown="@id/weixiuok_wxdate"
                 android:gravity="center"
                 android:inputType="text"
                 android:labelFor="@+id/weixiuok_wxstate" />

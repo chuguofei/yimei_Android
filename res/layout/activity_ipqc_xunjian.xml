@@ -47,6 +47,7 @@
                     android:layout_height="40dp"
                     android:background="@drawable/shape_edittext"
                     android:ems="10"
+                    android:nextFocusDown="@id/yimei_xunjian_user"
                     android:enabled="true"
                     android:imeOptions="actionDone"
                     android:inputType="text"
@@ -72,6 +73,7 @@
                     android:enabled="true"
                     android:imeOptions="actionDone"
                     android:inputType="text"
+                    android:nextFocusDown="@id/yimei_xunjian_sbid"
                     android:labelFor="@+id/yimei_xunjian_sbid"
                     android:paddingLeft="10dp"
                     android:tag="巡检设备号" />
@@ -93,6 +95,7 @@
                     android:enabled="true"
                     android:imeOptions="actionDone"
                     android:inputType="text"
+                    android:nextFocusDown="@id/yimei_xunjian_sid1"
                     android:labelFor="@+id/yimei_xunjian_sid1"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -119,6 +122,7 @@
                     android:labelFor="@+id/yimei_xunjian_prd_no"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
+                    android:nextFocusDown="@id/yimei_xunjian_prd_no"
                     android:tag="巡检货品名称"
                     android:textColor="#808080" />
             </TableRow>

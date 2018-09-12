@@ -182,7 +182,7 @@ public class RuKuActivity extends Activity {
 						map.put("chkid", "33");
 						JSONObject ceaJson = new JSONObject();
 						ceaJson.put("sid",SubmitSid);
-						ceaJson.put("sbuid", "E0004");
+						ceaJson.put("sbuid", "F0004");
 						ceaJson.put("statefr", "0");
 						ceaJson.put("stateto", "0");
 						map.put("cea", ceaJson.toString());
@@ -447,7 +447,7 @@ public class RuKuActivity extends Activity {
 								JSONObject ceaJson = new JSONObject();
 								ceaJson.put("stateto","6");
 								ceaJson.put("sid",SubmitSid);
-								ceaJson.put("sbuid", "E0004");
+								ceaJson.put("sbuid", "F0004");
 								ceaJson.put("ckd","true");
 								ceaJson.put("yjcontext", "");
 								ceaJson.put("bup", "1");
@@ -469,6 +469,7 @@ public class RuKuActivity extends Activity {
 						if(string.equals("Approval_34")){
 							JSONObject jsonObject = JSON.parseObject(b.getString("jsonObj").toString());
 							if(jsonObject.getInteger("id") == 0){
+								//输出服务器返回的mess
 								ToastUtil.showToast(rukuActivity,jsonObject.getString("message"),0);
 							}else{
 								ToastUtil.showToast(rukuActivity,"34:"+jsonObject.getString("message"),0);

@@ -1277,7 +1277,8 @@ public class TongYongActivity extends Activity {
 								
 							}
 							
-							if(zcno.equals("21") || zcno.equals("31") || zcno.equals("11")){
+							//判断焊接点胶料盒是否空
+							if(zcno.equals("21") || zcno.equals("31")){
 								if(yimei_tongyong_newMbox.getText().toString().trim().toUpperCase().equals("")){
 									ToastUtil.showToast(gujingActivity,"服务器没有返回响应，请重新扫描!", 0);
 									MyApplication.nextEditFocus(yimei_tongyong_newMbox);
